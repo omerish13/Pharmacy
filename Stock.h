@@ -48,4 +48,16 @@ Product* findProduct(const Stock* stock, int code);
  */
 void printStockDetails(const Stock* stock);
 
+/**
+ * Updates the stock quantity of a specific product based on a product code and quantity adjustment.
+ * If the product is found in the stock and there is sufficient quantity, the stock is reduced by the specified quantity.
+ * If the stock is insufficient, a warning is printed indicating the available and required quantities.
+ * If the product is not found in the stock, a message is printed to indicate this.
+ * 
+ * @param stock Pointer to the Stock structure containing the array of products.
+ * @param productCode The unique code of the product for which the stock quantity needs to be updated.
+ * @param quantity The quantity by which the stock needs to be adjusted (reduced).
+ */
+void updateStock(Stock* stock, int productCode, int quantity);
+
 #endif // STOCK_H

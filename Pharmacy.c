@@ -97,5 +97,20 @@ void cancelOrder(Pharmacy* pharmacy, int orderNumber) {
 }
 
 void purchaseOrder(Pharmacy* pharmacy, int orderNumber) {
-    // Move the order from openOrders to orderHistory and update stock
+    // Find and remove the order from the openOrders linked list
+    Order* finalizedOrder = removeFromList(&pharmacy->openOrders, compareOrderNumber, &orderNumber);
+
+    if (finalizedOrder != NULL) {
+        // Update the stock based on the products in the order
+        OrderProductNode* currentNode = finalizedOrder->orderProducts;
+        while (currentNode != NULL) {
+            updateStock(&pharmacy->stock, currentNode->product, currentNode->quantity);
+            currentNode = currentNode->next;
+        }
+
+        // Add the finalized order to the orderHistory linked list
+        addToList(&pharmacy->orderHistory, finalizedOrder);
+    } else {
+        printf("Error: This order doesn't exist!");
+    }
 }
