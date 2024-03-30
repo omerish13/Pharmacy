@@ -4,9 +4,9 @@ static int lastProductCode = 0;  // Static variable to keep track of the last us
 
 // Corresponding names for the ProductType enum values
 static const char* ProductTypeNames[PRODUCT_TYPE_COUNT] = {
-    "Healthcare",  // Corresponds to HEALTHCARE
-    "Equipment"    // Corresponds to EQUIPMENT
-    // Add new product type names here
+    "Medicine", 
+    "Healthcare",  
+    "Equipment"
 };
 
 void initProduct(Product* product, int isMedicine) {
@@ -34,7 +34,7 @@ void setProductName(Product* product) {
 
 void setProductType(Product* product) {
     printf("Select product type:\n");
-    for (int i = 0; i < PRODUCT_TYPE_COUNT; ++i) {
+    for (int i = 1; i < PRODUCT_TYPE_COUNT; ++i) {
         printf("%d. %s\n", i + 1, ProductTypeNames[i]);
     }
     
@@ -61,6 +61,16 @@ void setProductStockQuantity(Product* product) {
     printf("Enter stock quantity: ");
     myGets(buffer, BUFFER_SIZE);
     product->stockQuantity = atoi(buffer);
+}
+
+int compareProducts(void* a, void* b) {
+    Product* productA = (Product*)a;
+    Product* productB = (Product*)b;
+    return productA->code - productB->code;  // 0 if codes are equal
+}
+
+void printProduct(void* item) {
+    printProductDetails((Product*)item);
 }
 
 void printProductDetails(const Product* product) {

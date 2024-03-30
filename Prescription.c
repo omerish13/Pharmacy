@@ -1,53 +1,32 @@
 #include "Prescription.h"
+#include <string.h>
+#include <time.h>
 
-static int lastPrescriptionID = 0;
+static int lastPrescriptionID = 0;  // For auto-incrementing the prescription ID
 
-void initPrescription(Prescription* prescription) {
-    prescription->id = ++lastPrescriptionID;  // Auto-increment ID
-    setPrescriptionMedication(prescription);
-    setPrescriptionDosage(prescription);
-    setPrescriptionInstructions(prescription);
-    setPrescriptionExpirationDate(prescription);
+void initPrescription(Prescription* prescription, int customerID, const char* medicineID, Date expirationDate) {
+    prescription->id = ++lastPrescriptionID;
+    prescription->customerID = customerID;
+    strncpy(prescription->medicineID, medicineID, 6);
+    prescription->medicineID[6] = '\0';  // Ensure null-termination
+    prescription->expirationDate = expirationDate;
+    prescription->used = 0;  // The prescription is initially unused
 }
 
-void setPrescriptionMedication(Prescription* prescription) {
-    char buffer[BUFFER_SIZE];
-    printf("Enter medication name: ");
-    myGets(buffer, BUFFER_SIZE);
-    prescription->medication = (char*)malloc(strlen(buffer) + 1);
-    CHECK_ALLOC(prescription->medication);
-    strcpy(prescription->medication, buffer);
-}
+int customerHasValidPrescription(const Prescription* prescriptions, int numPrescriptions, int customerID, const char* medicineID) {
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    Date currentDate = {tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900};  // Current date
 
-void setPrescriptionDosage(Prescription* prescription) {
-    char buffer[BUFFER_SIZE];
-    printf("Enter dosage information: ");
-    myGets(buffer, BUFFER_SIZE);
-    prescription->dosage = (char*)malloc(strlen(buffer) + 1);
-    CHECK_ALLOC(prescription->dosage);
-    strcpy(prescription->dosage, buffer);
-}
+    for (int i = 0; i < numPrescriptions; ++i) {
+        if (prescriptions[i].customerID == customerID &&
+            strcmp(prescriptions[i].medicineID, medicineID) == 0 &&
+            !prescriptions[i].used &&
+            compareDates(&prescriptions[i].expirationDate, &currentDate) > 0) {  
+            return 1;
+        }
+    }
 
-void setPrescriptionInstructions(Prescription* prescription) {
-    char buffer[BUFFER_SIZE];
-    printf("Enter instructions for use: ");
-    myGets(buffer, BUFFER_SIZE);
-    prescription->instructions = (char*)malloc(strlen(buffer) + 1);
-    CHECK_ALLOC(prescription->instructions);
-    strcpy(prescription->instructions, buffer);
-}
-
-void setPrescriptionExpirationDate(Prescription* prescription) {
-    printf("Setting expiration date:\n");
-    initDate(&prescription->expirationDate);  // This function needs to prompt for day, month, and year
-}
-
-void printPrescriptionDetails(const Prescription* prescription) {
-    printf("Prescription ID: %d\n", prescription->id);
-    printf("Medication: %s\n", prescription->medication);
-    printf("Dosage: %s\n", prescription->dosage);
-    printf("Instructions: %s\n", prescription->instructions);
-    // Assuming printDate function exists to print Date in a formatted manner
-    printf("Expiration Date: ");
-    printDate(&prescription->expirationDate);
+    // No valid prescription found
+    return 0;
 }

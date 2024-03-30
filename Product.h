@@ -3,7 +3,7 @@
 
 #include "general.h"
 
-#define PRODUCT_TYPE_COUNT 2  // Update this count when adding new types
+#define PRODUCT_TYPE_COUNT 3  // Update this count when adding new types
 /**
  * Enum for ProductType.
  */
@@ -63,5 +63,8 @@ void setProductStockQuantity(Product* product);
  * @param product Pointer to the Product structure whose details are being printed.
  */
 void printProductDetails(const Product* product);
+
+void printProduct(void* item);
+int compareProducts(void* a, void* b);
 
 #endif // PRODUCT_H
