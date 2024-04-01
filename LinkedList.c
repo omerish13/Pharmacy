@@ -48,6 +48,29 @@ void clearList(LinkedList* list, void (*freeItem)(void*)) {
     list->size = 0;
 }
 
+void traverseLinkedList(const LinkedList* list, void (*callback)(const void*)) {
+    ListNode* node = list->head;
+    while (node != NULL) {
+        callback(node->item);
+        node = node->next;
+    }
+}
+
+void* traverseAndFind(const LinkedList* list, const void* target, int (*compFunc)(const void*, const void*)) {
+    ListNode* node = list->head;
+    while (node != NULL) {
+        if (compFunc(node->item, target) == 0) {
+            return node->item;
+        }
+        node = node->next;
+    }
+    return NULL;
+}
+
+void* binarySearchLinkedList(const LinkedList* list, const void* target, int (*compFunc)(const void*, const void*)) {
+    return (void*)(bsearch(target,list,list->size,sizeof(target),compFunc));
+}
+
 void printList(const LinkedList* list, void (*printItem)(void*)) {
     ListNode* node = list->head;
 

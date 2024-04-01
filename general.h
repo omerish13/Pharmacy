@@ -15,6 +15,6 @@
  * @param buffer The character array where the input will be stored.
  * @param size The maximum number of characters to read, including the null terminator.
  */
-void myGets(char* buffer, int size);
+void myGets(char* buffer);
 
 #endif // GENERAL_H

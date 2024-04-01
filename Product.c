@@ -26,7 +26,7 @@ void initProduct(Product* product, int isMedicine) {
 void setProductName(Product* product) {
     char buffer[BUFFER_SIZE];
     printf("Enter product name: ");
-    myGets(buffer, BUFFER_SIZE);
+    myGets(buffer);
     product->name = (char*)malloc(strlen(buffer) + 1);
     CHECK_ALLOC(product->name);
     strcpy(product->name, buffer);
@@ -39,7 +39,7 @@ void setProductType(Product* product) {
     }
     
     char buffer[BUFFER_SIZE];
-    myGets(buffer, BUFFER_SIZE);
+    myGets(buffer);
     int typeIndex = atoi(buffer) - 1;  // Adjust for 0-based index
 
     if (typeIndex >= 0 && typeIndex < PRODUCT_TYPE_COUNT) {
@@ -52,14 +52,14 @@ void setProductType(Product* product) {
 void setProductPrice(Product* product) {
     char buffer[BUFFER_SIZE];
     printf("Enter product price: ");
-    myGets(buffer, BUFFER_SIZE);
+    myGets(buffer);
     product->price = atof(buffer);
 }
 
 void setProductStockQuantity(Product* product) {
     char buffer[BUFFER_SIZE];
     printf("Enter stock quantity: ");
-    myGets(buffer, BUFFER_SIZE);
+    myGets(buffer);
     product->stockQuantity = atoi(buffer);
 }
 

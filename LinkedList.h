@@ -3,23 +3,89 @@
 
 #include <stdlib.h>
 
-// Node structure for the linked list
+/**
+ * Node in a linked list, containing a generic pointer to any type of item and a pointer to the next node.
+ */
 typedef struct ListNode {
-    void* item;               // Pointer to the item stored in this node
-    struct ListNode* next;    // Pointer to the next node in the list
+    void* item;               /**< Pointer to the item stored in the node. */
+    struct ListNode* next;    /**< Pointer to the next node in the list. */
 } ListNode;
 
-// Linked list structure
+/**
+ * Linked list structure, containing the head node and the size of the list.
+ */
 typedef struct {
-    ListNode* head;           // Pointer to the first node in the list
-    int size;                 // Number of items in the list
+    ListNode* head;           /**< Pointer to the first node in the list. */
+    int size;                 /**< Number of elements in the list. */
 } LinkedList;
 
-// Function prototypes
+/**
+ * Initializes a linked list to be empty, with no elements.
+ * 
+ * @param list Pointer to the LinkedList structure to initialize.
+ */
 void initList(LinkedList* list);
+
+/**
+ * Adds a new item to the beginning of the list.
+ * 
+ * @param list Pointer to the LinkedList structure.
+ * @param item Pointer to the item to add to the list.
+ */
 void addToList(LinkedList* list, void* item);
+
+/**
+ * Removes the first occurrence of an item from the list that matches the target, based on a comparison function.
+ * 
+ * @param list Pointer to the LinkedList structure.
+ * @param compare Function used to compare two list items.
+ * @param item Pointer to the target item to remove from the list.
+ * @return Pointer to the removed item, or NULL if the item was not found.
+ */
 void* removeFromList(LinkedList* list, int (*compare)(void*, void*), void* item);
+
+/**
+ * Clears all items from the list, optionally freeing allocated memory for each item.
+ * 
+ * @param list Pointer to the LinkedList structure.
+ * @param freeItem Function used to free the memory allocated for an item, if necessary. Can be NULL.
+ */
 void clearList(LinkedList* list, void (*freeItem)(void*));
+
+/**
+ * Iterates over each item in the list and applies a given function, such as printing or modifying items.
+ * 
+ * @param list Pointer to the LinkedList structure.
+ * @param printItem Function applied to each item in the list.
+ */
 void printList(const LinkedList* list, void (*printItem)(void*));
+
+/**
+ * Iterates over each item in the list and applies a given function.
+ * 
+ * @param list Pointer to the LinkedList structure.
+ * @param callback Function applied to each item in the list.
+ */
+void traverseLinkedList(const LinkedList* list, void (*callback)(const void*));
+
+/**
+ * Searches the list for an item matching the target based on a comparison function.
+ * 
+ * @param list Pointer to the LinkedList structure.
+ * @param target Pointer to the target item to find.
+ * @param compFunc Function used to compare two list items.
+ * @return Pointer to the found item, or NULL if not found.
+ */
+void* traverseAndFind(const LinkedList* list, const void* target, int (*compFunc)(const void*, const void*));
+
+/**
+ * Attempts to perform a binary search on the list (not recommended for linked lists due to inefficiency).
+ * 
+ * @param list Pointer to the LinkedList structure.
+ * @param target Pointer to the target item to find.
+ * @param compFunc Function used to compare two list items.
+ * @return Always returns NULL, as binary search is not suitable for linked lists.
+ */
+void* binarySearchLinkedList(const LinkedList* list, const void* target, int (*compFunc)(const void*, const void*));
 
 #endif // LINKEDLIST_H

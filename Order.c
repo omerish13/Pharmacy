@@ -46,38 +46,57 @@ int addProductToOrder(Order* order, Stock* stock, int productCode, int quantity)
     return 1;  // Indicate success
 }
 
-int addMedicineToOrder(Order* order,Prescription* prescriptions, int numOfPrescriptions, Stock* stock, int medicineCode, int customerID, int quantity) {
-    // Find the medicine in stock
+int addMedicineToOrder(Order* order, Prescription* prescriptions, int numOfPrescriptions, Stock* stock, int medicineCode, int customerID) {
     Medicine* medicine = (Medicine*)findProduct(stock, medicineCode);
-    // First, check if the customer has a valid prescription for the medicine
-    if (!customerHasValidPrescription(prescriptions,numOfPrescriptions,customerID, medicine->medicineID)) {
+    if (!medicine) {
+        printf("Error: Invalid Medicine ID.\n");
+        return 0;  // Indicate failure
+    }
+
+    int validPrescriptionIndex = -1;
+    for (int i = 0; i < numOfPrescriptions; i++) {
+        if (prescriptions[i].customerID == customerID &&
+            strcmp(prescriptions[i].medicineID, medicine->medicineID) == 0 &&
+            !prescriptions[i].used) {
+            validPrescriptionIndex = i;
+            break;
+        }
+    }
+
+    if (validPrescriptionIndex == -1) {
         printf("Error: No valid prescription for this medicine.\n");
         return 0;  // Indicate failure
     }
 
-    if (!medicine || quantity > medicine->product.stockQuantity) {
-        printf("Error: Invalid Medicine ID or insufficient stock quantity.\n");
-        return 0;  // Indicate failure
-    }
-
-    // Check if medicine already in order and adjust quantity if so
-    for (OrderProductNode* node = order->orderProducts; node != NULL; node = node->next) {
-        if (node->product->code == medicineCode) {
-            printf("Error: Medicine Already in order, you can update it's quantity through the menu.\n");
-            return 0; // Indicate failure
+    int prescribedQuantity = prescriptions[validPrescriptionIndex].quantity;
+    if (medicine->product.stockQuantity < prescribedQuantity) {
+        char choice;
+        printf("Insufficient stock. Available: %d, Required: %d\n", medicine->product.stockQuantity, prescribedQuantity);
+        printf("Do you want to take the available amount? (y/n): ");
+        scanf(" %c", &choice);
+        if (choice == 'y' || choice == 'Y') {
+            prescribedQuantity = medicine->product.stockQuantity;
+        } else {
+            return 0;  // Indicate failure
         }
     }
 
-    // If medicine not in order, add it
+    // Add the medicine to the order with the prescribed quantity
     OrderProductNode* newNode = (OrderProductNode*)malloc(sizeof(OrderProductNode));
-    newNode->product = (Product*)medicine;  // Cast Medicine to Product
-    newNode->quantity = quantity;
+    if (!newNode) {
+        printf("Error: Memory allocation failed.\n");
+        return 0;  // Indicate failure
+    }
+    newNode->product = (Product*)medicine;
+    newNode->quantity = prescribedQuantity;
     newNode->next = order->orderProducts;
     order->orderProducts = newNode;
-    order->totalAmount += medicine->product.price * quantity;
+    order->totalAmount += medicine->product.price * prescribedQuantity;
+    prescriptions[validPrescriptionIndex].used = 1;  // Mark the prescription as used
     updateLastModified(order);
     return 1;  // Indicate success
 }
+
 
 
 // Modify this function signature to return an int indicating success/failure

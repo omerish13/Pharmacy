@@ -4,13 +4,17 @@
 
 static int lastPrescriptionID = 0;  // For auto-incrementing the prescription ID
 
-void initPrescription(Prescription* prescription, int customerID, const char* medicineID, Date expirationDate) {
-    prescription->id = ++lastPrescriptionID;
+void initPrescription(Prescription* prescription, int customerID, const char* medicineID, Date expirationDate, int quantity) {
+    prescription->id = ++lastPrescriptionID;  // Auto-increment the prescription ID
     prescription->customerID = customerID;
-    strncpy(prescription->medicineID, medicineID, 6);
-    prescription->medicineID[6] = '\0';  // Ensure null-termination
-    prescription->expirationDate = expirationDate;
-    prescription->used = 0;  // The prescription is initially unused
+    
+    // Ensure the medicine ID is copied safely, assuming medicineID has a fixed size
+    strncpy(prescription->medicineID, medicineID, sizeof(prescription->medicineID) - 1);
+    prescription->medicineID[sizeof(prescription->medicineID) - 1] = '\0';  // Null-terminate
+    
+    prescription->expirationDate = expirationDate;  // Assign the expiration date
+    prescription->quantity = quantity;  // Assign the allowed quantity of medication
+    prescription->used = 0;  // Initially mark the prescription as unused
 }
 
 int customerHasValidPrescription(const Prescription* prescriptions, int numPrescriptions, int customerID, const char* medicineID) {
@@ -30,3 +34,18 @@ int customerHasValidPrescription(const Prescription* prescriptions, int numPresc
     // No valid prescription found
     return 0;
 }
+
+void printPrescription(const Prescription* prescription, const Customer* customers, int numCustomers, const Stock* stock) {
+    Customer* customer = findCustomerByID(customers, numCustomers, prescription->customerID);
+    Medicine* medicine = findMedicineByID(stock, prescription->medicineID);
+
+    if (customer && medicine) {
+        printf("Prescription ID: %d\n", prescription->id);
+        printf("Customer: %s (ID: %d)\n", customer->name, customer->id);
+        printf("Medicine: %s (ID: %s)\n", medicine->product.name, medicine->medicineID);
+        // Additional details can be printed here if needed
+    } else {
+        printf("Error: Customer or Medicine not found for the prescription.\n");
+    }
+}
+

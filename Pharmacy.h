@@ -84,4 +84,6 @@ void cancelOrder(Pharmacy* pharmacy, int orderNumber);
  */
 void purchaseOrder(Pharmacy* pharmacy, int orderNumber);
 
+void addNewPrescriptionToPharmacy(Pharmacy* pharmacy);
+
 #endif // PHARMACY_H

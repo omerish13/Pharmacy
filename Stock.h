@@ -2,15 +2,15 @@
 #define STOCK_H
 
 #include "Product.h"  // Include the Product structure for use in the Stock
+#include "Medicine.h"
+#include "LinkedList.h"
 
 /**
- * Structure representing the stock of products, supporting dynamic allocation to allow
- * flexibility in the number of products it can hold.
+ * Represents the inventory of a pharmacy, including both general products and medicines.
  */
-typedef struct {
-    Product* products;   /**< Dynamically allocated array of Product structures. */
-    int productCount;    /**< Number of products currently in stock. */
-    int capacity;        /**< Current capacity of the product array, used to manage dynamic allocation. */
+typedef struct Stock {
+    LinkedList products;   /**< Linked list of all products, including medicines. */
+    LinkedList medicines;  /**< Linked list of medicines for quick access. */
 } Stock;
 
 /**
@@ -59,5 +59,14 @@ void printStockDetails(const Stock* stock);
  * @param quantity The quantity by which the stock needs to be adjusted (reduced).
  */
 void updateStock(Stock* stock, int productCode, int quantity);
+
+Medicine* findMedicineByID(const Stock* stock, const char* medicineID);
+
+void addNewProductToStock(Stock* stock);
+
+void addNewMedicineToStock(Stock* stock);
+
+int compareMedicineByID(const void* a, const void* b);
+
 
 #endif // STOCK_H

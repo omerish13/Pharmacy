@@ -24,6 +24,16 @@ void initCustomer(Customer* customer);
 void setCustomerName(Customer* customer);
 
 /**
+ * Finds a customer by their unique ID.
+ *
+ * @param customers Array of Customer structures.
+ * @param numCustomers Total number of customers in the array.
+ * @param customerID The unique ID of the customer to find.
+ * @return Pointer to the Customer structure if found, NULL otherwise.
+ */
+Customer* findCustomerByID(const Customer* customers, int numCustomers, int customerID);
+
+/**
  * Prints the details of a customer in a formatted manner.
  * @param customer Pointer to the Customer structure whose details are being printed.
  */

@@ -114,3 +114,63 @@ void purchaseOrder(Pharmacy* pharmacy, int orderNumber) {
         printf("Error: This order doesn't exist!");
     }
 }
+
+// Helper function to print all customers
+void printAllCustomers(const Pharmacy* pharmacy) {
+    printf("List of Customers:\n");
+    for (int i = 0; i < pharmacy->customerCount; ++i) {
+        printf("%d: %s\n", pharmacy->customers[i].id, pharmacy->customers[i].name);
+    }
+}
+
+// Helper function to print all employees
+void printAllEmployees(const Pharmacy* pharmacy) {
+    printf("List of Employees:\n");
+    for (int i = 0; i < pharmacy->employeeCount; ++i) {
+        printf("%d: %s\n", pharmacy->employees[i].id, pharmacy->employees[i].name);
+    }
+}
+
+void addNewPrescriptionToPharmacy(Pharmacy* pharmacy) {
+    Prescription newPrescription;
+
+    // Print all customers to let the user choose
+    printAllCustomers(pharmacy);
+
+    int customerID,quantity,used=0;
+    char* medicineID;
+    // Get Customer ID from the client
+    printf("Enter the Customer ID for the new prescription: ");
+    scanf("%d", &customerID);
+
+    // Get other prescription details from the client
+    printf("Enter the Medicine ID for the new prescription: ");
+    char buffer[BUFFER_SIZE];
+    myGets(buffer);
+    medicineID = (char*)malloc(strlen(buffer)+1);
+    CHECK_ALLOC(medicineID);
+    strcpy(medicineID,buffer);
+
+    printf("Enter the quantity for the prescription: ");
+    scanf("%d", &quantity);
+
+    Date d;
+    // Use initDate to set the expiration date
+    initDate(&d);  // Assuming initDate prompts the client for date information
+
+    // Resize the prescriptions array if necessary
+    if (pharmacy->prescriptionCount >= pharmacy->prescriptionCapacity) {
+        int newCapacity = pharmacy->prescriptionCapacity > 0 ? pharmacy->prescriptionCapacity * 2 : 1;
+        Prescription* resizedArray = (Prescription*)realloc(pharmacy->prescriptions, newCapacity * sizeof(Prescription));
+        if (!resizedArray) {
+            printf("Failed to allocate memory for new prescriptions.\n");
+            return;
+        }
+        pharmacy->prescriptions = resizedArray;
+        pharmacy->prescriptionCapacity = newCapacity;
+    }
+
+    initPrescription(&newPrescription,customerID,medicineID,d,quantity);
+    // Add the new prescription to the array and increment the count
+    pharmacy->prescriptions[pharmacy->prescriptionCount++] = newPrescription;
+}

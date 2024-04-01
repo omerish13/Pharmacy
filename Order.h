@@ -63,14 +63,15 @@ int addProductToOrder(Order* order, Stock* stock, int productCode, int quantity)
  * total amount of the order is updated accordingly.
  * 
  * @param order Pointer to the Order to add the medicine to.
+ * @param prescriptions Pointer to list of prescriptions that need to be checked.
+ * @param numOfPrescriptions Number of prescription in prescriptions list.
  * @param stock Pointer to the Stock for medicine availability verification.
  * @param medicineCode The unique code of the medicine to add.
  * @param customerID The ID of the customer making the order, used for prescription verification.
- * @param quantity The quantity of the medicine to add to the order.
  * @return Integer indicating success (1) or failure (0) of the operation. Failure can occur if the stock is
  * insufficient, the medicine is not found, or the customer does not have a valid prescription.
  */
-int addMedicineToOrder(Order* order, Stock* stock, int medicineCode, int customerID, int quantity);
+int addMedicineToOrder(Order* order, Prescription* prescriptions, int numOfPrescriptions, Stock* stock, int medicineCode, int customerID);
 
 /**
  * Updates the quantity of a product already in the order.

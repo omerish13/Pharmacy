@@ -11,7 +11,7 @@ void initAddress(Address* address) {
 void setAddressCountry(Address* address) {
     char buffer[BUFFER_SIZE];
     printf("Enter country: ");
-    myGets(buffer, BUFFER_SIZE);
+    myGets(buffer);
     address->country = (char*)malloc(strlen(buffer) + 1);
     CHECK_ALLOC(address->country);
     strcpy(address->country, buffer);
@@ -20,7 +20,7 @@ void setAddressCountry(Address* address) {
 void setAddressCity(Address* address) {
     char buffer[BUFFER_SIZE];
     printf("Enter city: ");
-    myGets(buffer, BUFFER_SIZE);
+    myGets(buffer);
     address->city = (char*)malloc(strlen(buffer) + 1);
     CHECK_ALLOC(address->city);
     strcpy(address->city, buffer);
@@ -29,7 +29,7 @@ void setAddressCity(Address* address) {
 void setAddressStreet(Address* address) {
     char buffer[BUFFER_SIZE];
     printf("Enter street: ");
-    myGets(buffer, BUFFER_SIZE);
+    myGets(buffer);
     address->street = (char*)malloc(strlen(buffer) + 1);
     CHECK_ALLOC(address->street);
     strcpy(address->street, buffer);
@@ -38,14 +38,14 @@ void setAddressStreet(Address* address) {
 void setAddressHouseNumber(Address* address) {
     char buffer[BUFFER_SIZE];
     printf("Enter house number: ");
-    myGets(buffer, BUFFER_SIZE);
+    myGets(buffer);
     address->houseNumber = atoi(buffer);
 }
 
 void setAddressPostalCode(Address* address) {
     char buffer[BUFFER_SIZE];
     printf("Enter postal code (6 characters): ");
-    myGets(buffer, BUFFER_SIZE);
+    myGets(buffer);
     if (strlen(buffer) == 6) {
         strncpy(address->postalCode, buffer, 6);
         address->postalCode[6] = '\0';

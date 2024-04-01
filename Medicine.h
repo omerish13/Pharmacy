@@ -40,4 +40,5 @@ void setMedicinePrescriptionRequired(Medicine* medicine);
  */
 void printMedicineDetails(const Medicine* medicine);
 
+
 #endif // MEDICINE_H

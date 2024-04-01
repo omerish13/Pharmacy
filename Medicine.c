@@ -17,7 +17,7 @@ void initMedicine(Medicine* medicine, const char* medicineID) {
 void setMedicineExpireDate(Medicine* medicine) {
     char buffer[BUFFER_SIZE];
     printf("Enter expiration date (e.g., YYYY-MM-DD): ");
-    myGets(buffer, BUFFER_SIZE);
+    myGets(buffer);
     medicine->expireDate = (char*)malloc(strlen(buffer) + 1);
     CHECK_ALLOC(medicine->expireDate);
     strcpy(medicine->expireDate, buffer);
@@ -26,7 +26,7 @@ void setMedicineExpireDate(Medicine* medicine) {
 void setMedicinePrescriptionRequired(Medicine* medicine) {
     char buffer[BUFFER_SIZE];
     printf("Is a prescription required? (0 = No, 1 = Yes): ");
-    myGets(buffer, BUFFER_SIZE);
+    myGets(buffer);
     medicine->prescriptionRequired = atoi(buffer);
 }
 

@@ -12,7 +12,7 @@ void initPerson(Person* person) {
 void setPersonName(Person* person) {
     char buffer[BUFFER_SIZE];
     printf("Enter person name: ");
-    myGets(buffer, BUFFER_SIZE);
+    myGets(buffer);
     person->name = (char*)malloc(strlen(buffer) + 1);
     CHECK_ALLOC(person->name);
     strcpy(person->name, buffer);
@@ -21,7 +21,7 @@ void setPersonName(Person* person) {
 void setPersonGender(Person* person) {
     char buffer[BUFFER_SIZE];
     printf("Enter person gender (Male, Female, Other): ");
-    myGets(buffer, BUFFER_SIZE);
+    myGets(buffer);
     if (strcmp(buffer, "Male") == 0) {
         person->gender = MALE;
     } else if (strcmp(buffer, "Female") == 0) {
@@ -37,7 +37,7 @@ void setPersonPhoneNumber(Person* person) {
     
     while (!valid) {
         printf("Enter person phone number (format 000-0000000): ");
-        myGets(buffer, BUFFER_SIZE);
+        myGets(buffer);
 
         // Validation check
         valid = validatePhoneNumber(buffer);

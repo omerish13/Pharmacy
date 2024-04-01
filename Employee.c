@@ -12,7 +12,7 @@ void initEmployee(Employee* employee) {
 void setEmployeeName(Employee* employee) {
     char buffer[BUFFER_SIZE];
     printf("Enter employee name: ");
-    myGets(buffer, BUFFER_SIZE);
+    myGets(buffer);
     employee->name = (char*)malloc(strlen(buffer) + 1);
     CHECK_ALLOC(employee->name);
     strcpy(employee->name, buffer);
@@ -21,7 +21,7 @@ void setEmployeeName(Employee* employee) {
 void setEmployeePosition(Employee* employee) {
     char buffer[BUFFER_SIZE];
     printf("Enter employee position: ");
-    myGets(buffer, BUFFER_SIZE);
+    myGets(buffer);
     employee->position = (char*)malloc(strlen(buffer) + 1);
     CHECK_ALLOC(employee->position);
     strcpy(employee->position, buffer);
@@ -30,7 +30,7 @@ void setEmployeePosition(Employee* employee) {
 void setEmployeeSalary(Employee* employee) {
     char buffer[BUFFER_SIZE];
     printf("Enter employee salary: ");
-    myGets(buffer, BUFFER_SIZE);
+    myGets(buffer);
     employee->salary = atof(buffer);
 }
 
