@@ -119,8 +119,26 @@ int removeProductFromOrder(Order* order, int productCode) {
     return 0;  // Indicate failure
 }
 
-// New function to update product quantity in an order
-int updateProductQuantityInOrder(Order* order, int productCode, int newQuantity) {
+int updateProductQuantityInOrder(Stock* stock, Order* order, int productCode, int newQuantity) {
+    Product* productInStock = findProduct(stock, productCode);
+    Medicine* medicineInStock = NULL;
+    if (!productInStock) {
+        // If it's not found as a Product, try finding it as a Medicine
+        medicineInStock = findMedicineByID(stock, productCode);
+    }
+
+    int availableQuantity = productInStock ? productInStock->stockQuantity : (medicineInStock ? medicineInStock->product.stockQuantity : -1);
+    if (availableQuantity < 0) {
+        printf("Error: Product/Medicine with code %d not found in stock.\n", productCode);
+        return 0;  // Indicate failure
+    }
+
+    if (availableQuantity < newQuantity) {
+        printf("Error: Insufficient stock for product/medicine code %d. Available: %d, Requested: %d\n", productCode, availableQuantity, newQuantity);
+        return 0;  // Indicate failure due to insufficient stock
+    }
+
+    // Update product/medicine quantity in the order if stock is sufficient
     for (OrderProductNode* node = order->orderProducts; node != NULL; node = node->next) {
         if (node->product->code == productCode) {
             order->totalAmount += node->product->price * (newQuantity - node->quantity);
@@ -130,9 +148,10 @@ int updateProductQuantityInOrder(Order* order, int productCode, int newQuantity)
         }
     }
 
-    printf("Error: Product not found in the order.\n");
+    printf("Error: Product/Medicine not found in the order.\n");
     return 0;  // Indicate failure
 }
+
 
 void showOrder(const Order* order) {
     printf("Order Number: %d\n", order->orderNumber);
@@ -151,4 +170,18 @@ void updateLastModified(Order* order) {
     order->lastModified.year = tm.tm_year + 1900;
     order->lastModified.month = tm.tm_mon + 1;
     order->lastModified.day = tm.tm_mday;
+}
+
+void printOrderProducts(Order* order){
+    printList(&order->orderProducts, printProduct);
+}
+void removeProductFromOrderClient(Order* order) {
+    int productCode, quantity;
+    printOrderProducts(order);
+    printf("Enter Product Code to remove from order: ");
+    scanf("%d", &productCode);
+    printf("Enter quantity: ");
+    scanf("%d", &quantity);
+
+    removeProductFromOrder(order,productCode);
 }

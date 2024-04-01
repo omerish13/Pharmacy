@@ -60,6 +60,8 @@ void printStockDetails(const Stock* stock);
  */
 void updateStock(Stock* stock, int productCode, int quantity);
 
+Medicine* findMedicine(const Stock* stock, int code);
+
 Medicine* findMedicineByID(const Stock* stock, const char* medicineID);
 
 void addNewProductToStock(Stock* stock);

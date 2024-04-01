@@ -35,6 +35,6 @@ void printMedicineDetails(const Medicine* medicine) {
     printProductDetails(&medicine->product);
 
     // Print medicine-specific details
-    printf("Expiration Date: %s\n", medicine->expireDate);
-    printf("Prescription Required: %s\n", medicine->prescriptionRequired ? "Yes" : "No");
+    printf("\nExpiration Date: %s", medicine->expireDate);
+    printf("\nPrescription Required: %s\n", medicine->prescriptionRequired ? "Yes" : "No");
 }

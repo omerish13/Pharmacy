@@ -38,6 +38,18 @@ Product* findProduct(const Stock* stock, int code) {
     return NULL;  // Product not found
 }
 
+Medicine* findMedicine(const Stock* stock, int code) {
+    ListNode* node = stock->medicines.head->next;
+    Medicine* tmp;
+    for (int i = 0; i < stock->medicines.size; ++i) {
+        tmp = (Medicine*)(node->item);
+        if (code == tmp->product.code)
+            return tmp;
+        node = node->next;
+    }
+    return NULL;  // Product not found
+}
+
 Medicine* findMedicineByID(const Stock* stock, const char* medicineID)
 {
     Medicine* temp = (Medicine*)malloc(sizeof(Medicine));

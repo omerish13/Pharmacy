@@ -74,9 +74,9 @@ void printProduct(void* item) {
 }
 
 void printProductDetails(const Product* product) {
-    printf("Product Code: %d\n", product->code);
-    printf("Name: %s\n", product->name);
-    printf("Type: %s\n", ProductTypeNames[product->type]);
-    printf("Price: $%.2f\n", product->price);
-    printf("Stock Quantity: %d\n", product->stockQuantity);
+    printf("Product Code: %d", product->code);
+    printf("Name: %s", product->name);
+    printf("Type: %s", ProductTypeNames[product->type]);
+    printf("Price: $%.2f", product->price);
+    printf("Stock Quantity: %d", product->stockQuantity);
 }

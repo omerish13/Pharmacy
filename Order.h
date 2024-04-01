@@ -76,12 +76,13 @@ int addMedicineToOrder(Order* order, Prescription* prescriptions, int numOfPresc
 /**
  * Updates the quantity of a product already in the order.
  * 
+ * @param stock Pointer to the Stock for product availability verification.
  * @param order Pointer to the Order to update.
  * @param productCode The unique code of the product whose quantity needs updating.
  * @param newQuantity The new quantity for the product.
  * @return Integer indicating success (1) or failure (0) of the operation.
  */
-int updateProductQuantityInOrder(Order* order, int productCode, int newQuantity);
+int updateProductQuantityInOrder(Stock* stock, Order* order, int productCode, int newQuantity);
 
 /**
  * Removes a product from an order by product code.
@@ -106,5 +107,7 @@ void updateLastModified(Order* order);
  * @param newEmployeeID The new employee ID to be associated with the order.
  */
 void updateEmployeeInOrder(Order* order, int newEmployeeID);
+
+void removeProductFromOrderClient(Order* order);
 
 #endif // ORDER_H

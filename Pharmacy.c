@@ -174,3 +174,24 @@ void addNewPrescriptionToPharmacy(Pharmacy* pharmacy) {
     // Add the new prescription to the array and increment the count
     pharmacy->prescriptions[pharmacy->prescriptionCount++] = newPrescription;
 }
+
+void addProductOrMedicineToOrder(Pharmacy* pharmacy, Order* order) {
+    showAvailableProducts(&pharmacy->stock);  // Assuming this lists all available products and medicines
+    int productCode, quantity;
+    printf("Enter Product/Medicine Code to add to order: ");
+    scanf("%d", &productCode);
+    printf("Enter quantity: ");
+    scanf("%d", &quantity);
+
+    // Function to add product/medicine to order, based on productCode
+    Product* product = findProduct(&pharmacy->stock,productCode);
+    if (!product){
+        Medicine* medicine = findMedicine(&pharmacy->stock,productCode);
+        if (!medicine){
+            printf("Product wiht the ID %d does not exist",productCode);
+            return;
+        }
+        addMedicineToOrder(order,pharmacy->prescriptions,pharmacy->prescriptionCount,&pharmacy->stock,productCode,order->customerID);
+    }
+    addProductToOrder(order, &pharmacy->stock, productCode, quantity);
+}
