@@ -146,3 +146,8 @@ void updateMedicineStock(Stock* stock, char* medicineID, int quantity) {
         printf("Medicine with the ID %s not found in stock.\n", medicineID);
     }
 }
+
+void freeStock(Stock* stock) {
+    freeList(&stock->products, freeProduct);
+    freeList(&stock->medicines, freeMedicine);
+}

@@ -1,7 +1,8 @@
 #ifndef MEDICINE_H
 #define MEDICINE_H
 
-#include "Product.h"  // Assuming Product structure is defined
+#include "Product.h"  
+#include "Date.h"     
 #define ID_LENGTH 7
 
 /**
@@ -11,7 +12,7 @@
 typedef struct {
     Product product;            /**< Base Product structure */
     char medicineID[ID_LENGTH];         /**< Unique medicine ID, a 6-digit string */
-    char* expireDate;           /**< Dynamically allocated expiration date string */
+    Date expireDate;           /**< Dynamically allocated expiration date string */
     int prescriptionRequired;   /**< Flag indicating if a prescription is required (0 = No, 1 = Yes) */
 } Medicine;
 
@@ -39,6 +40,13 @@ void setMedicinePrescriptionRequired(Medicine* medicine);
  * @param medicine Pointer to the Medicine structure whose details are being printed.
  */
 void printMedicineDetails(const Medicine* medicine);
+
+/**
+ * Frees the dynamically allocated memory for the medicine's product details.
+ * @param medicine Pointer to the Medicine structure to free.
+ */
+void freeMedicine(Medicine* medicine);
+
 
 
 #endif // MEDICINE_H

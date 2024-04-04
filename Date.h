@@ -32,6 +32,6 @@ int checkDateValidity(Date* date);
  * Prints the date in a standardized format (DD/MM/YYYY).
  * @param date Pointer to the Date structure to print.
  */
-void printDateDetails(Date* date);
+void printDate(Date* date);
 
 #endif // DATE_H

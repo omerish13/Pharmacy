@@ -80,3 +80,8 @@ void printProductDetails(const Product* product) {
     printf("Price: $%.2f", product->price);
     printf("Stock Quantity: %d", product->stockQuantity);
 }
+
+void freeProduct(Product* product) {
+    free(product->name);
+    product->name = NULL;
+}

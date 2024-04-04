@@ -84,3 +84,10 @@ void printPersonDetails(const Person* person) {
     printf("Gender: %s\n", person->gender == MALE ? "Male" : person->gender == FEMALE ? "Female" : "Other");
     printf("Phone Number: %s\n", person->phoneNumber);
 }
+
+void freePerson(Person* person) {
+    free(person->name);
+    person->name = NULL;
+    free(person->phoneNumber);
+    person->phoneNumber = NULL;
+}

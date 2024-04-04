@@ -195,3 +195,32 @@ void addProductOrMedicineToOrder(Pharmacy* pharmacy, Order* order) {
     }
     addProductToOrder(order, &pharmacy->stock, productCode, quantity);
 }
+
+void updateProductQuantityOrder(Pharmacy* pharmacy,Order* order) {
+    printOrderProducts(order);
+    int productCode, newQuantity;
+    printf("Enter Product Code to update quantity: ");
+    scanf("%d", &productCode);
+    printf("Enter new quantity: ");
+    scanf("%d", &newQuantity);
+    
+    Product* product = findProduct(&pharmacy->stock,productCode);
+    if (!product){
+        Medicine* medicine = findMedicine(&pharmacy->stock,productCode);
+        if (!medicine){
+            printf("Product wiht the ID %d does not exist",productCode);
+            return;
+        }
+        updateProductQuantityInOrder(&pharmacy->stock,order,productCode,newQuantity);
+    }
+    updateProductQuantityInOrder(&pharmacy->stock, order, productCode, newQuantity);
+}
+
+void freePharmacy(Pharmacy* pharmacy) {
+    freeEmployees(pharmacy->employees, pharmacy->employeeCount);
+    freeCustomers(pharmacy->customers, pharmacy->customerCount);
+    freePrescriptions(pharmacy->prescriptions, pharmacy->prescriptionCount);
+    freeStock(&pharmacy->stock);
+    freeList(&pharmacy->openOrders, freeOrder);
+    freeList(&pharmacy->orderHistory, freeOrder);
+}

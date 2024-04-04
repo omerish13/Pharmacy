@@ -32,22 +32,6 @@ void* removeFromList(LinkedList* list, int (*compare)(void*, void*), void* item)
     return removedItem;
 }
 
-void clearList(LinkedList* list, void (*freeItem)(void*)) {
-    ListNode *current = list->head, *next;
-
-    while (current != NULL) {
-        next = current->next;
-        if (freeItem != NULL) {
-            freeItem(current->item);
-        }
-        free(current);
-        current = next;
-    }
-
-    list->head = NULL;
-    list->size = 0;
-}
-
 void traverseLinkedList(const LinkedList* list, void (*callback)(const void*)) {
     ListNode* node = list->head;
     while (node != NULL) {
@@ -78,5 +62,23 @@ void printList(const LinkedList* list, void (*printItem)(void*)) {
         printItem(node->item);
         node = node->next;
     }
+}
+
+void freeList(LinkedList* list, void (*freeItem)(void*)) {
+
+    ListNode* current = list->head;
+    ListNode* next;
+
+    while (current != NULL) {
+        next = current->next;
+        if (freeItem != NULL) {
+            freeItem(current->item);
+        }
+        free(current);
+        current = next;
+    }
+
+    list->head = NULL;
+    list->size = 0;
 }
 

@@ -2,11 +2,13 @@
 #define EMPLOYEE_H
 
 #include "general.h"  // Include for CHECK_ALLOC and myGets
+#include "Person.h"   // Include the Person struct definition
 
 /**
  * Structure representing an employee's basic information.
  */
 typedef struct {
+    Person person;    /**< Base Person structure */
     int id;           /**< Unique employee ID, automatically incremented */
     char* name;       /**< Dynamically allocated employee name */
     char* position;   /**< Dynamically allocated employee position */
@@ -42,5 +44,18 @@ void setEmployeeSalary(Employee* employee);
  * @param employee Pointer to the Employee structure whose details are being printed.
  */
 void printEmployeeDetails(const Employee* employee);
+
+/**
+ * Frees the dynamically allocated memory for the employee's name and position.
+ * @param employee Pointer to the Employee structure to free.
+ */
+void freeEmployee(Employee* employee);
+
+/**
+ * Frees the dynamically allocated memory for an array of employees.
+ * @param employees Array of Employee structures to free.
+ * @param numEmployees Number of employees in the array.
+ */
+void freeEmployees(Employee* employees, int numEmployees);
 
 #endif // EMPLOYEE_H

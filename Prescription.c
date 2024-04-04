@@ -49,3 +49,22 @@ void printPrescription(const Prescription* prescription, const Customer* custome
     }
 }
 
+void freePrescription(Prescription* prescription) {
+    prescription->id = 0;
+    prescription->customerID = 0;
+    prescription->medicineID[0] = '\0';
+    prescription->expirationDate.day = 0;
+    prescription->expirationDate.month = 0;
+    prescription->expirationDate.year = 0;
+    prescription->quantity = 0;
+    prescription->used = 0;
+}
+
+void freePrescriptions(Prescription* prescriptions, int numPrescriptions) {
+    for (int i = 0; i < numPrescriptions; i++) {
+        freePrescription(&prescriptions[i]);
+    }
+    free(prescriptions);
+    prescriptions = NULL;
+}
+

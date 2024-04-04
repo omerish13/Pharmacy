@@ -64,9 +64,20 @@ int customerHasValidPrescription(const Prescription* prescriptions, int numPresc
 
 void printPrescription(const Prescription* prescription, const Customer* customers, int numCustomers, const Stock* stock);
 
-/** TODO:
- * 1. print prescription
- * 2. find customer by id
- * 3. find medicine by id
+
+/**
+ * Frees the memory allocated for a Prescription object.
+ *
+ * @param prescription The Prescription object to free.
  */
+void freePrescription(Prescription* prescription);
+
+/**
+ * Frees the memory allocated for an array of Prescription objects.
+ *
+ * @param prescriptions Array of Prescription objects to free.
+ * @param numPrescriptions Number of Prescription objects in the array.
+ */
+void freePrescriptions(Prescription* prescriptions, int numPrescriptions);
+
 #endif // PRESCRIPTION_H

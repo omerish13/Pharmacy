@@ -108,6 +108,28 @@ void updateLastModified(Order* order);
  */
 void updateEmployeeInOrder(Order* order, int newEmployeeID);
 
+/**
+ * Prints the products in an order.
+ * 
+ * @param order Pointer to the Order to print products from.
+ */
+void printOrderProducts(Order* order);
+
+/**
+* Removes all products from an order.
+* 
+* @param order Pointer to the Order to clear.
+*/
 void removeProductFromOrderClient(Order* order);
+
+
+/**
+ * Frees the memory allocated for an order.
+ * 
+ * @param order Pointer to the Order to free.
+ */
+void freeOrder(Order* order);
+
+
 
 #endif // ORDER_H

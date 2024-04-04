@@ -60,15 +60,61 @@ void printStockDetails(const Stock* stock);
  */
 void updateStock(Stock* stock, int productCode, int quantity);
 
+
+/**
+ * Finds a medicine in the stock based on its code.
+ *
+ * @param stock The stock to search in.
+ * @param code The code of the medicine to find.
+ * @return A pointer to the found Medicine object, or NULL if not found.
+ */
 Medicine* findMedicine(const Stock* stock, int code);
 
+
+/**
+ * Finds a medicine in the stock by its ID.
+ *
+ * @param stock The stock to search in.
+ * @param medicineID The ID of the medicine to find.
+ * @return A pointer to the Medicine struct if found, NULL otherwise.
+ */
 Medicine* findMedicineByID(const Stock* stock, const char* medicineID);
 
+/**
+ * Adds a new product to the stock.
+ *
+ * @param stock The stock to add the product to.
+ */
 void addNewProductToStock(Stock* stock);
 
+/**
+ * Adds a new medicine to the stock.
+ *
+ * @param stock A pointer to the Stock structure.
+ */
 void addNewMedicineToStock(Stock* stock);
 
+/**
+ * Compares two medicines by their ID.
+ *
+ * This function is used to compare two medicines based on their ID values.
+ * It is typically used as a comparison function for sorting or searching algorithms.
+ *
+ * @param a Pointer to the first medicine.
+ * @param b Pointer to the second medicine.
+ * @return An integer value indicating the comparison result:
+ *         - Negative value if the ID of `a` is less than the ID of `b`.
+ *         - Zero if the ID of `a` is equal to the ID of `b`.
+ *         - Positive value if the ID of `a` is greater than the ID of `b`.
+ */
 int compareMedicineByID(const void* a, const void* b);
+
+/**
+ * Frees the memory allocated for the Stock structure.
+ *
+ * @param stock The Stock structure to free.
+ */
+void freeStock(Stock* stock);
 
 
 #endif // STOCK_H

@@ -51,4 +51,16 @@ void setAddressPostalCode(Address* address);
  */
 void printAddressDetails(const Address* address);
 
+/**
+ * Initializes an address by setting its country, city, street, house number, and postal code.
+ * @param address Pointer to the Address structure to be initialized.
+ */
+void initAddress(Address* address);
+
+/**
+ * Frees the dynamically allocated memory for the strings in an Address structure.
+ * @param address Pointer to the Address structure to be freed.
+ */
+void freeAddress(Address* address);
+
 #endif // ADDRESS_H

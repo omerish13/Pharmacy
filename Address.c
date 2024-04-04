@@ -57,3 +57,9 @@ void setAddressPostalCode(Address* address) {
 void printAddressDetails(const Address* address) {
     printf("Address: %s, %s, %s, %d, %s\n", address->country, address->city, address->street, address->houseNumber, address->postalCode);
 }
+
+void freeAddress(Address* address) {
+    free(address->country);
+    free(address->city);
+    free(address->street);
+}

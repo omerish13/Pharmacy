@@ -186,4 +186,10 @@ void removeProductFromOrderClient(Order* order) {
     removeProductFromOrder(order,productCode);
 }
 
-//update order product
+void freeOrderProductNode(void* data) {
+    free(data);
+}
+
+void freeOrder(Order* order) {
+    freeList(&order->orderProducts, freeOrderProductNode);
+}

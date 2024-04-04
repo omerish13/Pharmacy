@@ -84,6 +84,28 @@ void cancelOrder(Pharmacy* pharmacy, int orderNumber);
  */
 void purchaseOrder(Pharmacy* pharmacy, int orderNumber);
 
+/**
+ * Adds a new prescription to the pharmacy's list of prescriptions.
+ * 
+ * @param pharmacy Pointer to the Pharmacy structure.
+ * @param prescription Pointer to the Prescription structure to be added.
+ */
 void addNewPrescriptionToPharmacy(Pharmacy* pharmacy);
+
+
+/**
+ * Updates the stock of the pharmacy based on the products in the order.
+ * 
+ * @param pharmacy Pointer to the Pharmacy structure.
+ * @param order Pointer to the Order structure.
+ */
+void updateProductQuantityOrder(Pharmacy* pharmacy, Order* order);
+
+/**
+ * Frees the memory allocated for a Pharmacy structure.
+ * 
+ * @param pharmacy Pointer to the Pharmacy structure to free.
+ */
+void freePharmacy(Pharmacy* pharmacy);
 
 #endif // PHARMACY_H

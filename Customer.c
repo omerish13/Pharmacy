@@ -3,6 +3,7 @@
 static int lastCustomerID = 0;  // Static variable to keep track of the last used customer ID
 
 void initCustomer(Customer* customer) {
+    initPerson(&customer->person);
     customer->id = ++lastCustomerID;  // Auto-increment the customer ID for each new customer
     setCustomerName(customer);
 }
@@ -29,4 +30,19 @@ Customer* findCustomerByID(const Customer* customers, int numCustomers, int cust
 void printCustomerDetails(const Customer* customer) {
     printf("Customer ID: %d\n", customer->id);
     printf("Name: %s\n", customer->name);
+}
+
+void freeCustomer(Customer* customer) {
+    freePerson(&customer->person);
+    free(customer->name);
+    customer->name = NULL;
+}
+
+void freeCustomers(Customer* customers, int numCustomers) {
+    for (int i = 0; i < numCustomers; i++) {
+        free(customers[i].name);
+        customers[i].name = NULL;
+    }
+    free(customers);
+    customers = NULL;
 }

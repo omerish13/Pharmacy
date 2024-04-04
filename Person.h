@@ -58,4 +58,11 @@ int validatePhoneNumber(const char* phoneNumber);
  */
 void printPersonDetails(const Person* person);
 
+/**
+ * Frees the dynamically allocated memory for the person's name and phone number.
+ * @param person Pointer to the Person structure to free.
+ */
+void freePerson(Person* person);
+
+
 #endif // PERSON_H

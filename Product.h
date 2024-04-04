@@ -64,7 +64,28 @@ void setProductStockQuantity(Product* product);
  */
 void printProductDetails(const Product* product);
 
+/**
+ * Prints the product's name and code in a formatted manner.
+ * @param item Pointer to the Product structure to print.
+ */
 void printProduct(void* item);
+
+/**
+ * Compares two Product structures based on their code.
+ * @param a Pointer to the first Product structure.
+ * @param b Pointer to the second Product structure.
+ * @return Integer value representing the comparison result.
+ */
 int compareProducts(void* a, void* b);
+
+/**
+ * Frees the dynamically allocated memory for the product's name.
+ * @param product Pointer to the Product structure to free.
+ */
+void freeProduct(Product* product);
+
+
+
+
 
 #endif // PRODUCT_H

@@ -44,6 +44,6 @@ int checkDateValidity(Date* date) {
  * 
  * @param date A pointer to a Date structure whose details are to be printed.
  */
-void printDateDetails(Date* date) {
+void printDate(Date* date) {
     printf("%02d/%02d/%04d\n", date->day, date->month, date->year);
 }

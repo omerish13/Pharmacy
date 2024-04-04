@@ -3,6 +3,7 @@
 static int lastEmployeeID = 0;  // Static variable to keep track of the last used employee ID
 
 void initEmployee(Employee* employee) {
+    initPerson(&employee->person);
     employee->id = ++lastEmployeeID;  // Auto-increment the employee ID for each new employee
     setEmployeeName(employee);
     setEmployeePosition(employee);
@@ -39,4 +40,20 @@ void printEmployeeDetails(const Employee* employee) {
     printf("Name: %s\n", employee->name);
     printf("Position: %s\n", employee->position);
     printf("Salary: $%.2f\n", employee->salary);
+}
+
+void freeEmployee(Employee* employee) {
+    freePerson(&employee->person);
+    free(employee->name);
+    employee->name = NULL;
+    free(employee->position);
+    employee->position = NULL;
+}
+
+void freeEmployees(Employee* employees, int numEmployees) {
+    for (int i = 0; i < numEmployees; i++) {
+        freeEmployee(&employees[i]);
+    }
+    free(employees);
+    employees = NULL;
 }

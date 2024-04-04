@@ -45,14 +45,6 @@ void addToList(LinkedList* list, void* item);
 void* removeFromList(LinkedList* list, int (*compare)(void*, void*), void* item);
 
 /**
- * Clears all items from the list, optionally freeing allocated memory for each item.
- * 
- * @param list Pointer to the LinkedList structure.
- * @param freeItem Function used to free the memory allocated for an item, if necessary. Can be NULL.
- */
-void clearList(LinkedList* list, void (*freeItem)(void*));
-
-/**
  * Iterates over each item in the list and applies a given function, such as printing or modifying items.
  * 
  * @param list Pointer to the LinkedList structure.
@@ -87,5 +79,13 @@ void* traverseAndFind(const LinkedList* list, const void* target, int (*compFunc
  * @return Always returns NULL, as binary search is not suitable for linked lists.
  */
 void* binarySearchLinkedList(const LinkedList* list, const void* target, int (*compFunc)(const void*, const void*));
+
+/**
+ * Frees the memory allocated for a linked list and its items.
+ * 
+ * @param node Pointer to the first node in the list.
+ * @param freeItem Function used to free the memory allocated for an item, if necessary. Can be NULL.
+ */
+void freeList(LinkedList* list, void (*freeItem)(void*));
 
 #endif // LINKEDLIST_H
