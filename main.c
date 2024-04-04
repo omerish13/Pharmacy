@@ -23,8 +23,9 @@ void printOrderManagementMenu() {
     printf("1. Add Product/Medicine to Order\n");
     printf("2. Remove Product from Order\n");
     printf("3. Update Quantity of Product in Order\n");
-    printf("4. Purchase Order\n");
-    printf("5. Cancel Order\n");
+    printf("4. Replace Employee\n");
+    printf("5. Purchase Order\n");
+    printf("6. Cancel Order\n");
     printf("Enter your choice: ");
 }
 
@@ -45,9 +46,12 @@ void manageOrder(Pharmacy* pharmacy, Order* order) {
                 updateProductOrMedicineQuantityInOrder(order);  // Function to update quantities
                 break;
             case 4:
+                replaceEmployeeInOrder(pharmacy, order);  // Function to replace employee
+                break;
+            case 5:
                 purchaseOrder(pharmacy, order->orderNumber);
                 return;  // Exit the mini menu after purchasing
-            case 5:
+            case 6:
                 cancelOrder(pharmacy, order->orderNumber);
                 return;  // Exit the mini menu after canceling
             default:
@@ -72,8 +76,11 @@ void showAndUpdateStock(Pharmacy* pharmacy) {
 
 int main() {
     Pharmacy pharmacy;
-    initPharmacy(&pharmacy);
-
+    if (!loadDataFromFile("pharmacy.txt", &pharmacy)) {
+        printf("Error loading data from file. Exiting program.\n");
+        initPharmacy(&pharmacy);
+    }
+    
     int choice;
     do {
         printMainMenu();
@@ -114,6 +121,7 @@ int main() {
         }
     } while (choice != 9);
 
+    saveDataToFile("pharmacy.txt",&pharmacy);  // Save all data to file before exiting
     freePharmacy(&pharmacy);  // Clean up resources
     return 0;
 }

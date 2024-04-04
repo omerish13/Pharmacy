@@ -59,6 +59,18 @@ int validatePhoneNumber(const char* phoneNumber);
 void printPersonDetails(const Person* person);
 
 /**
+ * Save person details from the user, including name and phone number.
+ * @param person Pointer to the Person structure to store the details.
+ */
+void savePerson(FILE* file, const Person* person);
+
+/**
+ * Reads person details from a file, including name and phone number.
+ * @param person Pointer to the Person structure to store the details.
+ */
+void loadPerson(Person* person, FILE* file);
+
+/**
  * Frees the dynamically allocated memory for the person's name and phone number.
  * @param person Pointer to the Person structure to free.
  */

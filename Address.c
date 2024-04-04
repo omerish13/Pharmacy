@@ -58,6 +58,14 @@ void printAddressDetails(const Address* address) {
     printf("Address: %s, %s, %s, %d, %s\n", address->country, address->city, address->street, address->houseNumber, address->postalCode);
 }
 
+void saveAddress(FILE* file, const Address* address) {
+    fprintf(file, "%s\n%s\n%s\n%d\n%s\n", address->country, address->city, address->street, address->houseNumber, address->postalCode);
+}
+
+void loadAddress(FILE* file, Address* address){
+    fscanf(file, "%s\n%s\n%s\n%d\n%s\n", address->country, address->city, address->street, &address->houseNumber, address->postalCode);
+}
+
 void freeAddress(Address* address) {
     free(address->country);
     free(address->city);

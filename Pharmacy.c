@@ -138,7 +138,7 @@ void purchaseOrder(Pharmacy* pharmacy, int orderNumber) {
 void printAllCustomers(const Pharmacy* pharmacy) {
     printf("List of Customers:\n");
     for (int i = 0; i < pharmacy->customerCount; ++i) {
-        printf("%d: %s\n", pharmacy->customers[i].id, pharmacy->customers[i].name);
+        printf("%d: %s\n", pharmacy->customers[i].id, pharmacy->customers[i].person.name);
     }
 }
 
@@ -146,7 +146,7 @@ void printAllCustomers(const Pharmacy* pharmacy) {
 void printAllEmployees(const Pharmacy* pharmacy) {
     printf("List of Employees:\n");
     for (int i = 0; i < pharmacy->employeeCount; ++i) {
-        printf("%d: %s\n", pharmacy->employees[i]->id, pharmacy->employees[i]->name);
+        printf("%d: %s\n", pharmacy->employees[i]->id, pharmacy->employees[i]->person.name);
     }
 }
 
@@ -189,7 +189,7 @@ void addNewPrescriptionToPharmacy(Pharmacy* pharmacy) {
         pharmacy->prescriptionCapacity = newCapacity;
     }
 
-    initPrescription(&newPrescription,customerID,medicineID,d,quantity);
+    initPrescription(&newPrescription,pharmacy->customers,pharmacy->customerCount,customerID,medicineID,&pharmacy->stock,d,quantity);
     // Add the new prescription to the array and increment the count
     pharmacy->prescriptions[pharmacy->prescriptionCount++] = newPrescription;
 }
@@ -253,6 +253,146 @@ void raiseSalaryClient(Pharmacy* pharmacy) {
     } else {
         printf("Employee with ID %d not found.\n", employeeID);
     }
+}
+
+void replaceEmployeeInOrder(Pharmacy* pharmacy, Order* order) {
+    printAllEmployees(pharmacy);
+    int employeeID;
+    printf("Enter the ID of the employee to replace: ");
+    scanf("%d", &employeeID);
+
+    Employee* newEmployee = findEmployee(pharmacy->employees, pharmacy->employeeCount, employeeID);
+
+    if (newEmployee != NULL) {
+        // Function to replace employee in order
+        updateEmployeeInOrder(order,newEmployee);
+    } else {
+        printf("Employee with ID %d not found.\n", employeeID);
+    }
+}
+
+void printPharmacyDetails(const Pharmacy* pharmacy) {
+    printf("Pharmacy Name: %s\n", pharmacy->name);
+    printAddress(&pharmacy->address);
+    printf("Number of Employees: %d\n", pharmacy->employeeCount);
+    printf("Number of Customers: %d\n", pharmacy->customerCount);
+    printf("Number of Prescriptions: %d\n", pharmacy->prescriptionCount);
+    printf("Number of Orders: %d\n", getListSize(&pharmacy->openOrders) + getListSize(&pharmacy->orderHistory));
+    printStockDetails(&pharmacy->stock);
+}
+
+void savePharmacyToFile(FILE* file, const Pharmacy* pharmacy) {
+    fprintf(file, "%s\n", pharmacy->name);
+    saveAddress(file, &pharmacy->address);
+    saveStock(file, &pharmacy->stock);
+    fprintf(file, "%d\n", pharmacy->employeeCount);
+    for (int i = 0; i < pharmacy->employeeCount; i++) {
+        saveEmployee(file, pharmacy->employees[i]);
+    }
+    fprintf(file, "%d\n", pharmacy->customerCount);
+    for (int i = 0; i < pharmacy->customerCount; i++) {
+        saveCustomer(file, &pharmacy->customers[i]);
+    }
+    fprintf(file, "%d\n", pharmacy->prescriptionCount);
+    for (int i = 0; i < pharmacy->prescriptionCount; i++) {
+        savePrescription(file, &pharmacy->prescriptions[i]);
+    }
+    saveList(file, &pharmacy->openOrders, saveOrder);
+    saveList(file, &pharmacy->orderHistory, saveOrder);
+}
+
+Employee** loadEmployees(FILE* file, int numEmployees) {
+    Employee** employees = (Employee**)malloc(numEmployees * sizeof(Employee*));
+    CHECK_ALLOC(employees);
+
+    for (int i = 0; i < numEmployees; i++) {
+        employees[i] = loadEmployee(file);
+    }
+
+    return employees;
+}
+
+Customer* loadCustomers(FILE* file, int numCustomers) {
+    Customer* customers = (Customer*)malloc(numCustomers * sizeof(Customer));
+    CHECK_ALLOC(customers);
+
+    for (int i = 0; i < numCustomers; i++) {
+        customers[i] = *loadCustomer(file);
+    }
+
+    return customers;
+}
+
+Prescription* loadPrescriptions(FILE* file, int numPrescriptions, const Customer* customers, int numCustomers, const Stock* stock) {
+    Prescription* prescriptions = (Prescription*)malloc(numPrescriptions * sizeof(Prescription));
+    CHECK_ALLOC(prescriptions);
+
+    for (int i = 0; i < numPrescriptions; i++) {
+        prescriptions[i] = *loadPrescription(file, customers, numCustomers, stock);
+    }
+
+    return prescriptions;
+}
+
+LinkedList* loadOrders(FILE* file, const Employee** employees, int numEmployees) {
+    LinkedList* orders = (LinkedList*)malloc(sizeof(LinkedList));
+    initList(orders);
+
+    int numOrders;
+    fscanf(file, "%d\n", &numOrders);
+    for (int i = 0; i < numOrders; i++) {
+        Order* order = loadOrder(file, employees, numEmployees);
+        addToList(orders, order);
+    }
+
+    return orders;
+}
+
+void loadPharmacyFromFile(FILE* file, Pharmacy* pharmacy) {
+    initPharmacy(pharmacy);
+    char buffer[BUFFER_SIZE];
+    myGets(buffer);
+    pharmacy->name = (char*)malloc(strlen(buffer) + 1);
+    CHECK_ALLOC(pharmacy->name);
+    strcpy(pharmacy->name, buffer);
+
+    loadAddress(file, &pharmacy->address);
+    loadStock(file, &pharmacy->stock);
+
+    fscanf(file, "%d\n", &pharmacy->employeeCount);
+    pharmacy->employees = loadEmployees(file, pharmacy->employeeCount);
+
+    fscanf(file, "%d\n", &pharmacy->customerCount);
+    pharmacy->customers = loadCustomers(file, pharmacy->customerCount);
+
+    fscanf(file, "%d\n", &pharmacy->prescriptionCount);
+    pharmacy->prescriptions = loadPrescriptions(file, pharmacy->prescriptionCount, pharmacy->customers, pharmacy->customerCount, &pharmacy->stock);
+
+    pharmacy->openOrders = *loadOrders(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount);
+    pharmacy->orderHistory = *loadOrders(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount);
+}
+
+
+
+void saveDataToFile(char* filename, Pharmacy* pharmacy) {
+    FILE* file = fopen(filename, "w");
+    if (file == NULL) {
+        printf("Failed to open file for writing.\n");
+        return;
+    }
+    savePharmacyToFile(file, pharmacy);
+    fclose(file);
+}
+
+int loadDataFromFile(char* filename, Pharmacy* pharmacy) {
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Failed to open file for reading.\n");
+        return 0;
+    }
+    loadPharmacyFromFile(file, pharmacy);
+    fclose(file);
+    return 1;
 }
 
 void freePharmacy(Pharmacy* pharmacy) {

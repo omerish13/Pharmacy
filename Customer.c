@@ -5,16 +5,6 @@ static int lastCustomerID = 0;  // Static variable to keep track of the last use
 void initCustomer(Customer* customer) {
     initPerson(&customer->person);
     customer->id = ++lastCustomerID;  // Auto-increment the customer ID for each new customer
-    setCustomerName(customer);
-}
-
-void setCustomerName(Customer* customer) {
-    char buffer[BUFFER_SIZE];
-    printf("Enter customer name: ");
-    myGets(buffer);
-    customer->name = (char*)malloc(strlen(buffer) + 1);
-    CHECK_ALLOC(customer->name);
-    strcpy(customer->name, buffer);
 }
 
 Customer* findCustomerByID(const Customer* customers, int numCustomers, int customerID) {
@@ -28,20 +18,31 @@ Customer* findCustomerByID(const Customer* customers, int numCustomers, int cust
 
 
 void printCustomerDetails(const Customer* customer) {
+    printPersonDetails(&customer->person);
     printf("Customer ID: %d\n", customer->id);
-    printf("Name: %s\n", customer->name);
+}
+
+void saveCustomer(FILE* file, const Customer* customer) {
+    savePerson(&customer->person, file);
+    fprintf(file, "%d\n", customer->id);
+}
+
+Customer* loadCustomer(FILE* file) {
+    Customer* customer = (Customer*)malloc(sizeof(Customer));
+    CHECK_ALLOC(customer);
+
+    loadPerson(&customer->person, file);
+    fscanf(file, "%d\n", &customer->id);
+    return customer;
 }
 
 void freeCustomer(Customer* customer) {
     freePerson(&customer->person);
-    free(customer->name);
-    customer->name = NULL;
 }
 
 void freeCustomers(Customer* customers, int numCustomers) {
     for (int i = 0; i < numCustomers; i++) {
-        free(customers[i].name);
-        customers[i].name = NULL;
+        freeCustomer(&customers[i]);
     }
     free(customers);
     customers = NULL;

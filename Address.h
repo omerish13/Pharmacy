@@ -58,6 +58,12 @@ void printAddressDetails(const Address* address);
 void initAddress(Address* address);
 
 /**
+ * Loads address details from a file, assuming the file is formatted correctly.
+ * @param address Pointer to the Address structure to load the details into.
+ * @param file Pointer to the file to read the address details from.
+ */
+void loadAddress(Address* address, FILE* file);
+/**
  * Frees the dynamically allocated memory for the strings in an Address structure.
  * @param address Pointer to the Address structure to be freed.
  */

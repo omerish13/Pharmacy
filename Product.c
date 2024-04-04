@@ -78,7 +78,30 @@ void printProductDetails(const Product* product) {
     printf("Name: %s", product->name);
     printf("Type: %s", ProductTypeNames[product->type]);
     printf("Price: $%.2f", product->price);
-    printf("Stock Quantity: %d", product->stockQuantity);
+    printf("Stock Quantity: %d\n", product->stockQuantity);
+}
+
+void saveProduct(FILE* file, const Product* product) {
+    fprintf(file, "%d\n", product->code);
+    fprintf(file, "%s\n", product->name);
+    fprintf(file, "%d\n", product->type);
+    fprintf(file, "%.2f\n", product->price);
+    fprintf(file, "%d\n", product->stockQuantity);
+}
+
+Product* loadProduct(FILE* file) {
+    Product* product = (Product*)malloc(sizeof(Product));
+    fscanf(file, "%d\n", &product->code);
+    char buffer[BUFFER_SIZE];
+    fscanf(file, "%s\n", buffer);
+    product->name = (char*)malloc(strlen(buffer) + 1);
+    CHECK_ALLOC(product->name);
+    strcpy(product->name, buffer);
+    fscanf(file, "%d\n", (int*)&product->type);
+    fscanf(file, "%lf\n", &product->price);
+    fscanf(file, "%d\n", &product->stockQuantity);
+
+    return product;
 }
 
 void freeProduct(Product* product) {

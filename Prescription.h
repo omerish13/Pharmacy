@@ -20,8 +20,8 @@
  */
 typedef struct {
     int id;                            /**< Unique prescription ID, automatically incremented. */
-    int customerID;                    /**< ID of the customer to whom the prescription is assigned. */
-    char medicineID[ID_LENGTH];        /**< Unique ID for the medicine, expected to be a 6-digit string. */
+    Customer* customer;                    /**< ID of the customer to whom the prescription is assigned. */
+    Medicine* medicine;        /**< Unique ID for the medicine, expected to be a 6-digit string. */
     Date expirationDate;               /**< Expiration date of the prescription. */
     int quantity;                      /**< Quantity of medication allowed for purchase with this prescription. */
     int used;                          /**< Flag indicating whether the prescription has been used (0 = No, 1 = Yes). */
@@ -39,7 +39,7 @@ typedef struct {
  * @param expirationDate The expiration date of the prescription.
  * @param quantity The quantity of medication the customer is allowed to purchase with this prescription.
  */
-void initPrescription(Prescription* prescription, int customerID, const char* medicineID, Date expirationDate, int quantity);
+void initPrescription(Prescription* prescription, Customer* customers,int numCustomers, int customerID, const char* medicineID,Stock* stock, Date expirationDate, int quantity);
 
 /**
  * Determines if a given customer has a valid (unused and unexpired) prescription
@@ -64,6 +64,24 @@ int customerHasValidPrescription(const Prescription* prescriptions, int numPresc
 
 void printPrescription(const Prescription* prescription, const Customer* customers, int numCustomers, const Stock* stock);
 
+/**
+ * Saves the details of a prescription to a file, including the customer ID, medicine ID, expiration date, quantity, and usage status.
+ *
+ * @param prescription Pointer to the Prescription structure to save.
+ * @param file Pointer to the file where the prescription details are to be saved.
+ */
+void savePrescription(const Prescription* prescription, FILE* file);
+
+/**
+ * Loads the details of a prescription from a file, including the customer ID, medicine ID, expiration date, quantity, and usage status.
+ *
+ * @param file Pointer to the file from which the prescription details are to be loaded.
+ * @param customers Array of Customer structures.
+ * @param numCustomers Total number of customers in the array.
+ * @param stock Pointer to the Stock structure containing an array of products.
+ * @return Pointer to the loaded Prescription structure.
+ */
+Prescription* loadPrescription(FILE* file, const Customer* customers, int numCustomers, const Stock* stock);
 
 /**
  * Frees the memory allocated for a Prescription object.

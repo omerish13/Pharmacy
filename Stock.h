@@ -110,6 +110,23 @@ void addNewMedicineToStock(Stock* stock);
 int compareMedicineByID(const void* a, const void* b);
 
 /**
+ * Saves the stock details to a file, including the products and medicines.
+ *
+ * @param stock Pointer to the Stock structure to save.
+ * @param file Pointer to the file where the stock details are to be saved.
+ */
+void saveStock(const Stock* stock, FILE* file);
+
+/**
+ * Loads the stock details from a file, including the products and medicines.
+ *
+ * @param file Pointer to the file from which the stock details are to be loaded.
+ * @param stock Pointer to the Stock structure to load the details into.
+ * @return Pointer to the loaded Stock structure.
+ */
+void loadStock(FILE* file, Stock* stock);
+
+/**
  * Frees the memory allocated for the Stock structure.
  *
  * @param stock The Stock structure to free.

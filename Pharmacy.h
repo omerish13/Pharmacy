@@ -117,6 +117,39 @@ void updateProductQuantityOrder(Pharmacy* pharmacy, Order* order);
 void raiseSalaryClient(Pharmacy* pharmacy);
 
 /**
+ * Replaces the employee in the given order with a new employee in the pharmacy.
+ *
+ * @param pharmacy A pointer to the Pharmacy struct.
+ * @param order A pointer to the Order struct.
+ */
+void replaceEmployeeInOrder(Pharmacy* pharmacy, Order* order);
+
+/**
+ * Prints the details of a pharmacy, including its name, address, and employee information.
+ * 
+ * @param pharmacy Pointer to the Pharmacy structure to be printed.
+ */
+void printPharmacyDetails(const Pharmacy* pharmacy);
+
+/**
+ * Saves the data of a Pharmacy object to a file.
+ *
+ * @param filename The name of the file to save the data to.
+ * @param pharmacy A pointer to the Pharmacy object containing the data to be saved.
+ */
+void saveDataToFile(char* filename, Pharmacy* pharmacy);
+
+/**
+ * Loads data from a file into a Pharmacy object.
+ *
+ * This function reads data from the specified file and populates the given Pharmacy object with the data.
+ *
+ * @param filename The name of the file to load data from.
+ * @param pharmacy A pointer to the Pharmacy object to populate with the data.
+ */
+int loadDataFromFile(char* filename, Pharmacy* pharmacy);
+
+/**
  * Frees the memory allocated for a Pharmacy structure.
  * 
  * @param pharmacy Pointer to the Pharmacy structure to free.

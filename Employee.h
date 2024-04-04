@@ -10,7 +10,6 @@
 typedef struct {
     Person person;    /**< Base Person structure */
     int id;           /**< Unique employee ID, automatically incremented */
-    char* name;       /**< Dynamically allocated employee name */
     char* position;   /**< Dynamically allocated employee position */
     double salary;    /**< Employee salary */
 } Employee;
@@ -20,12 +19,6 @@ typedef struct {
  * @param employee Pointer to the Employee structure to initialize.
  */
 void initEmployee(Employee* employee);
-
-/**
- * Sets the name of an employee after dynamically allocating memory for it.
- * @param employee Pointer to the Employee structure whose name is being set.
- */
-void setEmployeeName(Employee* employee);
 
 /**
  * Sets the position of an employee after dynamically allocating memory for it.
@@ -60,6 +53,19 @@ Employee* findEmployee(Employee** employees, int numEmployees, int id);
  * @param employee Pointer to the Employee structure whose details are being printed.
  */
 void printEmployeeDetails(const Employee* employee);
+
+/**
+ * Save employee details from the user, including name
+ * and age.
+ * @param employee Pointer to the Employee structure to store the details.
+ */
+void saveEmployee(FILE* file, const Employee* employee);
+
+/**
+ * Reads employee details from a file, including name and age.
+ * @param file Pointer to the text file.
+ */
+Employee* loadEmployee(FILE* file);
 
 /**
  * Frees the dynamically allocated memory for the employee's name and position.

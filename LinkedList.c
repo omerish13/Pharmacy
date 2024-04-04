@@ -1,4 +1,7 @@
 #include "LinkedList.h"
+#include <stdio.h>
+#include "general.h"
+
 
 void initList(LinkedList* list) {
     list->head = NULL;
@@ -62,6 +65,32 @@ void printList(const LinkedList* list, void (*printItem)(void*)) {
         printItem(node->item);
         node = node->next;
     }
+}
+
+void saveList(FILE* file, const LinkedList* list, void (*saveItem)(FILE*, const void*)) {
+    ListNode* node = list->head;
+
+    while (node != NULL) {
+        saveItem(file, node->item);
+        node = node->next;
+    }
+}
+
+LinkedList* loadList(FILE* file, void* (*loadItem)(FILE*)) {
+    LinkedList* list = (LinkedList*)malloc(sizeof(LinkedList));
+    CHECK_ALLOC(list);
+
+    initList(list);
+
+    int size;
+    fscanf(file, "%d", &size);
+
+    for (int i = 0; i < size; ++i) {
+        void* item = loadItem(file);
+        addToList(list, item);
+    }
+
+    return list;
 }
 
 void freeList(LinkedList* list, void (*freeItem)(void*)) {

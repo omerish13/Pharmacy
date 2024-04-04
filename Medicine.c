@@ -35,6 +35,31 @@ void printMedicineDetails(const Medicine* medicine) {
     printf("\nPrescription Required: %s\n", medicine->prescriptionRequired ? "Yes" : "No");
 }
 
+void saveMedicine(FILE* file, const Medicine* medicine) {
+    // Save the base product details
+    saveProduct(file, &medicine->product);
+
+    // Save medicine-specific details
+    fprintf(file, "%s\n", medicine->medicineID);
+    saveDate(file, &medicine->expireDate);
+    fprintf(file, "%d\n", medicine->prescriptionRequired);
+}
+
+Medicine* loadMedicine(FILE* file) {
+    Medicine* medicine = (Medicine*)malloc(sizeof(Medicine));
+    CHECK_ALLOC(medicine);
+
+    // Load the base product details
+    medicine->product = *loadProduct(file);
+
+    // Load medicine-specific details
+    fscanf(file, "%s", medicine->medicineID);
+    loadDate(file, &medicine->expireDate);
+    fscanf(file, "%d", &medicine->prescriptionRequired);
+
+    return medicine;
+}
+
 void freeMedicine(Medicine* medicine) {
     freeProduct(&medicine->product);
 }

@@ -10,7 +10,6 @@
 typedef struct {
     Person person; /**< Base Person structure */
     int id;        /**< Unique customer ID, automatically incremented */
-    char* name;    /**< Dynamically allocated customer name */
 } Customer;
 
 /**
@@ -18,12 +17,6 @@ typedef struct {
  * @param customer Pointer to the Customer structure to initialize.
  */
 void initCustomer(Customer* customer);
-
-/**
- * Sets the name of a customer after dynamically allocating memory for it.
- * @param customer Pointer to the Customer structure whose name is being set.
- */
-void setCustomerName(Customer* customer);
 
 /**
  * Finds a customer by their unique ID.
@@ -40,6 +33,18 @@ Customer* findCustomerByID(const Customer* customers, int numCustomers, int cust
  * @param customer Pointer to the Customer structure whose details are being printed.
  */
 void printCustomerDetails(const Customer* customer);
+
+/**
+ * Save customer details from the user, including name and age.
+ * @param customer Pointer to the Customer structure to store the details.
+ */
+void saveCustomer(FILE* file, const Customer* customer);
+
+/**
+ * Reads customer details from a file, including name and age.
+ * @param customer Pointer to the Customer structure to store the details.
+ */
+Customer* loadCustomer(FILE* file);
 
 /**
  * Frees the dynamically allocated memory for the customer's name.

@@ -79,10 +79,34 @@ int validatePhoneNumber(const char* phoneNumber) {
 
 
 void printPersonDetails(const Person* person) {
-    printf("Person ID: %d\n", person->id);
-    printf("Name: %s\n", person->name);
-    printf("Gender: %s\n", person->gender == MALE ? "Male" : person->gender == FEMALE ? "Female" : "Other");
-    printf("Phone Number: %s\n", person->phoneNumber);
+    printf("Person ID: %d ", person->id);
+    printf("Name: %s ", person->name);
+    printf("Gender: %s ", person->gender == MALE ? "Male" : person->gender == FEMALE ? "Female" : "Other");
+    printf("Phone Number: %s ", person->phoneNumber);
+}
+
+void savePerson(FILE* file, const Person* person) {
+    fwrite(&person->id, sizeof(int), 1, file);
+    int nameLength = strlen(person->name) + 1;
+    fwrite(&nameLength, sizeof(int), 1, file);
+    fwrite(person->name, sizeof(char), nameLength, file);
+    fwrite(&person->gender, sizeof(Gender), 1, file);
+    int phoneNumberLength = strlen(person->phoneNumber) + 1;
+    fwrite(&phoneNumberLength, sizeof(int), 1, file);
+    fwrite(person->phoneNumber, sizeof(char), phoneNumberLength, file);
+}
+
+void loadPerson(Person* person, FILE* file) {
+    fread(&person->id, sizeof(int), 1, file);
+    int nameLength;
+    fread(&nameLength, sizeof(int), 1, file);
+    person->name = (char*)malloc(nameLength);
+    fread(person->name, sizeof(char), nameLength, file);
+    fread(&person->gender, sizeof(Gender), 1, file);
+    int phoneNumberLength;
+    fread(&phoneNumberLength, sizeof(int), 1, file);
+    person->phoneNumber = (char*)malloc(phoneNumberLength);
+    fread(person->phoneNumber, sizeof(char), phoneNumberLength, file);
 }
 
 void freePerson(Person* person) {

@@ -34,4 +34,18 @@ int checkDateValidity(Date* date);
  */
 void printDate(Date* date);
 
+/**
+ * Saves the date to a file in the format "DD/MM/YYYY".
+ * @param file Pointer to the file to save the date to.
+ * @param date Pointer to the Date structure to save.
+ */
+void saveDate(FILE* file, Date* date);
+
+/**
+ * Loads the date from a file in the format "DD/MM/YYYY".
+ * @param file Pointer to the file to load the date from.
+ * @param date Pointer to the Date structure to load.
+ */
+void loadDate(FILE* file, Date* date);
+
 #endif // DATE_H

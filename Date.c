@@ -11,13 +11,6 @@ void initDate(Date* date) {
     }   
 }
 
-/**
- * Checks the validity of a given date, considering the correct range of days for each month
- * and leap years for February.
- * 
- * @param date A pointer to a Date structure to be validated.
- * @return int Returns 1 (true) if the date is valid, taking into account leap years and the correct number of days in each month. Returns 0 (false) for invalid dates.
- */
 int checkDateValidity(Date* date) {
     // Check for valid year
     if (date->year < 1) return 0;
@@ -39,11 +32,15 @@ int checkDateValidity(Date* date) {
     }
 }
 
-/**
- * Prints the details of a given date in DD/MM/YYYY format.
- * 
- * @param date A pointer to a Date structure whose details are to be printed.
- */
+
 void printDate(Date* date) {
     printf("%02d/%02d/%04d\n", date->day, date->month, date->year);
+}
+
+void saveDate(FILE* file, Date* date) {
+    fprintf(file, "%d/%d/%d", date->day, date->month, date->year);
+}
+
+void loadDate(FILE* file, Date* date) {
+    fscanf(file, "%d/%d/%d", &date->day, &date->month, &date->year);
 }

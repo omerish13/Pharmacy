@@ -3,18 +3,18 @@
 
 static int lastOrderNumber = 0;  // For auto-incrementing the order number
 
-void initOrder(Order* order, int customerID, int employeeID) {
+void initOrder(Order* order, int customerID, Employee* employee) {
     order->orderNumber = ++lastOrderNumber;
     order->customerID = customerID;
     initList(&order->orderProducts);  // Assuming initList initializes the linked list
     order->totalAmount = 0;
     // Set the current date to lastModified, assuming setDate sets the date
     setDate(&order->lastModified);
-    order->employeeID = employeeID;
+    order->employee = employee;
 }
 
-void updateEmployeeInOrder(Order* order, int newEmployeeID) {
-    order->employeeID = newEmployeeID;
+void updateEmployeeInOrder(Order* order, Employee* newEmployee) {
+    order->employee = newEmployee;
     // Optionally, update the lastModified date here as well
     setDate(&order->lastModified);
 }
@@ -55,8 +55,8 @@ int addMedicineToOrder(Order* order, Prescription* prescriptions, int numOfPresc
 
     int validPrescriptionIndex = -1;
     for (int i = 0; i < numOfPrescriptions; i++) {
-        if (prescriptions[i].customerID == customerID &&
-            strcmp(prescriptions[i].medicineID, medicine->medicineID) == 0 &&
+        if (prescriptions[i].customer->id == customerID &&
+            strcmp(prescriptions[i].medicine->medicineID, medicine->medicineID) == 0 &&
             !prescriptions[i].used) {
             validPrescriptionIndex = i;
             break;
@@ -156,7 +156,7 @@ int updateProductQuantityInOrder(Stock* stock, Order* order, int productCode, in
 void showOrder(const Order* order) {
     printf("Order Number: %d\n", order->orderNumber);
     printf("Customer ID: %d\n", order->customerID);
-    printf("Employee ID: %d\n", order->employeeID);
+    printEmployeeDetails(order->employee);
     printf("Total Amount: $%d\n", order->totalAmount);
     printList(&order->orderProducts, printProduct);
     printf("Last Modified: ");
@@ -184,6 +184,33 @@ void removeProductFromOrderClient(Order* order) {
     scanf("%d", &quantity);
 
     removeProductFromOrder(order,productCode);
+}
+
+void saveOrder(const Order* order, FILE* file) {
+    saveDate(file, &order->lastModified);
+    saveList(file, &order->orderProducts, saveOrderProductNode);
+    fprintf(file, "%d %d %d %d\n", order->orderNumber, order->customerID, order->employee->id, order->totalAmount);
+}
+
+void saveOrderProductNode(FILE* file, void* data) {
+    OrderProductNode* node = (OrderProductNode*)data;
+    fprintf(file, "%d %d ", node->product->code, node->quantity);
+}
+
+Order* loadOrder(FILE* file, Employee** employees, int numEmployees) {
+    Order* order = (Order*)malloc(sizeof(Order));
+    CHECK_ALLOC(order);
+    loadDate(file, &order->lastModified);
+    order->orderProducts = loadList(file, loadOrderProductNode);
+    fscanf(file, "%d %d %d %d", &order->orderNumber, &order->customerID, &order->employee->id, &order->totalAmount);
+    order->employee = findEmployee(employees, numEmployees, order->employee->id);
+    return order;
+}
+
+OrderProductNode*  loadOrderProductNode(FILE* file) {
+    OrderProductNode* node = (OrderProductNode*)malloc(sizeof(OrderProductNode));
+    fscanf(file, "%d %d", &node->product->code, &node->quantity);
+    return node;
 }
 
 void freeOrderProductNode(void* data) {

@@ -42,6 +42,20 @@ void setMedicinePrescriptionRequired(Medicine* medicine);
 void printMedicineDetails(const Medicine* medicine);
 
 /**
+ * Saves the details of a medicine to a file, including product details and medicine-specific information.
+ * @param file Pointer to the file where the medicine details are to be saved.
+ * @param medicine Pointer to the Medicine structure to save.
+ */
+void saveMedicine(FILE* file, const Medicine* medicine);
+
+/**
+ * Loads the details of a medicine from a file, including product details and medicine-specific information.
+ * @param file Pointer to the file from which the medicine details are to be loaded.
+ * @return Pointer to the loaded Medicine structure.
+ */
+Medicine* loadMedicine(FILE* file);
+
+/**
  * Frees the dynamically allocated memory for the medicine's product details.
  * @param medicine Pointer to the Medicine structure to free.
  */

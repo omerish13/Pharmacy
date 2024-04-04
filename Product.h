@@ -79,6 +79,20 @@ void printProduct(void* item);
 int compareProducts(void* a, void* b);
 
 /**
+ * Save product details to a file, including name, type, price, and stock quantity.
+ * @param file Pointer to the file to save the product details to.
+ * @param product Pointer to the Product structure to save.
+ */
+void saveProduct(FILE* file, const Product* product);
+
+/**
+ * Reads product details from a file, including name, type, price, and stock quantity.
+ * @param product Pointer to the Product structure to store the details.
+ * @param file Pointer to the file to read the product details from.
+ */
+Product* loadProduct(FILE* file);
+
+/**
  * Frees the dynamically allocated memory for the product's name.
  * @param product Pointer to the Product structure to free.
  */

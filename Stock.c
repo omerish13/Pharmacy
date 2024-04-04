@@ -147,6 +147,27 @@ void updateMedicineStock(Stock* stock, char* medicineID, int quantity) {
     }
 }
 
+void saveStock(const Stock* stock, FILE* file) {
+    // Save the number of products and medicines in the stock
+    fprintf(file, "%d %d\n", stock->products.size, stock->medicines.size);
+
+    // Save the products
+    saveList(&stock->products, file, saveProduct);
+
+    // Save the medicines
+    saveList(&stock->medicines, file, saveMedicine);
+}
+
+void loadStock(FILE* file, Stock* stock) {
+    initStock(stock);
+
+    // Load the products
+    stock->products = *(loadList(file, loadProduct));
+
+    // Load the medicines
+    stock->medicines = *(loadList(file, loadMedicine));
+}
+
 void freeStock(Stock* stock) {
     freeList(&stock->products, freeProduct);
     freeList(&stock->medicines, freeMedicine);

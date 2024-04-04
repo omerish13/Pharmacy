@@ -6,6 +6,7 @@
 #include "Date.h"
 #include "Stock.h"
 #include "Prescription.h"
+#include "Employee.h"
 #include <time.h>
 
 /**
@@ -27,7 +28,7 @@ typedef struct {
     OrderProductNode* orderProducts;  /**< Head of the linked list of products in the order. */
     int totalAmount;                  /**< Total cost of the order. */
     Date lastModified;                /**< Date when the order was last modified. */
-    int employeeID;                   /**< ID of the employee managing the order. */
+    Employee* employee;                   /**< ID of the employee managing the order. */
 } Order;
 
 /**
@@ -36,7 +37,7 @@ typedef struct {
  * @param order Pointer to the Order structure to initialize.
  * @param customerID The customer's unique identifier.
  */
-void initOrder(Order* order, int customerID,int employeeID);
+void initOrder(Order* order, int customerID, Employee* employee);
 
 /**
  * Displays the details of an order, including each product and the total cost.
@@ -106,7 +107,7 @@ void updateLastModified(Order* order);
  * @param order Pointer to the Order to update.
  * @param newEmployeeID The new employee ID to be associated with the order.
  */
-void updateEmployeeInOrder(Order* order, int newEmployeeID);
+void updateEmployeeInOrder(Order* order, Employee* newEmployee);
 
 /**
  * Prints the products in an order.
@@ -122,6 +123,40 @@ void printOrderProducts(Order* order);
 */
 void removeProductFromOrderClient(Order* order);
 
+/**
+ * Saves the order details to a file.
+ * 
+ * @param order Pointer to the Order to save.
+ * @param file Pointer to the file to save the order to.
+ */
+void saveOrder(Order* order, FILE* file);
+
+/**
+ * Loads an order from a file.
+ * 
+ * @param file Pointer to the file to read the order from.
+ * @param employees Array of Employee structures.
+ * @param numEmployees Total number of employees in the array.
+ * @return Pointer to the loaded Order.
+ */
+Order* loadOrder(FILE* file, Employee** employees, int numEmployees);
+
+/**
+ * Saves an OrderProductNode to a file.
+ * 
+ * @param file Pointer to the file to save the OrderProductNode to.
+ * @param data Pointer to the OrderProductNode to save.
+ */
+void saveOrderProductNode(FILE* file, void* data);
+
+/**
+ * Loads an OrderProductNode from a file.
+ * 
+ * @param file Pointer to the file to read the OrderProductNode from.
+ * @param stock Pointer to the Stock structure containing an array of products.
+ * @return Pointer to the loaded OrderProductNode.
+ */
+OrderProductNode* loadOrderProductNode(FILE* file);
 
 /**
  * Frees the memory allocated for an order.

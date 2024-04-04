@@ -4,13 +4,11 @@
 
 static int lastPrescriptionID = 0;  // For auto-incrementing the prescription ID
 
-void initPrescription(Prescription* prescription, int customerID, const char* medicineID, Date expirationDate, int quantity) {
+void initPrescription(Prescription* prescription,const Customer* customers, int numCustomers, int customerID, const char* medicineID,Stock* stock, Date expirationDate, int quantity) {
     prescription->id = ++lastPrescriptionID;  // Auto-increment the prescription ID
-    prescription->customerID = customerID;
+    prescription->customer = findCustomerByID(customers, numCustomers, customerID);
     
-    // Ensure the medicine ID is copied safely, assuming medicineID has a fixed size
-    strncpy(prescription->medicineID, medicineID, sizeof(prescription->medicineID) - 1);
-    prescription->medicineID[sizeof(prescription->medicineID) - 1] = '\0';  // Null-terminate
+    prescription->medicine = findMedicineByID(stock, medicineID);
     
     prescription->expirationDate = expirationDate;  // Assign the expiration date
     prescription->quantity = quantity;  // Assign the allowed quantity of medication
@@ -23,8 +21,8 @@ int customerHasValidPrescription(const Prescription* prescriptions, int numPresc
     Date currentDate = {tm.tm_mday, tm.tm_mon + 1, tm.tm_year + 1900};  // Current date
 
     for (int i = 0; i < numPrescriptions; ++i) {
-        if (prescriptions[i].customerID == customerID &&
-            strcmp(prescriptions[i].medicineID, medicineID) == 0 &&
+        if (prescriptions[i].customer->id == customerID &&
+            strcmp(prescriptions[i].medicine->medicineID, medicineID) == 0 &&
             !prescriptions[i].used &&
             compareDates(&prescriptions[i].expirationDate, &currentDate) > 0) {  
             return 1;
@@ -36,23 +34,41 @@ int customerHasValidPrescription(const Prescription* prescriptions, int numPresc
 }
 
 void printPrescription(const Prescription* prescription, const Customer* customers, int numCustomers, const Stock* stock) {
-    Customer* customer = findCustomerByID(customers, numCustomers, prescription->customerID);
-    Medicine* medicine = findMedicineByID(stock, prescription->medicineID);
 
-    if (customer && medicine) {
-        printf("Prescription ID: %d\n", prescription->id);
-        printf("Customer: %s (ID: %d)\n", customer->name, customer->id);
-        printf("Medicine: %s (ID: %s)\n", medicine->product.name, medicine->medicineID);
-        // Additional details can be printed here if needed
-    } else {
-        printf("Error: Customer or Medicine not found for the prescription.\n");
-    }
+    printf("Prescription ID: %d", prescription->id);
+    printf("Customer: %s (ID: %d)", prescription->customer->person.name, prescription->customer->id);
+    printf("Medicine: %s (ID: %s)\n", prescription->medicine->product.name, prescription->medicine->medicineID);
+    // Additional details can be printed here if needed
 }
+
+void savePrescription(const Prescription* prescription, FILE* file) {
+    fprintf(file, "%d %d %s %d %d ", prescription->id, prescription->customer->id, prescription->medicine->medicineID,
+            prescription->quantity, prescription->used);
+    saveDate(&prescription->expirationDate, file);
+    fprintf(file, "\n");
+}
+
+Prescription* loadPrescription(FILE* file, const Customer* customers, int numCustomers, const Stock* stock) {
+    Prescription* prescription = (Prescription*)malloc(sizeof(Prescription));
+    CHECK_ALLOC(prescription);
+
+    fscanf(file, "%d %d %s %d %d ", &prescription->id, &prescription->customer->id, prescription->medicine->medicineID,
+           &prescription->quantity, &prescription->used);
+    loadDate(file, &prescription->expirationDate);
+
+    prescription->customer = findCustomerByID(customers, numCustomers, prescription->customer->id);
+    prescription->medicine = findMedicineByID(stock, prescription->medicine->medicineID);
+
+    return prescription;
+}
+
+
+    
 
 void freePrescription(Prescription* prescription) {
     prescription->id = 0;
-    prescription->customerID = 0;
-    prescription->medicineID[0] = '\0';
+    freeCustomer(prescription->customer);
+    freeMedicine(prescription->medicine);
     prescription->expirationDate.day = 0;
     prescription->expirationDate.month = 0;
     prescription->expirationDate.year = 0;
