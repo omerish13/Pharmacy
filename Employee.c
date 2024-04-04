@@ -35,6 +35,19 @@ void setEmployeeSalary(Employee* employee) {
     employee->salary = atof(buffer);
 }
 
+void raiseSalary(Employee* employee, double raisePercentage) {
+    employee->salary += employee->salary * raisePercentage / 100;
+}
+
+Employee* findEmployee(Employee** employees, int numEmployees, int id) {
+    for (int i = 0; i < numEmployees; i++) {
+        if (employees[i]->id == id) {
+            return &employees[i];
+        }
+    }
+    return NULL;  // Employee not found
+}
+
 void printEmployeeDetails(const Employee* employee) {
     printf("Employee ID: %d\n", employee->id);
     printf("Name: %s\n", employee->name);
@@ -50,9 +63,9 @@ void freeEmployee(Employee* employee) {
     employee->position = NULL;
 }
 
-void freeEmployees(Employee* employees, int numEmployees) {
+void freeEmployees(Employee** employees, int numEmployees) {
     for (int i = 0; i < numEmployees; i++) {
-        freeEmployee(&employees[i]);
+        freeEmployee(employees[i]);
     }
     free(employees);
     employees = NULL;

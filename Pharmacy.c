@@ -2,6 +2,23 @@
 #include <stdlib.h>
 #include <string.h>
 
+void initPharmacy(Pharmacy* pharmacy) {
+    pharmacy->name = NULL;
+    initAddress(&pharmacy->address);
+    initStock(&pharmacy->stock);
+    pharmacy->employees = NULL;
+    pharmacy->employeeCount = 0;
+    pharmacy->employeeCapacity = 0;
+    pharmacy->customers = NULL;
+    pharmacy->customerCount = 0;
+    pharmacy->customerCapacity = 0;
+    initList(&pharmacy->openOrders);
+    initList(&pharmacy->orderHistory);
+    pharmacy->prescriptions = NULL;
+    pharmacy->prescriptionCount = 0;
+    pharmacy->prescriptionCapacity = 0;
+}
+
 void createNewOrder(Pharmacy* pharmacy, int customerID, int employeeID) {
     // Allocate memory for a new order
     Order* newOrder = (Order*)malloc(sizeof(Order));
@@ -17,11 +34,12 @@ void createNewOrder(Pharmacy* pharmacy, int customerID, int employeeID) {
     addToList(&pharmacy->openOrders, newOrder);
 }
 
+
 void addEmployee(Pharmacy* pharmacy, const Employee* employee) {
     // Check if the employees array needs to be expanded
     if (pharmacy->employeeCount == pharmacy->employeeCapacity) {
         int newCapacity = pharmacy->employeeCapacity > 0 ? pharmacy->employeeCapacity * 2 : 1;  // Double the capacity, start with 1 if 0
-        Employee* resizedArray = (Employee*)realloc(pharmacy->employees, newCapacity * sizeof(Employee));
+        Employee** resizedArray = (Employee**)realloc(pharmacy->employees, newCapacity * sizeof(Employee*));
 
         CHECK_ALLOC(resizedArray);
 
@@ -30,7 +48,8 @@ void addEmployee(Pharmacy* pharmacy, const Employee* employee) {
     }
 
     // Add the new employee to the array and increment the count
-    memcpy(&pharmacy->employees[pharmacy->employeeCount], employee, sizeof(Employee));
+    pharmacy->employees[pharmacy->employeeCount] = (Employee*)malloc(sizeof(Employee));
+    memcpy(pharmacy->employees[pharmacy->employeeCount], employee, sizeof(Employee));
     pharmacy->employeeCount++;
 }
 
@@ -58,7 +77,7 @@ void removeEmployee(Pharmacy* pharmacy, int employeeID) {
     int found = 0;  // Flag to indicate if the employee was found
 
     for (int i = 0; i < pharmacy->employeeCount; i++) {
-        if (pharmacy->employees[i].id == employeeID) {
+        if (pharmacy->employees[i]->id == employeeID) {
             found = 1;
             
             // Shift the rest of the employees down by one to fill the gap
@@ -127,7 +146,7 @@ void printAllCustomers(const Pharmacy* pharmacy) {
 void printAllEmployees(const Pharmacy* pharmacy) {
     printf("List of Employees:\n");
     for (int i = 0; i < pharmacy->employeeCount; ++i) {
-        printf("%d: %s\n", pharmacy->employees[i].id, pharmacy->employees[i].name);
+        printf("%d: %s\n", pharmacy->employees[i]->id, pharmacy->employees[i]->name);
     }
 }
 
@@ -214,6 +233,26 @@ void updateProductQuantityOrder(Pharmacy* pharmacy,Order* order) {
         updateProductQuantityInOrder(&pharmacy->stock,order,productCode,newQuantity);
     }
     updateProductQuantityInOrder(&pharmacy->stock, order, productCode, newQuantity);
+}
+
+void raiseSalaryClient(Pharmacy* pharmacy) {
+    printAllEmployees(pharmacy);
+    int employeeID;
+    printf("Enter the ID of the employee to raise the salary: ");
+    scanf("%d", &employeeID);
+
+    Employee* employee = findEmployee(pharmacy->employees, pharmacy->employeeCount, employeeID);
+
+    if (employee != NULL) {
+        // Get precents to raise the salary
+        printf("Enter the percentage to raise the salary: ");
+        double percent;
+        scanf("%lf", &percent);
+        // Function to raise salary of employee
+        raiseSalary(employee,percent);
+    } else {
+        printf("Employee with ID %d not found.\n", employeeID);
+    }
 }
 
 void freePharmacy(Pharmacy* pharmacy) {

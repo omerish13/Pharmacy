@@ -40,6 +40,22 @@ void setEmployeePosition(Employee* employee);
 void setEmployeeSalary(Employee* employee);
 
 /**
+ * Raises the salary of an employee by a given percentage.
+ * @param employee Pointer to the Employee structure whose salary is being raised.
+ * @param raisePercentage The percentage by which to raise the salary.
+ */
+void raiseSalary(Employee* employee, double raisePercentage);
+
+/**
+ * Searches for an employee in an array of employees by their unique ID.
+ * @param employees Array of Employee structures to search.
+ * @param numEmployees Number of employees in the array.
+ * @param id The unique ID of the employee to find.
+ * @return Pointer to the found Employee structure, or NULL if the employee is not found.
+ */
+Employee* findEmployee(Employee** employees, int numEmployees, int id);
+
+/**
  * Prints the details of an employee in a formatted manner.
  * @param employee Pointer to the Employee structure whose details are being printed.
  */
@@ -56,6 +72,6 @@ void freeEmployee(Employee* employee);
  * @param employees Array of Employee structures to free.
  * @param numEmployees Number of employees in the array.
  */
-void freeEmployees(Employee* employees, int numEmployees);
+void freeEmployees(Employee** employees, int numEmployees);
 
 #endif // EMPLOYEE_H
