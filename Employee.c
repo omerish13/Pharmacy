@@ -32,7 +32,7 @@ void raiseSalary(Employee* employee, double raisePercentage) {
 Employee* findEmployee(Employee** employees, int numEmployees, int id) {
     for (int i = 0; i < numEmployees; i++) {
         if (employees[i]->id == id) {
-            return &employees[i];
+            return employees[i];
         }
     }
     return NULL;  // Employee not found
@@ -55,7 +55,7 @@ void saveEmployee(FILE* file, const Employee* employee) {
 Employee* loadEmployee(FILE* file) {
     Employee* employee = (Employee*)malloc(sizeof(Employee));
     CHECK_ALLOC(employee);
-    loadPerson(file, &employee->person);
+    loadPerson(&employee->person,file);
     fscanf(file, "%d\n", &employee->id);
     char buffer[BUFFER_SIZE];
     fscanf(file, "%s\n", buffer);

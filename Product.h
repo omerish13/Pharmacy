@@ -68,7 +68,13 @@ void printProductDetails(const Product* product);
  * Prints the product's name and code in a formatted manner.
  * @param item Pointer to the Product structure to print.
  */
-void printProduct(void* item);
+void printProduct(const void* item);
+
+/**
+ * Prints the product's name and stock quantity in a formatted manner.
+ * @param item Pointer to the Product structure to print.
+ */
+void printProductInStock(const void* item);
 
 /**
  * Compares two Product structures based on their code.
@@ -83,7 +89,7 @@ int compareProducts(void* a, void* b);
  * @param file Pointer to the file to save the product details to.
  * @param product Pointer to the Product structure to save.
  */
-void saveProduct(FILE* file, const Product* product);
+void saveProduct(FILE* file, const void* product);
 
 /**
  * Reads product details from a file, including name, type, price, and stock quantity.
@@ -96,7 +102,7 @@ Product* loadProduct(FILE* file);
  * Frees the dynamically allocated memory for the product's name.
  * @param product Pointer to the Product structure to free.
  */
-void freeProduct(Product* product);
+void freeProduct(void* product);
 
 
 

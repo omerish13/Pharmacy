@@ -69,8 +69,16 @@ int compareProducts(void* a, void* b) {
     return productA->code - productB->code;  // 0 if codes are equal
 }
 
-void printProduct(void* item) {
-    printProductDetails((Product*)item);
+void printProduct(const void* item) {
+    const Product* product = (const Product*)item;
+    printProductDetails(product);
+}
+
+void printProductInStock(const void* item) {
+    const Product* product = (const Product*)item;
+    if (product->stockQuantity > 0) {
+        printProductDetails(product);
+    }
 }
 
 void printProductDetails(const Product* product) {
@@ -81,12 +89,13 @@ void printProductDetails(const Product* product) {
     printf("Stock Quantity: %d\n", product->stockQuantity);
 }
 
-void saveProduct(FILE* file, const Product* product) {
-    fprintf(file, "%d\n", product->code);
-    fprintf(file, "%s\n", product->name);
-    fprintf(file, "%d\n", product->type);
-    fprintf(file, "%.2f\n", product->price);
-    fprintf(file, "%d\n", product->stockQuantity);
+void saveProduct(FILE* file, const void* product) {
+    const Product* prod = (const Product*)product;
+    fprintf(file, "%d\n", prod->code);
+    fprintf(file, "%s\n", prod->name);
+    fprintf(file, "%d\n", prod->type);
+    fprintf(file, "%.2f\n", prod->price);
+    fprintf(file, "%d\n", prod->stockQuantity);
 }
 
 Product* loadProduct(FILE* file) {
@@ -104,7 +113,8 @@ Product* loadProduct(FILE* file) {
     return product;
 }
 
-void freeProduct(Product* product) {
-    free(product->name);
-    product->name = NULL;
+void freeProduct(void* product) {
+    Product* prod = (Product*)product;
+    free(prod);
+    prod->name = NULL;
 }

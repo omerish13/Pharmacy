@@ -25,7 +25,7 @@ typedef struct OrderProductNode {
 typedef struct {
     int orderNumber;                  /**< Unique identifier for each order. */
     int customerID;                   /**< Identifier for the customer who made the order. */
-    OrderProductNode* orderProducts;  /**< Head of the linked list of products in the order. */
+    LinkedList* orderProducts;  /**< Head of the linked list of products in the order. */
     int totalAmount;                  /**< Total cost of the order. */
     Date lastModified;                /**< Date when the order was last modified. */
     Employee* employee;                   /**< ID of the employee managing the order. */
@@ -129,7 +129,7 @@ void removeProductFromOrderClient(Order* order);
  * @param order Pointer to the Order to save.
  * @param file Pointer to the file to save the order to.
  */
-void saveOrder(Order* order, FILE* file);
+void saveOrder(const Order* order, FILE* file);
 
 /**
  * Loads an order from a file.

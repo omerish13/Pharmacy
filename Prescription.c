@@ -4,7 +4,7 @@
 
 static int lastPrescriptionID = 0;  // For auto-incrementing the prescription ID
 
-void initPrescription(Prescription* prescription,const Customer* customers, int numCustomers, int customerID, const char* medicineID,Stock* stock, Date expirationDate, int quantity) {
+void initPrescription(Prescription* prescription, Customer* customers, int numCustomers, int customerID, const char* medicineID,Stock* stock, Date expirationDate, int quantity) {
     prescription->id = ++lastPrescriptionID;  // Auto-increment the prescription ID
     prescription->customer = findCustomerByID(customers, numCustomers, customerID);
     
@@ -33,7 +33,7 @@ int customerHasValidPrescription(const Prescription* prescriptions, int numPresc
     return 0;
 }
 
-void printPrescription(const Prescription* prescription, const Customer* customers, int numCustomers, const Stock* stock) {
+void printPrescription(const Prescription* prescription) {
 
     printf("Prescription ID: %d", prescription->id);
     printf("Customer: %s (ID: %d)", prescription->customer->person.name, prescription->customer->id);
@@ -44,11 +44,11 @@ void printPrescription(const Prescription* prescription, const Customer* custome
 void savePrescription(const Prescription* prescription, FILE* file) {
     fprintf(file, "%d %d %s %d %d ", prescription->id, prescription->customer->id, prescription->medicine->medicineID,
             prescription->quantity, prescription->used);
-    saveDate(&prescription->expirationDate, file);
+    saveDate(file,&prescription->expirationDate);
     fprintf(file, "\n");
 }
 
-Prescription* loadPrescription(FILE* file, const Customer* customers, int numCustomers, const Stock* stock) {
+Prescription* loadPrescription(FILE* file,Customer* customers, int numCustomers,Stock* stock) {
     Prescription* prescription = (Prescription*)malloc(sizeof(Prescription));
     CHECK_ALLOC(prescription);
 

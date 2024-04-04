@@ -3,11 +3,11 @@
 
 void initDate(Date* date) {
     
-    scanf("%d/%d/%d",date->day,date->month,date->year);
+    scanf("%d/%d/%d",&date->day,&date->month,&date->year);
     while (!checkDateValidity(date))
     {
         printf("Error: Invalid date provided.\n");
-        scanf("%d/%d/%d",date->day,date->month,date->year);
+        scanf("%d/%d/%d",&date->day,&date->month,&date->year);
     }   
 }
 
@@ -32,12 +32,21 @@ int checkDateValidity(Date* date) {
     }
 }
 
+int compareDates(const Date* date1, const Date* date2) {
+    if (date1->year != date2->year) {
+        return date1->year - date2->year;
+    } else if (date1->month != date2->month) {
+        return date1->month - date2->month;
+    } else {
+        return date1->day - date2->day;
+    }
+}
 
-void printDate(Date* date) {
+void printDate(const Date* date) {
     printf("%02d/%02d/%04d\n", date->day, date->month, date->year);
 }
 
-void saveDate(FILE* file, Date* date) {
+void saveDate(FILE* file, const Date* date) {
     fprintf(file, "%d/%d/%d", date->day, date->month, date->year);
 }
 

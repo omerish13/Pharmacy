@@ -2,7 +2,7 @@
 #define PERSON_H
 
 #include "general.h"  // Include for CHECK_ALLOC and myGets
-
+#include <ctype.h>    // Include for isdigit
 /**
  * Enum for Gender.
  */

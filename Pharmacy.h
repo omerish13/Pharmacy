@@ -35,13 +35,27 @@ typedef struct Pharmacy {
 void initPharmacy(Pharmacy* pharmacy);
 
 /**
+ * Sets the name of the pharmacy after dynamically allocating memory for it.
+ * 
+ * @param pharmacy Pointer to the Pharmacy structure whose name is being set.
+ */
+void setPharmacyName(char *name);
+
+/**
  * Creates and initializes a new order for a specified customer and employee, and adds it to the open orders.
  * 
  * @param pharmacy Pointer to the Pharmacy structure.
  * @param customerID The unique identifier of the customer placing the order.
  * @param employeeID The unique identifier of the employee handling the order.
  */
-void createNewOrder(Pharmacy* pharmacy, int customerID, int employeeID);
+Order* createNewOrder(Pharmacy* pharmacy, int customerID, int employeeID);
+
+/**
+* Creates and initializes a new order for a specified customer and employee, and adds it to the open orders.
+* 
+* @param pharmacy Pointer to the Pharmacy structure.
+*/
+Order* createNewOrderInteractive(Pharmacy* pharmacy);
 
 /**
  * Adds a new employee to the pharmacy's list of employees.
@@ -52,6 +66,20 @@ void createNewOrder(Pharmacy* pharmacy, int customerID, int employeeID);
 void addEmployee(Pharmacy* pharmacy, const Employee* employee);
 
 /**
+ * Adds a new employee to the pharmacy's list of employees interactively.
+ * 
+ * @param pharmacy Pointer to the Pharmacy structure.
+ */
+void addEmployeeInteractive(Pharmacy* pharmacy);
+
+/**
+ * Adds a new customer to the pharmacy's list of customers interactively.
+ * 
+ * @param pharmacy Pointer to the Pharmacy structure.
+ */
+void addCustomerInteractive(Pharmacy* pharmacy);
+
+/**
  * Adds a new customer to the pharmacy's list of customers.
  * 
  * @param pharmacy Pointer to the Pharmacy structure.
@@ -59,6 +87,13 @@ void addEmployee(Pharmacy* pharmacy, const Employee* employee);
  */
 void addCustomer(Pharmacy* pharmacy, const Customer* customer);
 
+/**
+ * Removes a customer from the pharmacy's list of customers based on their unique identifier.
+ * 
+ * @param pharmacy Pointer to the Pharmacy structure.
+ * @param customerID The unique identifier of the customer to be removed.
+ */
+void removeEmployeeInteractive(Pharmacy* pharmacy);
 /**
  * Removes an employee from the pharmacy's list of employees based on their unique identifier.
  * 
@@ -100,6 +135,12 @@ void purchaseOrder(Pharmacy* pharmacy, int orderNumber);
  */
 void addNewPrescriptionToPharmacy(Pharmacy* pharmacy);
 
+/**
+ * Adds a new product to the pharmacy's stock.
+ * 
+ * @param pharmacy Pointer to the Pharmacy structure.
+ */
+void addProductOrMedicineToOrder(Pharmacy* pharmacy, Order* order);
 
 /**
  * Updates the stock of the pharmacy based on the products in the order.

@@ -26,7 +26,7 @@ void initCustomer(Customer* customer);
  * @param customerID The unique ID of the customer to find.
  * @return Pointer to the Customer structure if found, NULL otherwise.
  */
-Customer* findCustomerByID(const Customer* customers, int numCustomers, int customerID);
+Customer* findCustomerByID(Customer* customers, int numCustomers, int customerID);
 
 /**
  * Prints the details of a customer in a formatted manner.

@@ -20,8 +20,8 @@
  */
 typedef struct {
     int id;                            /**< Unique prescription ID, automatically incremented. */
-    Customer* customer;                    /**< ID of the customer to whom the prescription is assigned. */
-    Medicine* medicine;        /**< Unique ID for the medicine, expected to be a 6-digit string. */
+    Customer* customer;          /**< Pointer to the customer to whom the prescription is issued. */
+    Medicine* medicine;                /**< Pointer to the medicine prescribed. */
     Date expirationDate;               /**< Expiration date of the prescription. */
     int quantity;                      /**< Quantity of medication allowed for purchase with this prescription. */
     int used;                          /**< Flag indicating whether the prescription has been used (0 = No, 1 = Yes). */
@@ -30,16 +30,17 @@ typedef struct {
 
 
 /**
- * Initializes a Prescription structure with the provided details.
- * Sets up a new prescription with a unique ID, customer ID, medicine ID, expiration date, and allowed medication quantity.
- *
- * @param prescription Pointer to the Prescription structure to be initialized.
- * @param customerID The ID of the customer for whom the prescription is issued.
- * @param medicineID The unique identifier for the medicine prescribed.
+ * Initializes a Prescription structure with a unique ID and other provided details.
+ * 
+ * @param prescription Pointer to the Prescription structure to initialize.
+ * @param customers Array of Customer structures.
+ * @param numCustomers Total number of customers in the array.
+ * @param customerID The ID of the customer to whom the prescription is assigned.
+ * @param medicineID The unique ID of the medicine prescribed.
  * @param expirationDate The expiration date of the prescription.
- * @param quantity The quantity of medication the customer is allowed to purchase with this prescription.
+ * @param quantity The quantity of medication allowed for purchase with this prescription.
  */
-void initPrescription(Prescription* prescription, Customer* customers,int numCustomers, int customerID, const char* medicineID,Stock* stock, Date expirationDate, int quantity);
+void initPrescription(Prescription* prescription,Customer* customers, int numCustomers, int customerID, const char* medicineID,Stock* stock, Date expirationDate, int quantity);
 
 /**
  * Determines if a given customer has a valid (unused and unexpired) prescription
@@ -54,15 +55,11 @@ void initPrescription(Prescription* prescription, Customer* customers,int numCus
 int customerHasValidPrescription(const Prescription* prescriptions, int numPrescriptions, int customerID, const char* medicineID);
 
 /**
- * Prints the details of a prescription, including information about the customer and the medicine prescribed.
- *
- * @param prescription Pointer to the Prescription structure to be printed.
- * @param customers Array of Customer structures.
- * @param numCustomers Total number of customers in the array.
- * @param stock Pointer to the Stock structure containing an array of products.
+ * Prints the details of a prescription, including the customer, medicine, and expiration date.
+ * 
+ * @param prescription Pointer to the Prescription structure to print.
  */
-
-void printPrescription(const Prescription* prescription, const Customer* customers, int numCustomers, const Stock* stock);
+void printPrescription(const Prescription* prescription);
 
 /**
  * Saves the details of a prescription to a file, including the customer ID, medicine ID, expiration date, quantity, and usage status.
@@ -81,7 +78,7 @@ void savePrescription(const Prescription* prescription, FILE* file);
  * @param stock Pointer to the Stock structure containing an array of products.
  * @return Pointer to the loaded Prescription structure.
  */
-Prescription* loadPrescription(FILE* file, const Customer* customers, int numCustomers, const Stock* stock);
+Prescription* loadPrescription(FILE* file,Customer* customers, int numCustomers,Stock* stock);
 
 /**
  * Frees the memory allocated for a Prescription object.

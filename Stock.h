@@ -78,7 +78,7 @@ Medicine* findMedicine(const Stock* stock, int code);
  * @param medicineID The ID of the medicine to find.
  * @return A pointer to the Medicine struct if found, NULL otherwise.
  */
-Medicine* findMedicineByID(const Stock* stock, const char* medicineID);
+Medicine* findMedicineByID(Stock* stock, const char* medicineID);
 
 /**
  * Adds a new product to the stock.

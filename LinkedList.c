@@ -1,6 +1,4 @@
 #include "LinkedList.h"
-#include <stdio.h>
-#include "general.h"
 
 
 void initList(LinkedList* list) {
@@ -58,7 +56,7 @@ void* binarySearchLinkedList(const LinkedList* list, const void* target, int (*c
     return (void*)(bsearch(target,list,list->size,sizeof(target),compFunc));
 }
 
-void printList(const LinkedList* list, void (*printItem)(void*)) {
+void printList(const LinkedList* list, void (*printItem)(const void*)) {
     ListNode* node = list->head;
 
     while (node != NULL) {

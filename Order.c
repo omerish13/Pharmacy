@@ -6,17 +6,16 @@ static int lastOrderNumber = 0;  // For auto-incrementing the order number
 void initOrder(Order* order, int customerID, Employee* employee) {
     order->orderNumber = ++lastOrderNumber;
     order->customerID = customerID;
-    initList(&order->orderProducts);  // Assuming initList initializes the linked list
+    initList(order->orderProducts);
     order->totalAmount = 0;
-    // Set the current date to lastModified, assuming setDate sets the date
-    setDate(&order->lastModified);
+    initDate(&order->lastModified);
     order->employee = employee;
 }
 
 void updateEmployeeInOrder(Order* order, Employee* newEmployee) {
     order->employee = newEmployee;
     // Optionally, update the lastModified date here as well
-    setDate(&order->lastModified);
+    initDate(&order->lastModified);
 }
 
 int addProductToOrder(Order* order, Stock* stock, int productCode, int quantity) {
@@ -28,19 +27,22 @@ int addProductToOrder(Order* order, Stock* stock, int productCode, int quantity)
     }
 
     // Check if product already in order and adjust quantity if so
-    for (OrderProductNode* node = order->orderProducts; node != NULL; node = node->next) {
+    OrderProductNode* node =  (OrderProductNode*)(OrderProductNode*)order->orderProducts->head;
+    while (node != NULL)
+    {
         if (node->product->code == productCode) {
             printf("Error: Product Already in order, you can update it's quantity through the menu.\n");
             return 0; // Indicate failure
         }
+        node = node->next;
     }
-
+    
     // If product not in order, add it
     OrderProductNode* newNode = (OrderProductNode*)malloc(sizeof(OrderProductNode));
     newNode->product = product;
     newNode->quantity = quantity;
-    newNode->next = order->orderProducts;
-    order->orderProducts = newNode;
+    newNode->next = NULL;
+    node->next = newNode;
     order->totalAmount += product->price * quantity;
     updateLastModified(order);
     return 1;  // Indicate success
@@ -68,6 +70,19 @@ int addMedicineToOrder(Order* order, Prescription* prescriptions, int numOfPresc
         return 0;  // Indicate failure
     }
 
+    // Check if medication already in order
+    OrderProductNode* node = (OrderProductNode*)order->orderProducts->head;
+    while (node != NULL)
+    {
+        if (node->product->code == medicineCode) {
+            printf("Error: Medicine Already in order, you can update it's quantity through the menu.\n");
+            return 0; // Indicate failure
+        }
+        node = node->next;
+    }
+
+    // Check if stock is sufficient for the prescribed quantity
+
     int prescribedQuantity = prescriptions[validPrescriptionIndex].quantity;
     if (medicine->product.stockQuantity < prescribedQuantity) {
         char choice;
@@ -83,36 +98,30 @@ int addMedicineToOrder(Order* order, Prescription* prescriptions, int numOfPresc
 
     // Add the medicine to the order with the prescribed quantity
     OrderProductNode* newNode = (OrderProductNode*)malloc(sizeof(OrderProductNode));
-    if (!newNode) {
-        printf("Error: Memory allocation failed.\n");
-        return 0;  // Indicate failure
-    }
+    CHECK_ALLOC(newNode);
     newNode->product = (Product*)medicine;
     newNode->quantity = prescribedQuantity;
-    newNode->next = order->orderProducts;
-    order->orderProducts = newNode;
+    newNode->next = NULL;
+    node->next = newNode;
     order->totalAmount += medicine->product.price * prescribedQuantity;
     prescriptions[validPrescriptionIndex].used = 1;  // Mark the prescription as used
     updateLastModified(order);
     return 1;  // Indicate success
 }
 
-
-
-// Modify this function signature to return an int indicating success/failure
 int removeProductFromOrder(Order* order, int productCode) {
-    OrderProductNode **node = &order->orderProducts, *temp = NULL;
+    OrderProductNode *node = (OrderProductNode*)order->orderProducts->head, *temp = NULL;
 
-    while (*node != NULL) {
-        if ((*node)->product->code == productCode) {
-            temp = *node;
-            *node = (*node)->next;
+    while (node != NULL) {
+        if (node->product->code == productCode) {
+            temp = node;
+            node = node->next;
             order->totalAmount -= temp->product->price * temp->quantity;
             free(temp);
             updateLastModified(order);
             return 1;  // Indicate success
         }
-        node = &(*node)->next;
+        node = node->next;
     }
 
     printf("Error: Product not found in the order.\n");
@@ -124,7 +133,7 @@ int updateProductQuantityInOrder(Stock* stock, Order* order, int productCode, in
     Medicine* medicineInStock = NULL;
     if (!productInStock) {
         // If it's not found as a Product, try finding it as a Medicine
-        medicineInStock = findMedicineByID(stock, productCode);
+        medicineInStock = findMedicine(stock, productCode);
     }
 
     int availableQuantity = productInStock ? productInStock->stockQuantity : (medicineInStock ? medicineInStock->product.stockQuantity : -1);
@@ -139,26 +148,28 @@ int updateProductQuantityInOrder(Stock* stock, Order* order, int productCode, in
     }
 
     // Update product/medicine quantity in the order if stock is sufficient
-    for (OrderProductNode* node = order->orderProducts; node != NULL; node = node->next) {
+    OrderProductNode* node = (OrderProductNode*)order->orderProducts->head;
+    while (node != NULL)
+    {
         if (node->product->code == productCode) {
             order->totalAmount += node->product->price * (newQuantity - node->quantity);
             node->quantity = newQuantity;
             updateLastModified(order);
             return 1;  // Indicate success
         }
+        node = node->next;
     }
 
     printf("Error: Product/Medicine not found in the order.\n");
     return 0;  // Indicate failure
 }
 
-
 void showOrder(const Order* order) {
     printf("Order Number: %d\n", order->orderNumber);
     printf("Customer ID: %d\n", order->customerID);
     printEmployeeDetails(order->employee);
     printf("Total Amount: $%d\n", order->totalAmount);
-    printList(&order->orderProducts, printProduct);
+    printList(order->orderProducts, printProduct);
     printf("Last Modified: ");
     printDate(&order->lastModified);
 }
@@ -173,7 +184,7 @@ void updateLastModified(Order* order) {
 }
 
 void printOrderProducts(Order* order){
-    printList(&order->orderProducts, printProduct);
+    printList(order->orderProducts, printProduct);
 }
 void removeProductFromOrderClient(Order* order) {
     int productCode, quantity;
@@ -188,7 +199,7 @@ void removeProductFromOrderClient(Order* order) {
 
 void saveOrder(const Order* order, FILE* file) {
     saveDate(file, &order->lastModified);
-    saveList(file, &order->orderProducts, saveOrderProductNode);
+    saveList(file, order->orderProducts, (void (*)(FILE*, const void*))saveOrderProductNode);
     fprintf(file, "%d %d %d %d\n", order->orderNumber, order->customerID, order->employee->id, order->totalAmount);
 }
 
@@ -201,7 +212,7 @@ Order* loadOrder(FILE* file, Employee** employees, int numEmployees) {
     Order* order = (Order*)malloc(sizeof(Order));
     CHECK_ALLOC(order);
     loadDate(file, &order->lastModified);
-    order->orderProducts = loadList(file, loadOrderProductNode);
+    order->orderProducts = loadList(file, (void* (*)(FILE*))loadOrderProductNode);
     fscanf(file, "%d %d %d %d", &order->orderNumber, &order->customerID, &order->employee->id, &order->totalAmount);
     order->employee = findEmployee(employees, numEmployees, order->employee->id);
     return order;
@@ -218,5 +229,5 @@ void freeOrderProductNode(void* data) {
 }
 
 void freeOrder(Order* order) {
-    freeList(&order->orderProducts, freeOrderProductNode);
+    freeList(order->orderProducts, freeOrderProductNode);
 }

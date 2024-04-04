@@ -2,6 +2,8 @@
 #define LINKEDLIST_H
 
 #include <stdlib.h>
+#include <stdio.h>
+#include "general.h"
 
 /**
  * Node in a linked list, containing a generic pointer to any type of item and a pointer to the next node.
@@ -50,7 +52,7 @@ void* removeFromList(LinkedList* list, int (*compare)(void*, void*), void* item)
  * @param list Pointer to the LinkedList structure.
  * @param printItem Function applied to each item in the list.
  */
-void printList(const LinkedList* list, void (*printItem)(void*));
+void printList(const LinkedList* list, void (*printItem)(const void*));
 
 /**
  * Iterates over each item in the list and applies a given function.

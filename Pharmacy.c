@@ -4,6 +4,7 @@
 
 void initPharmacy(Pharmacy* pharmacy) {
     pharmacy->name = NULL;
+    setPharmacyName(pharmacy->name);
     initAddress(&pharmacy->address);
     initStock(&pharmacy->stock);
     pharmacy->employees = NULL;
@@ -19,19 +20,40 @@ void initPharmacy(Pharmacy* pharmacy) {
     pharmacy->prescriptionCapacity = 0;
 }
 
-void createNewOrder(Pharmacy* pharmacy, int customerID, int employeeID) {
+void setPharmacyName(char* name) {
+    char buffer[BUFFER_SIZE];
+    printf("Enter the name of the pharmacy: ");
+    myGets(buffer);
+    name = (char*)malloc(strlen(buffer) + 1);
+    CHECK_ALLOC(name);
+    strcpy(name, buffer);
+}
+
+Order* createNewOrder(Pharmacy* pharmacy, int customerID, int employeeID) {
     // Allocate memory for a new order
     Order* newOrder = (Order*)malloc(sizeof(Order));
     CHECK_ALLOC(newOrder);
 
     // Initialize the new order with the given customer and employee IDs
-    initOrder(newOrder, customerID, employeeID);
+    initOrder(newOrder, customerID, findEmployee(pharmacy->employees, pharmacy->employeeCount, employeeID));
 
     // Update the lastModified date of the order to the current date/time
     updateLastModified(newOrder);
 
     // Add the new order to the pharmacy's openOrders linked list
-    addToList(&pharmacy->openOrders, newOrder);
+    return newOrder;
+}
+
+Order* createNewOrderInteractive(Pharmacy* pharmacy) {
+    Order* newOrder = (Order*)malloc(sizeof(Order));
+    CHECK_ALLOC(newOrder);
+    int customerID, employeeID;
+    printf("Enter the Customer ID for the new order: ");
+    scanf("%d", &customerID);
+    printf("Enter the Employee ID for the new order: ");
+    scanf("%d", &employeeID);
+
+    return createNewOrder(pharmacy, customerID, employeeID);
 }
 
 
@@ -71,6 +93,14 @@ void addCustomer(Pharmacy* pharmacy, const Customer* customer) {
     // Add the new customer to the array and increment the count
     memcpy(&pharmacy->customers[pharmacy->customerCount], customer, sizeof(Customer));
     pharmacy->customerCount++;
+}
+
+void removeEmployeeInteractive(Pharmacy* pharmacy) {
+    int employeeID;
+    printf("Enter the ID of the employee to remove: ");
+    scanf("%d", &employeeID);
+
+    removeEmployee(pharmacy, employeeID);
 }
 
 void removeEmployee(Pharmacy* pharmacy, int employeeID) {
@@ -121,9 +151,9 @@ void purchaseOrder(Pharmacy* pharmacy, int orderNumber) {
 
     if (finalizedOrder != NULL) {
         // Update the stock based on the products in the order
-        OrderProductNode* currentNode = finalizedOrder->orderProducts;
+        OrderProductNode* currentNode = (OrderProductNode*)finalizedOrder->orderProducts->head;
         while (currentNode != NULL) {
-            updateStock(&pharmacy->stock, currentNode->product, currentNode->quantity);
+            updateStock(&pharmacy->stock, currentNode->product->code, currentNode->quantity);
             currentNode = currentNode->next;
         }
 
@@ -156,7 +186,7 @@ void addNewPrescriptionToPharmacy(Pharmacy* pharmacy) {
     // Print all customers to let the user choose
     printAllCustomers(pharmacy);
 
-    int customerID,quantity,used=0;
+    int customerID,quantity;
     char* medicineID;
     // Get Customer ID from the client
     printf("Enter the Customer ID for the new prescription: ");
@@ -192,6 +222,22 @@ void addNewPrescriptionToPharmacy(Pharmacy* pharmacy) {
     initPrescription(&newPrescription,pharmacy->customers,pharmacy->customerCount,customerID,medicineID,&pharmacy->stock,d,quantity);
     // Add the new prescription to the array and increment the count
     pharmacy->prescriptions[pharmacy->prescriptionCount++] = newPrescription;
+}
+
+void addEmployeeInteractive(Pharmacy* pharmacy) {
+    Employee newEmployee;
+    initEmployee(&newEmployee);
+
+    // Add the new employee to the pharmacy
+    addEmployee(pharmacy, &newEmployee);
+}
+
+void addCustomerInteractive(Pharmacy* pharmacy) {
+    Customer newCustomer;
+    initCustomer(&newCustomer);
+
+    // Add the new customer to the pharmacy
+    addCustomer(pharmacy, &newCustomer);
 }
 
 void addProductOrMedicineToOrder(Pharmacy* pharmacy, Order* order) {
@@ -273,18 +319,18 @@ void replaceEmployeeInOrder(Pharmacy* pharmacy, Order* order) {
 
 void printPharmacyDetails(const Pharmacy* pharmacy) {
     printf("Pharmacy Name: %s\n", pharmacy->name);
-    printAddress(&pharmacy->address);
+    printAddressDetails(&pharmacy->address);
     printf("Number of Employees: %d\n", pharmacy->employeeCount);
     printf("Number of Customers: %d\n", pharmacy->customerCount);
     printf("Number of Prescriptions: %d\n", pharmacy->prescriptionCount);
-    printf("Number of Orders: %d\n", getListSize(&pharmacy->openOrders) + getListSize(&pharmacy->orderHistory));
+    printf("Number of Orders: %d\n", pharmacy->orderHistory.size);
     printStockDetails(&pharmacy->stock);
 }
 
 void savePharmacyToFile(FILE* file, const Pharmacy* pharmacy) {
     fprintf(file, "%s\n", pharmacy->name);
-    saveAddress(file, &pharmacy->address);
-    saveStock(file, &pharmacy->stock);
+    saveAddress(&pharmacy->address, file);
+    saveStock(&pharmacy->stock, file);
     fprintf(file, "%d\n", pharmacy->employeeCount);
     for (int i = 0; i < pharmacy->employeeCount; i++) {
         saveEmployee(file, pharmacy->employees[i]);
@@ -295,10 +341,10 @@ void savePharmacyToFile(FILE* file, const Pharmacy* pharmacy) {
     }
     fprintf(file, "%d\n", pharmacy->prescriptionCount);
     for (int i = 0; i < pharmacy->prescriptionCount; i++) {
-        savePrescription(file, &pharmacy->prescriptions[i]);
+        savePrescription(&pharmacy->prescriptions[i], file);
     }
-    saveList(file, &pharmacy->openOrders, saveOrder);
-    saveList(file, &pharmacy->orderHistory, saveOrder);
+    saveList(file, &pharmacy->openOrders, (void (*)(FILE*, const void*))saveOrder);
+    saveList(file, &pharmacy->orderHistory, (void (*)(FILE*, const void*))saveOrder);
 }
 
 Employee** loadEmployees(FILE* file, int numEmployees) {
@@ -323,7 +369,7 @@ Customer* loadCustomers(FILE* file, int numCustomers) {
     return customers;
 }
 
-Prescription* loadPrescriptions(FILE* file, int numPrescriptions, const Customer* customers, int numCustomers, const Stock* stock) {
+Prescription* loadPrescriptions(FILE* file, int numPrescriptions,Customer* customers, int numCustomers,Stock* stock) {
     Prescription* prescriptions = (Prescription*)malloc(numPrescriptions * sizeof(Prescription));
     CHECK_ALLOC(prescriptions);
 
@@ -341,7 +387,7 @@ LinkedList* loadOrders(FILE* file, const Employee** employees, int numEmployees)
     int numOrders;
     fscanf(file, "%d\n", &numOrders);
     for (int i = 0; i < numOrders; i++) {
-        Order* order = loadOrder(file, employees, numEmployees);
+        Order* order = loadOrder(file, (Employee**)employees, numEmployees);
         addToList(orders, order);
     }
 
@@ -356,7 +402,7 @@ void loadPharmacyFromFile(FILE* file, Pharmacy* pharmacy) {
     CHECK_ALLOC(pharmacy->name);
     strcpy(pharmacy->name, buffer);
 
-    loadAddress(file, &pharmacy->address);
+    loadAddress(&pharmacy->address,file);
     loadStock(file, &pharmacy->stock);
 
     fscanf(file, "%d\n", &pharmacy->employeeCount);
@@ -371,8 +417,6 @@ void loadPharmacyFromFile(FILE* file, Pharmacy* pharmacy) {
     pharmacy->openOrders = *loadOrders(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount);
     pharmacy->orderHistory = *loadOrders(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount);
 }
-
-
 
 void saveDataToFile(char* filename, Pharmacy* pharmacy) {
     FILE* file = fopen(filename, "w");
@@ -400,6 +444,6 @@ void freePharmacy(Pharmacy* pharmacy) {
     freeCustomers(pharmacy->customers, pharmacy->customerCount);
     freePrescriptions(pharmacy->prescriptions, pharmacy->prescriptionCount);
     freeStock(&pharmacy->stock);
-    freeList(&pharmacy->openOrders, freeOrder);
-    freeList(&pharmacy->orderHistory, freeOrder);
+    freeList(&pharmacy->openOrders, (void (*)(void*))freeOrder);
+    freeList(&pharmacy->orderHistory, (void (*)(void*))freeOrder);
 }

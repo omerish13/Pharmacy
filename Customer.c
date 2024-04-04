@@ -7,7 +7,7 @@ void initCustomer(Customer* customer) {
     customer->id = ++lastCustomerID;  // Auto-increment the customer ID for each new customer
 }
 
-Customer* findCustomerByID(const Customer* customers, int numCustomers, int customerID) {
+Customer* findCustomerByID(Customer* customers, int numCustomers, int customerID) {
     for (int i = 0; i < numCustomers; i++) {
         if (customers[i].id == customerID) {
             return &customers[i];
@@ -23,7 +23,7 @@ void printCustomerDetails(const Customer* customer) {
 }
 
 void saveCustomer(FILE* file, const Customer* customer) {
-    savePerson(&customer->person, file);
+    savePerson(file,&customer->person);
     fprintf(file, "%d\n", customer->id);
 }
 

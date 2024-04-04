@@ -26,23 +26,32 @@ void setMedicinePrescriptionRequired(Medicine* medicine) {
     medicine->prescriptionRequired = atoi(buffer);
 }
 
-void printMedicineDetails(const Medicine* medicine) {
-    // Print base product details
-    printProductDetails(&medicine->product);
-
-    // Print medicine-specific details
-    printDate(&medicine->expireDate);
-    printf("\nPrescription Required: %s\n", medicine->prescriptionRequired ? "Yes" : "No");
+void printMedicineInStock(const void* item) {
+    const Medicine* medicine = (const Medicine*)item;
+    if (medicine->product.stockQuantity > 0) {
+        printMedicineDetails(medicine);
+    }
 }
 
-void saveMedicine(FILE* file, const Medicine* medicine) {
+void printMedicineDetails(const void* medicine) {
+    const Medicine* med = (const Medicine*)medicine;
+    // Print base product details
+    printProductDetails(&med->product);
+
+    // Print medicine-specific details
+    printDate(&med->expireDate);
+    printf("\nPrescription Required: %s\n", med->prescriptionRequired ? "Yes" : "No");
+}
+
+void saveMedicine(FILE* file, const void* medicine) {
+    const Medicine* med = (const Medicine*)medicine;
     // Save the base product details
-    saveProduct(file, &medicine->product);
+    saveProduct(file, &med->product);
 
     // Save medicine-specific details
-    fprintf(file, "%s\n", medicine->medicineID);
-    saveDate(file, &medicine->expireDate);
-    fprintf(file, "%d\n", medicine->prescriptionRequired);
+    fprintf(file, "%s\n", med->medicineID);
+    saveDate(file, &med->expireDate);
+    fprintf(file, "%d\n", med->prescriptionRequired);
 }
 
 Medicine* loadMedicine(FILE* file) {
@@ -60,6 +69,7 @@ Medicine* loadMedicine(FILE* file) {
     return medicine;
 }
 
-void freeMedicine(Medicine* medicine) {
-    freeProduct(&medicine->product);
+void freeMedicine(void* medicine) {
+    Medicine* med = (Medicine*)medicine;
+    freeProduct(med);
 }

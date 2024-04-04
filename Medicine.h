@@ -36,17 +36,23 @@ void setMedicineExpireDate(Medicine* medicine);
 void setMedicinePrescriptionRequired(Medicine* medicine);
 
 /**
+ * Prints the details of a medicine in stock, including product details and medicine-specific information.
+ * @param item Pointer to the Medicine structure to print.
+ */
+void printMedicineInStock(const void* item);
+
+/**
  * Prints the details of the medicine in a formatted manner, including product details and medicine-specific information.
  * @param medicine Pointer to the Medicine structure whose details are being printed.
  */
-void printMedicineDetails(const Medicine* medicine);
+void printMedicineDetails(const void* medicine);
 
 /**
  * Saves the details of a medicine to a file, including product details and medicine-specific information.
  * @param file Pointer to the file where the medicine details are to be saved.
  * @param medicine Pointer to the Medicine structure to save.
  */
-void saveMedicine(FILE* file, const Medicine* medicine);
+void saveMedicine(FILE* file, const void* medicine);
 
 /**
  * Loads the details of a medicine from a file, including product details and medicine-specific information.
@@ -59,7 +65,7 @@ Medicine* loadMedicine(FILE* file);
  * Frees the dynamically allocated memory for the medicine's product details.
  * @param medicine Pointer to the Medicine structure to free.
  */
-void freeMedicine(Medicine* medicine);
+void freeMedicine(void* medicine);
 
 
 

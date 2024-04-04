@@ -12,9 +12,9 @@ void showAvailableProducts(const Stock* stock) {
      * Displays all available products in the stock, including medicines.
      */
     printf("Available Products:\n");
-    traverseLinkedList(&stock->products, printProduct);  // printProduct is a callback function
+    traverseLinkedList(&stock->products, printProductInStock);  // printProduct is a callback function
     printf("Available Medicines:\n");
-    traverseLinkedList(&stock->medicines, printMedicineDetails);  // printMedicine is a callback function
+    traverseLinkedList(&stock->medicines, printMedicineInStock);  // printMedicine is a callback function
 }
 
 
@@ -50,11 +50,11 @@ Medicine* findMedicine(const Stock* stock, int code) {
     return NULL;  // Product not found
 }
 
-Medicine* findMedicineByID(const Stock* stock, const char* medicineID)
+Medicine* findMedicineByID(Stock* stock, const char* medicineID)
 {
     Medicine* temp = (Medicine*)malloc(sizeof(Medicine));
     CHECK_ALLOC(temp);
-    *temp->medicineID = strdup(medicineID);
+    strcpy(temp->medicineID,medicineID);
 
     qsort(&stock->medicines,stock->medicines.size,sizeof(Medicine*),compareMedicineByID);
     return (Medicine*)bsearch(temp,&stock->medicines,stock->medicines.size,sizeof(Medicine),compareMedicineByID);
@@ -152,20 +152,29 @@ void saveStock(const Stock* stock, FILE* file) {
     fprintf(file, "%d %d\n", stock->products.size, stock->medicines.size);
 
     // Save the products
-    saveList(&stock->products, file, saveProduct);
+    saveList(file,&stock->products, saveProduct);
 
     // Save the medicines
-    saveList(&stock->medicines, file, saveMedicine);
+    saveList(file,&stock->medicines, saveMedicine);
 }
 
 void loadStock(FILE* file, Stock* stock) {
     initStock(stock);
 
+    int numProducts, numMedicines;
+    fscanf(file, "%d %d", &numProducts, &numMedicines);
+
     // Load the products
-    stock->products = *(loadList(file, loadProduct));
+    for (int i = 0; i < numProducts; i++) {
+        Product* product = loadProduct(file);
+        addToList(&stock->products, product);
+    }
 
     // Load the medicines
-    stock->medicines = *(loadList(file, loadMedicine));
+    for (int i = 0; i < numMedicines; i++) {
+        Medicine* medicine = loadMedicine(file);
+        addToList(&stock->medicines, medicine);
+    }
 }
 
 void freeStock(Stock* stock) {

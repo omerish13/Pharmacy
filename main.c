@@ -40,10 +40,10 @@ void manageOrder(Pharmacy* pharmacy, Order* order) {
                 addProductOrMedicineToOrder(pharmacy, order);  // Function to add products/medicines
                 break;
             case 2:
-                removeProductOrMedicineFromOrder(order);  // Function to remove products/medicines
+                removeProductFromOrderClient(order);  // Function to remove products/medicines
                 break;
             case 3:
-                updateProductOrMedicineQuantityInOrder(order);  // Function to update quantities
+                updateProductQuantityOrder(pharmacy,order);  // Function to update quantities
                 break;
             case 4:
                 replaceEmployeeInOrder(pharmacy, order);  // Function to replace employee
@@ -97,7 +97,8 @@ int main() {
                 addNewMedicineToStock(&pharmacy.stock);
                 break;
             case 4: {
-                Order* newOrder = createNewOrderInteractive(&pharmacy);  // This function should return a pointer to the new order
+                Order* newOrder = createNewOrderInteractive(&pharmacy);
+                addToList(&pharmacy.openOrders, newOrder);  
                 manageOrder(&pharmacy, newOrder);
                 break;
             }
