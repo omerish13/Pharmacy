@@ -3,7 +3,6 @@
 #include <string.h>
 
 void initPharmacy(Pharmacy* pharmacy) {
-    pharmacy->name = NULL;
     setPharmacyName(pharmacy->name);
     initAddress(&pharmacy->address);
     initStock(&pharmacy->stock);

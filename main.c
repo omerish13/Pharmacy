@@ -34,6 +34,7 @@ void manageOrder(Pharmacy* pharmacy, Order* order) {
     do {
         printOrderManagementMenu();
         scanf("%d", &choice);
+        clearInputBuffer();
 
         switch (choice) {
             case 1:
@@ -76,15 +77,16 @@ void showAndUpdateStock(Pharmacy* pharmacy) {
 
 int main() {
     Pharmacy pharmacy;
-    if (!loadDataFromFile("pharmacy.txt", &pharmacy)) {
-        printf("Error loading data from file. Exiting program.\n");
-        initPharmacy(&pharmacy);
-    }
+    // if (!loadDataFromFile("pharmacy.txt", &pharmacy)) {
+    //     printf("Error loading data from file. Exiting program.\n");
+    // }
+    initPharmacy(&pharmacy);
     
     int choice;
     do {
         printMainMenu();
         scanf("%d", &choice);
+        clearInputBuffer();
 
         switch (choice) {
             case 1:

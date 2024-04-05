@@ -15,7 +15,7 @@ void initMedicine(Medicine* medicine, const char* medicineID) {
 }
 
 void setMedicineExpireDate(Medicine* medicine) {
-    printf("Enter expiration date (e.g., YYYY-MM-DD): ");
+    printf("Enter expiration date (e.g., DD/MM/YYYY): ");
     initDate(&medicine->expireDate);
 }
 

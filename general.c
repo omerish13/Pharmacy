@@ -10,3 +10,8 @@ void myGets(char* buffer) {
         printf("Error reading input.\n");
     }
 }
+
+void clearInputBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}

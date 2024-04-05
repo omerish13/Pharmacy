@@ -80,6 +80,7 @@ void addNewMedicineToStock(Stock* stock) {
     do {
         printf("Enter unique Medicine ID: ");
         scanf("%6s", medicineID);  // Get medicine ID from user
+        clearInputBuffer();
 
         // Use findMedicineByID to check if a medicine with the given ID already exists
         existingMedicine = findMedicineByID(stock, medicineID);

@@ -19,4 +19,9 @@
  */
 void myGets(char* buffer);
 
+/**
+ * Clears the input buffer by reading and discarding any remaining characters up to the newline or EOF.
+ */
+void clearInputBuffer();
+
 #endif // GENERAL_H
