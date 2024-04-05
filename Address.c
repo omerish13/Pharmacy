@@ -17,7 +17,7 @@ void setAddressCountry(Address* address) {
     printf("Enter country: ");
     myGets(buffer);
     address->country = (char*)malloc(strlen(buffer) + 1);
-    CHECK_ALLOC(address->country);
+    CHECK_ALLOC_VOID(address->country);
     strcpy(address->country, buffer);
 }
 
@@ -26,7 +26,7 @@ void setAddressCity(Address* address) {
     printf("Enter city: ");
     myGets(buffer);
     address->city = (char*)malloc(strlen(buffer) + 1);
-    CHECK_ALLOC(address->city);
+    CHECK_ALLOC_VOID(address->city);
     strcpy(address->city, buffer);
 }
 
@@ -35,7 +35,7 @@ void setAddressStreet(Address* address) {
     printf("Enter street: ");
     myGets(buffer);
     address->street = (char*)malloc(strlen(buffer) + 1);
-    CHECK_ALLOC(address->street);
+    CHECK_ALLOC_VOID(address->street);
     strcpy(address->street, buffer);
 }
 

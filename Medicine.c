@@ -56,7 +56,7 @@ void saveMedicine(FILE* file, const void* medicine) {
 
 Medicine* loadMedicine(FILE* file) {
     Medicine* medicine = (Medicine*)malloc(sizeof(Medicine));
-    CHECK_ALLOC(medicine);
+    CHECK_ALLOC_STRUCT(medicine);
 
     // Load the base product details
     medicine->product = *loadProduct(file);

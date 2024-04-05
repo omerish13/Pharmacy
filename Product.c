@@ -28,7 +28,7 @@ void setProductName(Product* product) {
     printf("Enter product name: ");
     myGets(buffer);
     product->name = (char*)malloc(strlen(buffer) + 1);
-    CHECK_ALLOC(product->name);
+    CHECK_ALLOC_VOID(product->name);
     strcpy(product->name, buffer);
 }
 
@@ -104,7 +104,7 @@ Product* loadProduct(FILE* file) {
     char buffer[BUFFER_SIZE];
     fscanf(file, "%s\n", buffer);
     product->name = (char*)malloc(strlen(buffer) + 1);
-    CHECK_ALLOC(product->name);
+    CHECK_ALLOC_STRUCT(product->name);
     strcpy(product->name, buffer);
     fscanf(file, "%d\n", (int*)&product->type);
     fscanf(file, "%lf\n", &product->price);

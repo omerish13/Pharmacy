@@ -50,7 +50,7 @@ void savePrescription(const Prescription* prescription, FILE* file) {
 
 Prescription* loadPrescription(FILE* file,Customer* customers, int numCustomers,Stock* stock) {
     Prescription* prescription = (Prescription*)malloc(sizeof(Prescription));
-    CHECK_ALLOC(prescription);
+    CHECK_ALLOC_STRUCT(prescription);
 
     fscanf(file, "%d %d %s %d %d ", &prescription->id, &prescription->customer->id, prescription->medicine->medicineID,
            &prescription->quantity, &prescription->used);

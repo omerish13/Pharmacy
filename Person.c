@@ -14,7 +14,7 @@ void setPersonName(Person* person) {
     printf("Enter person name: ");
     myGets(buffer);
     person->name = (char*)malloc(strlen(buffer) + 1);
-    CHECK_ALLOC(person->name);
+    CHECK_ALLOC_VOID(person->name);
     strcpy(person->name, buffer);
 }
 
@@ -44,7 +44,7 @@ void setPersonPhoneNumber(Person* person) {
         
         if (valid) {
             person->phoneNumber = (char*)malloc(strlen(buffer) + 1);
-            CHECK_ALLOC(person->phoneNumber);
+            CHECK_ALLOC_VOID(person->phoneNumber);
             strcpy(person->phoneNumber, buffer);
         } else {
             printf("Invalid phone number format. Please try again.\n");

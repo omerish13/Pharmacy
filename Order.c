@@ -98,7 +98,7 @@ int addMedicineToOrder(Order* order, Prescription* prescriptions, int numOfPresc
 
     // Add the medicine to the order with the prescribed quantity
     OrderProductNode* newNode = (OrderProductNode*)malloc(sizeof(OrderProductNode));
-    CHECK_ALLOC(newNode);
+    CHECK_ALLOC_INT(newNode);
     newNode->product = (Product*)medicine;
     newNode->quantity = prescribedQuantity;
     newNode->next = NULL;
@@ -210,7 +210,7 @@ void saveOrderProductNode(FILE* file, void* data) {
 
 Order* loadOrder(FILE* file, Employee** employees, int numEmployees) {
     Order* order = (Order*)malloc(sizeof(Order));
-    CHECK_ALLOC(order);
+    CHECK_ALLOC_STRUCT(order);
     loadDate(file, &order->lastModified);
     order->orderProducts = loadList(file, (void* (*)(FILE*))loadOrderProductNode);
     fscanf(file, "%d %d %d %d", &order->orderNumber, &order->customerID, &order->employee->id, &order->totalAmount);

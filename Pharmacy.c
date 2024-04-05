@@ -25,14 +25,14 @@ void setPharmacyName(char* name) {
     printf("Enter the name of the pharmacy: ");
     myGets(buffer);
     name = (char*)malloc(strlen(buffer) + 1);
-    CHECK_ALLOC(name);
+    CHECK_ALLOC_VOID(name);
     strcpy(name, buffer);
 }
 
 Order* createNewOrder(Pharmacy* pharmacy, int customerID, int employeeID) {
     // Allocate memory for a new order
     Order* newOrder = (Order*)malloc(sizeof(Order));
-    CHECK_ALLOC(newOrder);
+    CHECK_ALLOC_STRUCT(newOrder);
 
     // Initialize the new order with the given customer and employee IDs
     initOrder(newOrder, customerID, findEmployee(pharmacy->employees, pharmacy->employeeCount, employeeID));
@@ -46,7 +46,7 @@ Order* createNewOrder(Pharmacy* pharmacy, int customerID, int employeeID) {
 
 Order* createNewOrderInteractive(Pharmacy* pharmacy) {
     Order* newOrder = (Order*)malloc(sizeof(Order));
-    CHECK_ALLOC(newOrder);
+    CHECK_ALLOC_STRUCT(newOrder);
     int customerID, employeeID;
     printf("Enter the Customer ID for the new order: ");
     scanf("%d", &customerID);
@@ -63,7 +63,7 @@ void addEmployee(Pharmacy* pharmacy, const Employee* employee) {
         int newCapacity = pharmacy->employeeCapacity > 0 ? pharmacy->employeeCapacity * 2 : 1;  // Double the capacity, start with 1 if 0
         Employee** resizedArray = (Employee**)realloc(pharmacy->employees, newCapacity * sizeof(Employee*));
 
-        CHECK_ALLOC(resizedArray);
+        CHECK_ALLOC_VOID(resizedArray);
 
         pharmacy->employees = resizedArray;
         pharmacy->employeeCapacity = newCapacity;
@@ -197,7 +197,7 @@ void addNewPrescriptionToPharmacy(Pharmacy* pharmacy) {
     char buffer[BUFFER_SIZE];
     myGets(buffer);
     medicineID = (char*)malloc(strlen(buffer)+1);
-    CHECK_ALLOC(medicineID);
+    CHECK_ALLOC_VOID(medicineID);
     strcpy(medicineID,buffer);
 
     printf("Enter the quantity for the prescription: ");
@@ -349,7 +349,7 @@ void savePharmacyToFile(FILE* file, const Pharmacy* pharmacy) {
 
 Employee** loadEmployees(FILE* file, int numEmployees) {
     Employee** employees = (Employee**)malloc(numEmployees * sizeof(Employee*));
-    CHECK_ALLOC(employees);
+    CHECK_ALLOC_STRUCT(employees);
 
     for (int i = 0; i < numEmployees; i++) {
         employees[i] = loadEmployee(file);
@@ -360,7 +360,7 @@ Employee** loadEmployees(FILE* file, int numEmployees) {
 
 Customer* loadCustomers(FILE* file, int numCustomers) {
     Customer* customers = (Customer*)malloc(numCustomers * sizeof(Customer));
-    CHECK_ALLOC(customers);
+    CHECK_ALLOC_STRUCT(customers);
 
     for (int i = 0; i < numCustomers; i++) {
         customers[i] = *loadCustomer(file);
@@ -371,7 +371,7 @@ Customer* loadCustomers(FILE* file, int numCustomers) {
 
 Prescription* loadPrescriptions(FILE* file, int numPrescriptions,Customer* customers, int numCustomers,Stock* stock) {
     Prescription* prescriptions = (Prescription*)malloc(numPrescriptions * sizeof(Prescription));
-    CHECK_ALLOC(prescriptions);
+    CHECK_ALLOC_STRUCT(prescriptions);
 
     for (int i = 0; i < numPrescriptions; i++) {
         prescriptions[i] = *loadPrescription(file, customers, numCustomers, stock);
@@ -399,7 +399,7 @@ void loadPharmacyFromFile(FILE* file, Pharmacy* pharmacy) {
     char buffer[BUFFER_SIZE];
     myGets(buffer);
     pharmacy->name = (char*)malloc(strlen(buffer) + 1);
-    CHECK_ALLOC(pharmacy->name);
+    CHECK_ALLOC_VOID(pharmacy->name);
     strcpy(pharmacy->name, buffer);
 
     loadAddress(&pharmacy->address,file);

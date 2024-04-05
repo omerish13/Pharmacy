@@ -14,7 +14,7 @@ void setEmployeePosition(Employee* employee) {
     printf("Enter employee position: ");
     myGets(buffer);
     employee->position = (char*)malloc(strlen(buffer) + 1);
-    CHECK_ALLOC(employee->position);
+    CHECK_ALLOC_VOID(employee->position);
     strcpy(employee->position, buffer);
 }
 
@@ -54,13 +54,13 @@ void saveEmployee(FILE* file, const Employee* employee) {
 
 Employee* loadEmployee(FILE* file) {
     Employee* employee = (Employee*)malloc(sizeof(Employee));
-    CHECK_ALLOC(employee);
+    CHECK_ALLOC_STRUCT(employee);
     loadPerson(&employee->person,file);
     fscanf(file, "%d\n", &employee->id);
     char buffer[BUFFER_SIZE];
     fscanf(file, "%s\n", buffer);
     employee->position = (char*)malloc(strlen(buffer) + 1);
-    CHECK_ALLOC(employee->position);
+    CHECK_ALLOC_STRUCT(employee->position);
     strcpy(employee->position, buffer);
     fscanf(file, "%lf\n", &employee->salary);
     return employee;

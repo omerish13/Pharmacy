@@ -29,7 +29,7 @@ void saveCustomer(FILE* file, const Customer* customer) {
 
 Customer* loadCustomer(FILE* file) {
     Customer* customer = (Customer*)malloc(sizeof(Customer));
-    CHECK_ALLOC(customer);
+    CHECK_ALLOC_STRUCT(customer);
 
     loadPerson(&customer->person, file);
     fscanf(file, "%d\n", &customer->id);

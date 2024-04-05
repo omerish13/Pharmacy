@@ -76,7 +76,7 @@ void saveList(FILE* file, const LinkedList* list, void (*saveItem)(FILE*, const 
 
 LinkedList* loadList(FILE* file, void* (*loadItem)(FILE*)) {
     LinkedList* list = (LinkedList*)malloc(sizeof(LinkedList));
-    CHECK_ALLOC(list);
+    CHECK_ALLOC_STRUCT(list);
 
     initList(list);
 

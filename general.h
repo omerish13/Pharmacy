@@ -5,7 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define CHECK_ALLOC(ptr) if ((ptr) == NULL) { perror("Failed to allocate memory"); exit(EXIT_FAILURE); }
+#define CHECK_ALLOC_VOID(ptr) if ((ptr) == NULL) { perror("Failed to allocate memory"); return; }
+#define CHECK_ALLOC_INT(ptr) if ((ptr) == NULL) { perror("Failed to allocate memory"); return 0; }
+#define CHECK_ALLOC_STRUCT(ptr) if ((ptr) == NULL) { perror("Failed to allocate memory"); return NULL; }
 #define BUFFER_SIZE 1024  // Define a buffer size for input
 
 /**

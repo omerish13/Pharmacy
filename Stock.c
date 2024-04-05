@@ -53,7 +53,7 @@ Medicine* findMedicine(const Stock* stock, int code) {
 Medicine* findMedicineByID(Stock* stock, const char* medicineID)
 {
     Medicine* temp = (Medicine*)malloc(sizeof(Medicine));
-    CHECK_ALLOC(temp);
+    CHECK_ALLOC_STRUCT(temp);
     strcpy(temp->medicineID,medicineID);
 
     qsort(&stock->medicines,stock->medicines.size,sizeof(Medicine*),compareMedicineByID);
