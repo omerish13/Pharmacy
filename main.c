@@ -13,7 +13,8 @@ void printMainMenu() {
     printf("6. Add Customer\n");
     printf("7. Remove Employee\n");
     printf("8. Show and Update Stock\n");
-    printf("9. Exit\n");
+    printf("9. Show Pharmacy Details\n");
+    printf("-1. Exit\n");
     printf("Enter your choice: ");
 }
 
@@ -77,10 +78,10 @@ void showAndUpdateStock(Pharmacy* pharmacy) {
 
 int main() {
     Pharmacy pharmacy;
-    // if (!loadDataFromFile("pharmacy.txt", &pharmacy)) {
-    //     printf("Error loading data from file. Exiting program.\n");
-    // }
-    initPharmacy(&pharmacy);
+    if (!loadDataFromFile("pharmacy.txt", &pharmacy)) {
+        printf("Error loading data from file. Initialize from client.\n");
+        initPharmacyClient(&pharmacy);
+    }
     
     int choice;
     do {
@@ -117,12 +118,15 @@ int main() {
                 showAndUpdateStock(&pharmacy);
                 break;
             case 9:
+                printPharmacyDetails(&pharmacy);
+                break;
+            case -1:
                 printf("Exiting Pharmacy Management System.\n");
                 break;
             default:
                 printf("Invalid choice, please try again.\n");
         }
-    } while (choice != 9);
+    } while (choice != -1);
 
     saveDataToFile("pharmacy.txt",&pharmacy);  // Save all data to file before exiting
     freePharmacy(&pharmacy);  // Clean up resources

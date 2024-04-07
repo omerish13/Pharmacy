@@ -35,6 +35,14 @@ typedef struct Pharmacy {
 void initPharmacy(Pharmacy* pharmacy);
 
 /**
+ * Initializes a Pharmacy structure with dynamic allocation. Sets initial capacity and allocates memory
+ * for the employee, customer, and prescription arrays, preparing the pharmacy for use. Getting data from user.
+ * 
+ * @param pharmacy Pointer to the Pharmacy structure to be initialized.
+ */
+void initPharmacyClient(Pharmacy* pharmacy);
+
+/**
  * Sets the name of the pharmacy after dynamically allocating memory for it.
  * 
  * @param pharmacy Pointer to the Pharmacy structure whose name is being set.

@@ -40,10 +40,9 @@ void setAddressStreet(Address* address) {
 }
 
 void setAddressHouseNumber(Address* address) {
-    char buffer[BUFFER_SIZE];
     printf("Enter house number: ");
-    myGets(buffer);
-    address->houseNumber = atoi(buffer);
+    scanf("%d", &address->houseNumber);
+    clearInputBuffer();
 }
 
 int setAddressPostalCode(Address* address) {
@@ -68,7 +67,17 @@ void saveAddress(const Address* address, FILE* file) {
 }
 
 void loadAddress(Address* address, FILE* file){
-    fscanf(file, "%s\n%s\n%s\n%d\n%s\n", address->country, address->city, address->street, &address->houseNumber, address->postalCode);
+    address->country = (char*)malloc(BUFFER_SIZE);
+    CHECK_ALLOC_VOID(address->country);
+    address->city = (char*)malloc(BUFFER_SIZE);
+    CHECK_ALLOC_VOID(address->city);
+    address->street = (char*)malloc(BUFFER_SIZE);
+    CHECK_ALLOC_VOID(address->street);
+    fscanf(file, "%s\n", address->country);
+    fscanf(file, "%s\n", address->city);
+    fscanf(file, "%s\n", address->street);
+    fscanf(file, "%d\n", &address->houseNumber);
+    fscanf(file, "%s\n", address->postalCode);
 }
 
 void freeAddress(Address* address) {

@@ -24,4 +24,12 @@ void myGets(char* buffer);
  */
 void clearInputBuffer();
 
+/**
+ * Reads a string from a file and stores it in a dynamically allocated buffer.
+ * 
+ * @param file The file to read from.
+ * @param str A pointer to a char pointer where the string will be stored.
+ */
+void readString(FILE* file, char** str);
+
 #endif // GENERAL_H

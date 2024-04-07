@@ -152,6 +152,10 @@ void saveStock(const Stock* stock, FILE* file) {
     // Save the number of products and medicines in the stock
     fprintf(file, "%d %d\n", stock->products.size, stock->medicines.size);
 
+    if (stock->products.size == 0 && stock->medicines.size == 0) {
+        return;
+    }
+
     // Save the products
     saveList(file,&stock->products, saveProduct);
 

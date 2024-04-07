@@ -3,6 +3,24 @@
 #include <string.h>
 
 void initPharmacy(Pharmacy* pharmacy) {
+    pharmacy->name = (char*)malloc(BUFFER_SIZE);
+    CHECK_ALLOC_VOID(pharmacy->name);
+    pharmacy->employees = NULL;
+    pharmacy->employeeCount = 0;
+    pharmacy->employeeCapacity = 0;
+    pharmacy->customers = NULL;
+    pharmacy->customerCount = 0;
+    pharmacy->customerCapacity = 0;
+    initList(&pharmacy->openOrders);
+    initList(&pharmacy->orderHistory);
+    pharmacy->prescriptions = NULL;
+    pharmacy->prescriptionCount = 0;
+    pharmacy->prescriptionCapacity = 0;
+}
+
+void initPharmacyClient(Pharmacy* pharmacy) {
+    pharmacy->name = (char*)malloc(BUFFER_SIZE);
+    CHECK_ALLOC_VOID(pharmacy->name);
     setPharmacyName(pharmacy->name);
     initAddress(&pharmacy->address);
     initStock(&pharmacy->stock);
@@ -20,12 +38,8 @@ void initPharmacy(Pharmacy* pharmacy) {
 }
 
 void setPharmacyName(char* name) {
-    char buffer[BUFFER_SIZE];
     printf("Enter the name of the pharmacy: ");
-    myGets(buffer);
-    name = (char*)malloc(strlen(buffer) + 1);
-    CHECK_ALLOC_VOID(name);
-    strcpy(name, buffer);
+    myGets(name);
 }
 
 Order* createNewOrder(Pharmacy* pharmacy, int customerID, int employeeID) {
@@ -347,6 +361,9 @@ void savePharmacyToFile(FILE* file, const Pharmacy* pharmacy) {
 }
 
 Employee** loadEmployees(FILE* file, int numEmployees) {
+    if (numEmployees <= 0) {
+        return NULL;
+    }
     Employee** employees = (Employee**)malloc(numEmployees * sizeof(Employee*));
     CHECK_ALLOC_STRUCT(employees);
 
@@ -358,6 +375,9 @@ Employee** loadEmployees(FILE* file, int numEmployees) {
 }
 
 Customer* loadCustomers(FILE* file, int numCustomers) {
+    if (numCustomers <= 0) {
+        return NULL;
+    }
     Customer* customers = (Customer*)malloc(numCustomers * sizeof(Customer));
     CHECK_ALLOC_STRUCT(customers);
 
@@ -369,6 +389,9 @@ Customer* loadCustomers(FILE* file, int numCustomers) {
 }
 
 Prescription* loadPrescriptions(FILE* file, int numPrescriptions,Customer* customers, int numCustomers,Stock* stock) {
+    if (numPrescriptions <= 0) {
+        return NULL;
+    }
     Prescription* prescriptions = (Prescription*)malloc(numPrescriptions * sizeof(Prescription));
     CHECK_ALLOC_STRUCT(prescriptions);
 
@@ -394,25 +417,16 @@ LinkedList* loadOrders(FILE* file, const Employee** employees, int numEmployees)
 }
 
 void loadPharmacyFromFile(FILE* file, Pharmacy* pharmacy) {
-    initPharmacy(pharmacy);
-    char buffer[BUFFER_SIZE];
-    myGets(buffer);
-    pharmacy->name = (char*)malloc(strlen(buffer) + 1);
-    CHECK_ALLOC_VOID(pharmacy->name);
-    strcpy(pharmacy->name, buffer);
-
-    loadAddress(&pharmacy->address,file);
-    loadStock(file, &pharmacy->stock);
-
+    // Read the pharmacy name from the file
+    readString(file, &pharmacy->name);
+    loadAddress(&pharmacy->address, file);
+    loadStock(file,&pharmacy->stock);
     fscanf(file, "%d\n", &pharmacy->employeeCount);
     pharmacy->employees = loadEmployees(file, pharmacy->employeeCount);
-
     fscanf(file, "%d\n", &pharmacy->customerCount);
     pharmacy->customers = loadCustomers(file, pharmacy->customerCount);
-
     fscanf(file, "%d\n", &pharmacy->prescriptionCount);
-    pharmacy->prescriptions = loadPrescriptions(file, pharmacy->prescriptionCount, pharmacy->customers, pharmacy->customerCount, &pharmacy->stock);
-
+    pharmacy->prescriptions = loadPrescriptions(file, pharmacy->prescriptionCount,pharmacy->customers,pharmacy->customerCount,&pharmacy->stock);
     pharmacy->openOrders = *loadOrders(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount);
     pharmacy->orderHistory = *loadOrders(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount);
 }
@@ -429,10 +443,26 @@ void saveDataToFile(char* filename, Pharmacy* pharmacy) {
 
 int loadDataFromFile(char* filename, Pharmacy* pharmacy) {
     FILE* file = fopen(filename, "r");
-    if (file == NULL) {
+    if (file == NULL || feof(file)) {
         printf("Failed to open file for reading.\n");
         return 0;
     }
+
+    // Seek to the end of the file
+    fseek(file, 0, SEEK_END);
+
+    // If the position is 0, the file is empty
+    if (ftell(file) == 0) {
+        printf("File is empty.\n");
+        fclose(file);
+        return 0;
+    }
+
+    // Seek back to the start of the file
+    fseek(file, 0, SEEK_SET);
+
+    pharmacy = (Pharmacy*)malloc(sizeof(Pharmacy));
+    CHECK_ALLOC_INT(pharmacy);
     loadPharmacyFromFile(file, pharmacy);
     fclose(file);
     return 1;
