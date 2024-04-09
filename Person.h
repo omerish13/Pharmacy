@@ -59,6 +59,19 @@ int validatePhoneNumber(const char* phoneNumber);
 void printPersonDetails(const Person* person);
 
 /**
+ * Save person details to a binary file.
+ * @param file Pointer to the binary file.
+ * @param person Pointer to the Person structure to save.
+ */
+int savePersonToBinary(FILE* file, const Person* person);
+
+/**
+ * Load person details from a binary file.
+ * @param file Pointer to the binary file.
+ * @param person Pointer to the Person structure to load.
+ */
+int loadPersonFromBinary(Person* person, FILE* file);
+/**
  * Save person details from the user, including name and phone number.
  * @param person Pointer to the Person structure to store the details.
  */

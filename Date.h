@@ -43,6 +43,22 @@ int compareDates(const Date* date1, const Date* date2);
 void printDate(const Date* date);
 
 /**
+ * Saves the date to a binary file.
+ * @param file Pointer to the file to save the date to.
+ * @param date Pointer to the Date structure to save.
+ * @return 1 if the save was successful, 0 otherwise.
+ */
+int saveDateToBinary(FILE* file, const Date* date);
+
+/**
+ * Loads the date from a binary file.
+ * @param date Pointer to the Date structure to load.
+ * @param file Pointer to the file to load the date from.
+ * @return 1 if the load was successful, 0 otherwise.
+ */
+int loadDateFromBinary(Date* date, FILE* file);
+
+/**
  * Saves the date to a file in the format "DD/MM/YYYY".
  * @param file Pointer to the file to save the date to.
  * @param date Pointer to the Date structure to save.

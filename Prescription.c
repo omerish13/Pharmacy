@@ -41,6 +41,56 @@ void printPrescription(const Prescription* prescription) {
     // Additional details can be printed here if needed
 }
 
+void printPrescriptions(const Prescription* prescriptions, int numPrescriptions) {
+    for (int i = 0; i < numPrescriptions; i++) {
+        printPrescription(&prescriptions[i]);
+    }
+}
+
+int savePrescriptionToBinary(const Prescription* prescription, FILE* file) {
+    if (fwrite(&prescription->id, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+    if (fwrite(&prescription->customer->id, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+    if (fwrite(prescription->medicine->medicineID, sizeof(char), ID_LENGTH, file) != ID_LENGTH) {
+        return 0;
+    }
+    if (fwrite(&prescription->quantity, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+    if (fwrite(&prescription->used, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+    return 1;
+}
+
+int loadPrescriptionFromBinary(Prescription* prescription, FILE* file, Customer* customers, int numCustomers, Stock* stock) {
+    if (fread(&prescription->id, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+    int customerID;
+    if (fread(&customerID, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+    char medicineID[ID_LENGTH];
+    if (fread(medicineID, sizeof(char), ID_LENGTH, file) != ID_LENGTH) {
+        return 0;
+    }
+    if (fread(&prescription->quantity, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+    if (fread(&prescription->used, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+
+    prescription->customer = findCustomerByID(customers, numCustomers, customerID);
+    prescription->medicine = findMedicineByID(stock, medicineID);
+
+    return 1;
+}
+
 void savePrescription(const Prescription* prescription, FILE* file) {
     fprintf(file, "%d %d %s %d %d ", prescription->id, prescription->customer->id, prescription->medicine->medicineID,
             prescription->quantity, prescription->used);

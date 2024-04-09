@@ -110,6 +110,24 @@ void addNewMedicineToStock(Stock* stock);
 int compareMedicineByID(const void* a, const void* b);
 
 /**
+ * Saves the stock details to a binary file, including the products and medicines.
+ *
+ * @param stock Pointer to the Stock structure to save.
+ * @param file Pointer to the file where the stock details are to be saved.
+ * @return 1 if the stock is saved successfully, 0 otherwise.
+ */
+int saveStockToBinary(const Stock *stock, FILE *file);
+
+/**
+ * Loads the stock details from a binary file, including the products and medicines.
+ *
+ * @param file Pointer to the file from which the stock details are to be loaded.
+ * @param stock Pointer to the Stock structure to load the details into.
+ * @return 1 if the stock is loaded successfully, 0 otherwise.
+ */
+int loadStockFromBinary(FILE* file, Stock* stock);
+
+/**
  * Saves the stock details to a file, including the products and medicines.
  *
  * @param stock Pointer to the Stock structure to save.

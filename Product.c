@@ -82,11 +82,47 @@ void printProductInStock(const void* item) {
 }
 
 void printProductDetails(const Product* product) {
-    printf("Product Code: %d", product->code);
-    printf("Name: %s", product->name);
-    printf("Type: %s", ProductTypeNames[product->type]);
-    printf("Price: $%.2f", product->price);
+    printf("Product Code: %d ", product->code);
+    printf("Name: %s ", product->name);
+    printf("Type: %s ", ProductTypeNames[product->type]);
+    printf("Price: $%.2f ", product->price);
     printf("Stock Quantity: %d\n", product->stockQuantity);
+}
+
+int saveProductToBinary(FILE* file, const Product* product) {
+    if (fwrite(&product->code, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+    int nameLength = strlen(product->name) + 1;
+    if (fwrite(&nameLength, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+    if (fwrite(product->name, sizeof(char), nameLength, file) != nameLength) {
+        return 0;
+    }
+    if (fwrite(&product->type, sizeof(ProductType), 1, file) != 1) {
+        return 0;
+    }
+    if (fwrite(&product->price, sizeof(double), 1, file) != 1) {
+        return 0;
+    }
+    if (fwrite(&product->stockQuantity, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+
+    return 1;
+}
+
+void* loadProductFromBinary(FILE* file) {
+    Product* product = malloc(sizeof(Product));
+    if (product == NULL) {
+        return NULL;
+    }
+    if (fread(product, sizeof(Product), 1, file) != 1) {
+        free(product);
+        return NULL;
+    }
+    return product;
 }
 
 void saveProduct(FILE* file, const void* product) {

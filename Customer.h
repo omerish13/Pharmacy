@@ -35,6 +35,21 @@ Customer* findCustomerByID(Customer* customers, int numCustomers, int customerID
 void printCustomerDetails(const Customer* customer);
 
 /**
+ * Saves a customer's details to a binary file.
+ * @param file Pointer to the file to save the customer details to.
+ * @param customer Pointer to the Customer structure to save.
+ * @return 1 if the save was successful, 0 otherwise.
+ */
+int saveCustomerToBinary(FILE* file, const Customer* customer);
+
+/**
+ * Loads a customer's details from a binary file.
+ * @param customer Pointer to the Customer structure to load the details into.
+ * @param file Pointer to the file to load the customer details from.
+ * @return 1 if the load was successful, 0 otherwise.
+ */
+int loadCustomerFromBinary(Customer* customer, FILE* file);
+/**
  * Save customer details from the user, including name and age.
  * @param customer Pointer to the Customer structure to store the details.
  */

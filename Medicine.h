@@ -3,7 +3,7 @@
 
 #include "Product.h"  
 #include "Date.h"     
-#define ID_LENGTH 7
+#define ID_LENGTH 6
 
 /**
  * Structure representing a medicine's information, extending the Product structure.
@@ -11,7 +11,7 @@
  */
 typedef struct {
     Product product;            /**< Base Product structure */
-    char medicineID[ID_LENGTH];         /**< Unique medicine ID, a 6-digit string */
+    char medicineID[ID_LENGTH+1];         /**< Unique medicine ID, a 6-digit string */
     Date expireDate;           /**< Dynamically allocated expiration date string */
     int prescriptionRequired;   /**< Flag indicating if a prescription is required (0 = No, 1 = Yes) */
 } Medicine;
@@ -48,6 +48,21 @@ void printMedicineInStock(const void* item);
 void printMedicineDetails(const void* medicine);
 
 /**
+ * Saves the details of a medicine to a binary file, including product details and medicine-specific information.
+ * @param file Pointer to the binary file where the medicine details are to be saved.
+ * @param med Pointer to the Medicine structure to save.
+ * @return 1 if the medicine is successfully saved, 0 otherwise.
+ */
+int saveMedicineToBinary(FILE* file, const Medicine* med);
+
+/**
+ * Loads the details of a medicine from a binary file, including product details and medicine-specific information.
+ * @param file Pointer to the binary file from which the medicine details are to be loaded.
+ * @return Pointer to the loaded Medicine structure.
+ */
+void* loadMedicineFromBinary(FILE* file);
+
+/**
  * Saves the details of a medicine to a file, including product details and medicine-specific information.
  * @param file Pointer to the file where the medicine details are to be saved.
  * @param medicine Pointer to the Medicine structure to save.
@@ -60,6 +75,7 @@ void saveMedicine(FILE* file, const void* medicine);
  * @return Pointer to the loaded Medicine structure.
  */
 Medicine* loadMedicine(FILE* file);
+
 
 /**
  * Frees the dynamically allocated memory for the medicine's product details.

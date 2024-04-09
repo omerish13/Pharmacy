@@ -62,6 +62,35 @@ int customerHasValidPrescription(const Prescription* prescriptions, int numPresc
 void printPrescription(const Prescription* prescription);
 
 /**
+ * Prints the details of an array of prescriptions.
+ * 
+ * @param prescriptions Array of Prescription structures to print.
+ * @param numPrescriptions Number of prescriptions in the array.
+ */
+void printPrescriptions(const Prescription* prescriptions, int numPrescriptions);
+
+/**
+ * Saves the details of a prescription to a binary file, including the prescription ID, customer ID, medicine ID, quantity, and usage status.
+ * 
+ * @param prescription Pointer to the Prescription structure to save.
+ * @param file Pointer to the file where the prescription details are to be saved.
+ * @return 1 if the prescription is saved successfully, 0 otherwise.
+ */
+int savePrescriptionToBinary(const Prescription* prescription, FILE* file);
+
+/**
+ * Loads the details of a prescription from a binary file, including the prescription ID, customer ID, medicine ID, quantity, and usage status.
+ * 
+ * @param prescription Pointer to the Prescription structure to load the details into.
+ * @param file Pointer to the file from which the prescription details are to be loaded.
+ * @param customers Array of Customer structures.
+ * @param numCustomers Total number of customers in the array.
+ * @param stock Pointer to the Stock structure containing an array of products.
+ * @return 1 if the prescription is loaded successfully, 0 otherwise.
+ */
+int loadPrescriptionFromBinary(Prescription* prescription, FILE* file, Customer* customers, int numCustomers, Stock* stock);
+
+/**
  * Saves the details of a prescription to a file, including the customer ID, medicine ID, expiration date, quantity, and usage status.
  *
  * @param prescription Pointer to the Prescription structure to save.

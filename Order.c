@@ -7,6 +7,7 @@ void initOrder(Order* order, int customerID, Employee* employee) {
     order->orderNumber = ++lastOrderNumber;
     order->customerID = customerID;
     initList(order->orderProducts);
+    initList(order->orderMedicines);
     order->totalAmount = 0;
     initDate(&order->lastModified);
     order->employee = employee;
@@ -71,16 +72,14 @@ int addMedicineToOrder(Order* order, Prescription* prescriptions, int numOfPresc
     }
 
     // Check if medication already in order
-    OrderProductNode* node = (OrderProductNode*)order->orderProducts->head;
-    while (node != NULL)
-    {
-        if (node->product->code == medicineCode) {
-            printf("Error: Medicine Already in order, you can update it's quantity through the menu.\n");
-            return 0; // Indicate failure
+    OrderMedicineNode* node = (OrderMedicineNode*)order->orderMedicines->head;
+    while (node != NULL) {
+        if (node->medicine->product.code == medicineCode) {
+            printf("Error: Medicine already in order.\n");
+            return 0;  // Indicate failure
         }
         node = node->next;
     }
-
     // Check if stock is sufficient for the prescribed quantity
 
     int prescribedQuantity = prescriptions[validPrescriptionIndex].quantity;
@@ -97,9 +96,9 @@ int addMedicineToOrder(Order* order, Prescription* prescriptions, int numOfPresc
     }
 
     // Add the medicine to the order with the prescribed quantity
-    OrderProductNode* newNode = (OrderProductNode*)malloc(sizeof(OrderProductNode));
+    OrderMedicineNode* newNode = (OrderMedicineNode*)malloc(sizeof(OrderMedicineNode));
     CHECK_ALLOC_INT(newNode);
-    newNode->product = (Product*)medicine;
+    newNode->medicine = medicine;
     newNode->quantity = prescribedQuantity;
     newNode->next = NULL;
     node->next = newNode;
@@ -186,6 +185,7 @@ void updateLastModified(Order* order) {
 void printOrderProducts(Order* order){
     printList(order->orderProducts, printProduct);
 }
+
 void removeProductFromOrderClient(Order* order) {
     int productCode, quantity;
     printOrderProducts(order);
@@ -197,9 +197,78 @@ void removeProductFromOrderClient(Order* order) {
     removeProductFromOrder(order,productCode);
 }
 
+int saveOrderProductToBinary(FILE* file, const void* item) {
+    const OrderProductNode* node = (const OrderProductNode*)item;
+    if (fwrite(&node->product->code, sizeof(int), 1, file) != 1 ||
+        fwrite(&node->quantity, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+    return 1;
+}
+
+int saveOrderMedicineNodeToBinary(FILE* file, const void* item) {
+    const OrderMedicineNode* node = (const OrderMedicineNode*)item;
+    if (fwrite(&node->medicine->product.code, sizeof(int), 1, file) != 1 ||
+        fwrite(&node->quantity, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+    return 1;
+}
+
+OrderMedicineNode* loadOrderMedicineNodeFromBinary(FILE* file) {
+    OrderMedicineNode* node = (OrderMedicineNode*)malloc(sizeof(OrderMedicineNode));
+    CHECK_ALLOC_STRUCT(node);
+    if (fread(&node->medicine->product.code, sizeof(int), 1, file) != 1 ||
+        fread(&node->quantity, sizeof(int), 1, file) != 1) {
+        free(node);
+        return NULL;
+    }
+    return node;
+}
+
+OrderProductNode* loadOrderProductFromBinary(FILE* file) {
+    OrderProductNode* node = (OrderProductNode*)malloc(sizeof(OrderProductNode));
+    CHECK_ALLOC_STRUCT(node);
+    if (fread(&node->product->code, sizeof(int), 1, file) != 1 ||
+        fread(&node->quantity, sizeof(int), 1, file) != 1) {
+        free(node);
+        return NULL;
+    }
+    return node;
+}
+
+int saveOrderToBinary(const Order* order, FILE* file) {
+    if (!saveDateToBinary(file, &order->lastModified) ||
+        !saveListBinary(file, order->orderProducts, saveOrderProductToBinary) ||
+        !saveListBinary(file, order->orderMedicines, saveOrderMedicineNodeToBinary) ||
+        fwrite(&order->orderNumber, sizeof(int), 1, file) != 1 ||
+        fwrite(&order->customerID, sizeof(int), 1, file) != 1 ||
+        fwrite(&order->employee->id, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+    return 1;
+}
+
+Order* loadOrderFromBinary(FILE* file, Employee** employees, int numEmployees) {
+    Order* order = (Order*)malloc(sizeof(Order));
+    CHECK_ALLOC_STRUCT(order);
+    if (!loadDateFromBinary(&order->lastModified,file) ||
+        !(loadListBinary(file,order->orderProducts, (void* (*)(FILE*))loadOrderProductFromBinary)) ||
+        !(loadListBinary(file, order->orderMedicines,(void* (*)(FILE*))loadOrderMedicineNodeFromBinary)) ||
+        fread(&order->orderNumber, sizeof(int), 1, file) != 1 ||
+        fread(&order->customerID, sizeof(int), 1, file) != 1 ||
+        fread(&order->employee->id, sizeof(int), 1, file) != 1) {
+        free(order);
+        return NULL;
+    }
+    order->employee = findEmployee(employees, numEmployees, order->employee->id);
+    return order;
+}
+
 void saveOrder(const Order* order, FILE* file) {
     saveDate(file, &order->lastModified);
     saveList(file, order->orderProducts, (void (*)(FILE*, const void*))saveOrderProductNode);
+    saveList(file, order->orderMedicines, (void (*)(FILE*, const void*))saveOrderMedicineNode);
     fprintf(file, "%d %d %d %d\n", order->orderNumber, order->customerID, order->employee->id, order->totalAmount);
 }
 
@@ -208,19 +277,31 @@ void saveOrderProductNode(FILE* file, void* data) {
     fprintf(file, "%d %d ", node->product->code, node->quantity);
 }
 
+void saveOrderMedicineNode(FILE* file, void* data) {
+    OrderMedicineNode* node = (OrderMedicineNode*)data;
+    fprintf(file, "%d %d ", node->medicine->product.code, node->quantity);
+}
+
 Order* loadOrder(FILE* file, Employee** employees, int numEmployees) {
     Order* order = (Order*)malloc(sizeof(Order));
     CHECK_ALLOC_STRUCT(order);
     loadDate(file, &order->lastModified);
     order->orderProducts = loadList(file, (void* (*)(FILE*))loadOrderProductNode);
+    order->orderMedicines = loadList(file, (void* (*)(FILE*))loadOrderMedicineNode);
     fscanf(file, "%d %d %d %d", &order->orderNumber, &order->customerID, &order->employee->id, &order->totalAmount);
     order->employee = findEmployee(employees, numEmployees, order->employee->id);
     return order;
 }
 
-OrderProductNode*  loadOrderProductNode(FILE* file) {
-    OrderProductNode* node = (OrderProductNode*)malloc(sizeof(OrderProductNode));
+void*  loadOrderProductNode(FILE* file, void* data) {
+    OrderProductNode* node = (OrderProductNode*)data;
     fscanf(file, "%d %d", &node->product->code, &node->quantity);
+    return node;
+}
+
+void* loadOrderMedicineNode(FILE* file, void* data) {
+    OrderMedicineNode* node = (OrderMedicineNode*)data;
+    fscanf(file, "%d %d", &node->medicine->product.code, &node->quantity);
     return node;
 }
 

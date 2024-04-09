@@ -19,6 +19,17 @@ typedef struct OrderProductNode {
 } OrderProductNode;
 
 /**
+ * Node in the linked list of order medicines, storing medicine details and quantity.
+ */
+typedef struct OrderMedicineNode {
+    Medicine* medicine;              /**< Pointer to the medicine in the order. */
+    int quantity;                    /**< Quantity of this medicine in the order. */
+    struct OrderMedicineNode* next;  /**< Pointer to the next medicine node in the order. */
+} OrderMedicineNode;
+
+
+
+/**
  * Represents an entire order, including customer details, products ordered,
  * total cost, and modification date.
  */
@@ -26,6 +37,7 @@ typedef struct {
     int orderNumber;                  /**< Unique identifier for each order. */
     int customerID;                   /**< Identifier for the customer who made the order. */
     LinkedList* orderProducts;  /**< Head of the linked list of products in the order. */
+    LinkedList* orderMedicines;  /**< Head of the linked list of medicines in the order. */
     int totalAmount;                  /**< Total cost of the order. */
     Date lastModified;                /**< Date when the order was last modified. */
     Employee* employee;                   /**< ID of the employee managing the order. */
@@ -124,6 +136,57 @@ void printOrderProducts(Order* order);
 void removeProductFromOrderClient(Order* order);
 
 /**
+ * Saves an order to a binary file.
+ * 
+ * @param order Pointer to the Order to save.
+ * @param file Pointer to the file to save the order to.
+ * @return Integer indicating success (1) or failure (0) of the operation.
+ */
+int saveOrderToBinary(const Order* order, FILE* file);
+
+/**
+ * Saves an order product node to a binary file.
+ * 
+ * @param file Pointer to the file to save the order product node to.
+ * @param data Pointer to the OrderProductNode to save.
+ */
+void saveOrderProductNode(FILE* file, void* data);
+
+/**
+ * Saves an order medicine node to a binary file.
+ * 
+ * @param file Pointer to the file to save the order medicine node to.
+ * @param data Pointer to the OrderMedicineNode to save.
+ */
+void saveOrderMedicineNode(FILE* file, void* data);
+
+/**
+ * Loads an order product node from a binary file.
+ * 
+ * @param file Pointer to the file to read the order product node from.
+ * @return Pointer to the loaded OrderProductNode.
+ */
+void* loadOrderProductNode(FILE* file, void* data);
+
+/**
+ * Loads an order medicine node from a binary file.
+ * 
+ * @param file Pointer to the file to read the order medicine node from.
+ * @return Pointer to the loaded OrderMedicineNode.
+ */
+void* loadOrderMedicineNode(FILE* file, void* data);
+
+/**
+ * Loads an order from a binary file.
+ * 
+ * @param file Pointer to the file to read the order from.
+ * @param employees Array of Employee structures.
+ * @param numEmployees Total number of employees in the array.
+ * @return Pointer to the loaded Order.
+ */
+Order* loadOrderFromBinary(FILE* file, Employee** employees, int numEmployees);
+
+/**
  * Saves the order details to a file.
  * 
  * @param order Pointer to the Order to save.
@@ -149,14 +212,6 @@ Order* loadOrder(FILE* file, Employee** employees, int numEmployees);
  */
 void saveOrderProductNode(FILE* file, void* data);
 
-/**
- * Loads an OrderProductNode from a file.
- * 
- * @param file Pointer to the file to read the OrderProductNode from.
- * @param stock Pointer to the Stock structure containing an array of products.
- * @return Pointer to the loaded OrderProductNode.
- */
-OrderProductNode* loadOrderProductNode(FILE* file);
 
 /**
  * Frees the memory allocated for an order.

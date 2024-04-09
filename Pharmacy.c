@@ -58,6 +58,10 @@ Order* createNewOrder(Pharmacy* pharmacy, int customerID, int employeeID) {
 }
 
 Order* createNewOrderInteractive(Pharmacy* pharmacy) {
+    if (pharmacy->customerCount == 0) {
+        printf("No customers available. Please add a customer first.\n");
+        return NULL;
+    }
     Order* newOrder = (Order*)malloc(sizeof(Order));
     CHECK_ALLOC_STRUCT(newOrder);
     int customerID, employeeID;
@@ -109,6 +113,10 @@ void addCustomer(Pharmacy* pharmacy, const Customer* customer) {
 }
 
 void removeEmployeeInteractive(Pharmacy* pharmacy) {
+    if (pharmacy->employeeCount == 0) {
+        printf("No employees available to remove.\n");
+        return;
+    }
     int employeeID;
     printf("Enter the ID of the employee to remove: ");
     scanf("%d", &employeeID);
@@ -196,6 +204,10 @@ void printAllEmployees(const Pharmacy* pharmacy) {
 void addNewPrescriptionToPharmacy(Pharmacy* pharmacy) {
     Prescription newPrescription;
 
+    if (pharmacy->customerCount == 0) {
+        printf("No customers available. Please add a customer first.\n");
+        return;
+    }
     // Print all customers to let the user choose
     printAllCustomers(pharmacy);
 
@@ -204,6 +216,7 @@ void addNewPrescriptionToPharmacy(Pharmacy* pharmacy) {
     // Get Customer ID from the client
     printf("Enter the Customer ID for the new prescription: ");
     scanf("%d", &customerID);
+    clearInputBuffer();
 
     // Get other prescription details from the client
     printf("Enter the Medicine ID for the new prescription: ");
@@ -214,12 +227,12 @@ void addNewPrescriptionToPharmacy(Pharmacy* pharmacy) {
     strcpy(medicineID,buffer);
 
     printf("Enter the quantity for the prescription: ");
-    scanf("%d", &quantity);
+    scanf("%d\n", &quantity);
 
     Date d;
     // Use initDate to set the expiration date
-    initDate(&d);  // Assuming initDate prompts the client for date information
-
+    initDate(&d);
+    
     // Resize the prescriptions array if necessary
     if (pharmacy->prescriptionCount >= pharmacy->prescriptionCapacity) {
         int newCapacity = pharmacy->prescriptionCapacity > 0 ? pharmacy->prescriptionCapacity * 2 : 1;
@@ -254,7 +267,7 @@ void addCustomerInteractive(Pharmacy* pharmacy) {
 }
 
 void addProductOrMedicineToOrder(Pharmacy* pharmacy, Order* order) {
-    showAvailableProducts(&pharmacy->stock);  // Assuming this lists all available products and medicines
+    showAvailableProducts(&pharmacy->stock);
     int productCode, quantity;
     printf("Enter Product/Medicine Code to add to order: ");
     scanf("%d", &productCode);
@@ -266,7 +279,7 @@ void addProductOrMedicineToOrder(Pharmacy* pharmacy, Order* order) {
     if (!product){
         Medicine* medicine = findMedicine(&pharmacy->stock,productCode);
         if (!medicine){
-            printf("Product wiht the ID %d does not exist",productCode);
+            printf("Product with the ID %d does not exist",productCode);
             return;
         }
         addMedicineToOrder(order,pharmacy->prescriptions,pharmacy->prescriptionCount,&pharmacy->stock,productCode,order->customerID);
@@ -340,6 +353,75 @@ void printPharmacyDetails(const Pharmacy* pharmacy) {
     printStockDetails(&pharmacy->stock);
 }
 
+int savePharmacyToBinary(FILE* file, const Pharmacy* pharmacy) {
+    // Save the pharmacy name
+    int length = (int)strlen(pharmacy->name)+1;
+    if (fwrite(&length, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+    if (fwrite(pharmacy->name, sizeof(char), length, file) != length) {
+        return 0;
+    }
+
+    // Save the pharmacy address
+    if (!saveAddressToBinary(&pharmacy->address,file)) {
+        return 0;
+    }
+
+    // Save the pharmacy stock
+    if (!saveStockToBinary(&pharmacy->stock,file)) {
+        return 0;
+    }
+
+    // Save the number of employees
+    if (fwrite(&pharmacy->employeeCount, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+
+    // Save the employees
+    for (int i = 0; i < pharmacy->employeeCount; i++) {
+        if (!saveEmployeeToBinary(file, pharmacy->employees[i])) {
+            return 0;
+        }
+    }
+
+    // Save the number of customers
+    if (fwrite(&pharmacy->customerCount, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+
+    // Save the customers
+    for (int i = 0; i < pharmacy->customerCount; i++) {
+        if (!saveCustomerToBinary(file, &pharmacy->customers[i])) {
+            return 0;
+        }
+    }
+
+    // Save the number of prescriptions
+    if (fwrite(&pharmacy->prescriptionCount, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+
+    // Save the prescriptions
+    for (int i = 0; i < pharmacy->prescriptionCount; i++) {
+        if (!savePrescriptionToBinary(&pharmacy->prescriptions[i],file)) {
+            return 0;
+        }
+    }
+
+    // Save the open orders
+    if (!saveListBinary(file, &pharmacy->openOrders, (int (*)(FILE*, const void*))saveOrderToBinary)) {
+        return 0;
+    }
+
+    // Save the order history
+    if (!saveListBinary(file, &pharmacy->orderHistory, (int (*)(FILE*, const void*))saveOrderToBinary)) {
+        return 0;
+    }
+
+    return 1;
+}
+
 void savePharmacyToFile(FILE* file, const Pharmacy* pharmacy) {
     fprintf(file, "%s\n", pharmacy->name);
     saveAddress(&pharmacy->address, file);
@@ -364,11 +446,29 @@ Employee** loadEmployees(FILE* file, int numEmployees) {
     if (numEmployees <= 0) {
         return NULL;
     }
-    Employee** employees = (Employee**)malloc(numEmployees * sizeof(Employee*));
+    Employee** employees = (Employee**)malloc((unsigned long)numEmployees * sizeof(Employee*));
     CHECK_ALLOC_STRUCT(employees);
 
     for (int i = 0; i < numEmployees; i++) {
+        employees[i] = (Employee*)malloc(sizeof(Employee));
+        CHECK_ALLOC_STRUCT(employees[i]);
         employees[i] = loadEmployee(file);
+    }
+
+    return employees;
+}
+
+Employee** loadEmployeesFromBinary(FILE* file, int numEmployees) {
+    if (numEmployees <= 0) {
+        return NULL;
+    }
+    Employee** employees = (Employee**)malloc((unsigned long)numEmployees * sizeof(Employee*));
+    CHECK_ALLOC_STRUCT(employees);
+
+    for (int i = 0; i < numEmployees; i++) {
+        employees[i] = (Employee*)malloc(sizeof(Employee));
+        CHECK_ALLOC_STRUCT(employees[i]);
+        loadEmployeeFromBinary(employees[i], file);
     }
 
     return employees;
@@ -388,6 +488,21 @@ Customer* loadCustomers(FILE* file, int numCustomers) {
     return customers;
 }
 
+Customer* loadCustomersFromBinary(FILE* file, int numCustomers) {
+    if (numCustomers <= 0) {
+        return NULL;
+    }
+    Customer* customers = (Customer*)malloc(numCustomers * sizeof(Customer));
+    CHECK_ALLOC_STRUCT(customers);
+
+    for (int i = 0; i < numCustomers; i++) {
+        if (!loadCustomerFromBinary(&customers[i],file))
+            return NULL;
+    }
+
+    return customers;
+}
+
 Prescription* loadPrescriptions(FILE* file, int numPrescriptions,Customer* customers, int numCustomers,Stock* stock) {
     if (numPrescriptions <= 0) {
         return NULL;
@@ -402,8 +517,22 @@ Prescription* loadPrescriptions(FILE* file, int numPrescriptions,Customer* custo
     return prescriptions;
 }
 
-LinkedList* loadOrders(FILE* file, const Employee** employees, int numEmployees) {
-    LinkedList* orders = (LinkedList*)malloc(sizeof(LinkedList));
+Prescription* loadPrescriptionsFromBinary(FILE* file, int numPrescriptions,Customer* customers, int numCustomers,Stock* stock) {
+    if (numPrescriptions <= 0) {
+        return NULL;
+    }
+    Prescription* prescriptions = (Prescription*)malloc(numPrescriptions * sizeof(Prescription));
+    CHECK_ALLOC_STRUCT(prescriptions);
+
+    for (int i = 0; i < numPrescriptions; i++) {
+        if (!loadPrescriptionFromBinary(&prescriptions[i], file, customers, numCustomers, stock))
+            return NULL;
+    }
+
+    return prescriptions;
+}
+
+void loadOrders(FILE* file, const Employee** employees, int numEmployees, LinkedList* orders) {
     initList(orders);
 
     int numOrders;
@@ -412,23 +541,82 @@ LinkedList* loadOrders(FILE* file, const Employee** employees, int numEmployees)
         Order* order = loadOrder(file, (Employee**)employees, numEmployees);
         addToList(orders, order);
     }
-
-    return orders;
 }
 
+void loadOrdersFromBinary(FILE* file, const Employee** employees, int numEmployees, LinkedList* orders) {
+    initList(orders);
+
+    int numOrders;
+    if (fread(&numOrders, sizeof(int), 1, file) != 1) {
+        return;
+    }
+    for (int i = 0; i < numOrders; i++) {
+        Order* order = loadOrderFromBinary(file, (Employee**)employees, numEmployees);
+        addToList(orders, order);
+    }
+}
+
+int loadPharmacyFromBinary(FILE* file, Pharmacy* pharmacy) {
+    initPharmacy(pharmacy);
+    // Read the pharmacy name from the file
+    int length;
+    if (fread(&length, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+    pharmacy->name = (char*)malloc(length);
+    CHECK_ALLOC_INT(pharmacy->name);
+    if (fread(pharmacy->name, sizeof(char), length, file) != length) {
+        return 0;
+    }
+
+    if (!loadAddressFromBinary(&pharmacy->address,file)) {
+        return 0;
+    }
+
+    if (!loadStockFromBinary(file, &pharmacy->stock)) {
+        return 0;
+    }
+
+    if (fread(&pharmacy->employeeCount, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+    if (pharmacy->employeeCount > 0)
+        pharmacy->employees = loadEmployeesFromBinary(file, pharmacy->employeeCount);
+
+    if (fread(&pharmacy->customerCount, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+    if (pharmacy->customerCount > 0)
+        pharmacy->customers = loadCustomersFromBinary(file, pharmacy->customerCount);
+
+    if (fread(&pharmacy->prescriptionCount, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+    if (pharmacy->prescriptionCount > 0)
+        pharmacy->prescriptions = loadPrescriptionsFromBinary(file, pharmacy->prescriptionCount, pharmacy->customers, pharmacy->customerCount, &pharmacy->stock);
+
+    loadOrdersFromBinary(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount, &pharmacy->openOrders);
+    loadOrdersFromBinary(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount, &pharmacy->orderHistory);
+    return 1;
+}
 void loadPharmacyFromFile(FILE* file, Pharmacy* pharmacy) {
+    initPharmacy(pharmacy);
     // Read the pharmacy name from the file
     readString(file, &pharmacy->name);
     loadAddress(&pharmacy->address, file);
     loadStock(file,&pharmacy->stock);
     fscanf(file, "%d\n", &pharmacy->employeeCount);
-    pharmacy->employees = loadEmployees(file, pharmacy->employeeCount);
+    if (pharmacy->employeeCount > 0)
+        pharmacy->employees = loadEmployees(file, pharmacy->employeeCount);
     fscanf(file, "%d\n", &pharmacy->customerCount);
-    pharmacy->customers = loadCustomers(file, pharmacy->customerCount);
+    if (pharmacy->customerCount > 0)
+        pharmacy->customers = loadCustomers(file, pharmacy->customerCount);
     fscanf(file, "%d\n", &pharmacy->prescriptionCount);
-    pharmacy->prescriptions = loadPrescriptions(file, pharmacy->prescriptionCount,pharmacy->customers,pharmacy->customerCount,&pharmacy->stock);
-    pharmacy->openOrders = *loadOrders(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount);
-    pharmacy->orderHistory = *loadOrders(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount);
+    if (pharmacy->prescriptionCount > 0)
+        pharmacy->prescriptions = loadPrescriptions(file, pharmacy->prescriptionCount, pharmacy->customers, pharmacy->customerCount, &pharmacy->stock);
+    loadOrders(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount, &pharmacy->openOrders);
+    loadOrders(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount, &pharmacy->orderHistory);
+    printPharmacyDetails(pharmacy);
 }
 
 void saveDataToFile(char* filename, Pharmacy* pharmacy) {
@@ -441,9 +629,20 @@ void saveDataToFile(char* filename, Pharmacy* pharmacy) {
     fclose(file);
 }
 
+int saveDataToBinary(char* filename, Pharmacy* pharmacy) {
+    FILE* file = fopen(filename, "wb");
+    if (file == NULL) {
+        printf("Failed to open file for writing.\n");
+        return 0;
+    }
+    int result = savePharmacyToBinary(file, pharmacy);
+    fclose(file);
+    return result;
+}
+
 int loadDataFromFile(char* filename, Pharmacy* pharmacy) {
     FILE* file = fopen(filename, "r");
-    if (file == NULL || feof(file)) {
+    if (file == NULL) {
         printf("Failed to open file for reading.\n");
         return 0;
     }
@@ -461,11 +660,34 @@ int loadDataFromFile(char* filename, Pharmacy* pharmacy) {
     // Seek back to the start of the file
     fseek(file, 0, SEEK_SET);
 
-    pharmacy = (Pharmacy*)malloc(sizeof(Pharmacy));
-    CHECK_ALLOC_INT(pharmacy);
     loadPharmacyFromFile(file, pharmacy);
     fclose(file);
     return 1;
+}
+
+int loadDataFromBinary(char* filename, Pharmacy* pharmacy) {
+    FILE* file = fopen(filename, "rb");
+    if (file == NULL) {
+        printf("Failed to open file for reading.\n");
+        return 0;
+    }
+
+    // Seek to the end of the file
+    fseek(file, 0, SEEK_END);
+
+    // If the position is 0, the file is empty
+    if (ftell(file) == 0) {
+        printf("File is empty.\n");
+        fclose(file);
+        return 0;
+    }
+
+    // Seek back to the start of the file
+    fseek(file, 0, SEEK_SET);
+
+    int result = loadPharmacyFromBinary(file, pharmacy);
+    fclose(file);
+    return result;
 }
 
 void freePharmacy(Pharmacy* pharmacy) {

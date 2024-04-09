@@ -83,6 +83,26 @@ void* traverseAndFind(const LinkedList* list, const void* target, int (*compFunc
 void* binarySearchLinkedList(const LinkedList* list, const void* target, int (*compFunc)(const void*, const void*));
 
 /**
+ * Saves the contents of a linked list to a binary file, using a given function to save each item.
+ * 
+ * @param file Pointer to the file to save the list to.
+ * @param list Pointer to the LinkedList structure to save.
+ * @param saveItem Function used to save each item in the list.
+ * @return 1 if the list is successfully saved, 0 otherwise.
+ */
+int saveListBinary(FILE* file, const LinkedList* list, int (*saveItem)(FILE*, const void*));
+
+/**
+ * Loads a linked list from a binary file, using a given function to load each item.
+ * 
+ * @param list Pointer to the LinkedList structure to load into.
+ * @param file Pointer to the file to load the list from.
+ * @param loadItem Function used to load each item from the file.
+ * @return 1 if the list is successfully loaded, 0 otherwise.
+ */
+int loadListBinary(FILE* file, LinkedList* list, void* (*loadItem)(FILE*));
+
+/**
  * Saves the contents of a linked list to a file, using a given function to save each item.
  * 
  * @param file Pointer to the file to save the list to.

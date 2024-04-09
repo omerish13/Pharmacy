@@ -22,6 +22,14 @@ void printCustomerDetails(const Customer* customer) {
     printf("Customer ID: %d\n", customer->id);
 }
 
+int saveCustomerToBinary(FILE* file, const Customer* customer) {
+    return savePersonToBinary(file, &customer->person) && fwrite(&customer->id, sizeof(int), 1, file) == 1;
+}
+
+int loadCustomerFromBinary(Customer* customer, FILE* file) {
+    return loadPersonFromBinary(&customer->person, file) && fread(&customer->id, sizeof(int), 1, file) == 1;
+}
+
 void saveCustomer(FILE* file, const Customer* customer) {
     savePerson(file,&customer->person);
     fprintf(file, "%d\n", customer->id);

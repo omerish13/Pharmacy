@@ -64,7 +64,11 @@ void manageOrder(Pharmacy* pharmacy, Order* order) {
 
 
 void showAndUpdateStock(Pharmacy* pharmacy) {
-    printStockDetails(&pharmacy->stock);  // Assuming this function prints all stock items, including those not in stock
+    if (pharmacy->stock.products.head == NULL && pharmacy->stock.medicines.head == NULL) {
+        printf("No products or medicines available in stock.\n");
+        return;
+    }
+    printStockDetails(&pharmacy->stock);
 
     int productCode, newQuantity;
     printf("Enter Product Code to update stock quantity: ");
@@ -101,6 +105,10 @@ int main() {
                 break;
             case 4: {
                 Order* newOrder = createNewOrderInteractive(&pharmacy);
+                if (newOrder == NULL) {
+                    printf("Error creating new order. Please try again.\n");
+                    break;
+                }
                 addToList(&pharmacy.openOrders, newOrder);  
                 manageOrder(&pharmacy, newOrder);
                 break;

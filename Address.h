@@ -58,13 +58,27 @@ void printAddressDetails(const Address* address);
 void initAddress(Address* address);
 
 /**
+ * Saves the address details to a binary file.
+ * @param address Pointer to the Address structure containing the details to save.
+ * @param file Pointer to the file to save the address details to.
+ */
+int saveAddressToBinary(const Address* address, FILE* file);
+
+/**
+ * Loads address details from a binary file.
+ * @param address Pointer to the Address structure to load the details into.
+ * @param file Pointer to the file to read the address details from.
+ */
+int loadAddressFromBinary(Address* address, FILE* file);
+
+/**
  * Saves address details to a file.
  * @param address Pointer to the Address structure containing the details to save.
  * @param file Pointer to the file to save the address details to.
  */
 void saveAddress(const Address* address, FILE* file);
 /**
- * Loads address details from a file, assuming the file is formatted correctly.
+ * Loads address details from a file.
  * @param address Pointer to the Address structure to load the details into.
  * @param file Pointer to the file to read the address details from.
  */

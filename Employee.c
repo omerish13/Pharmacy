@@ -45,6 +45,28 @@ void printEmployeeDetails(const Employee* employee) {
     printf("Salary: $%.2f\n", employee->salary);
 }
 
+int saveEmployeeToBinary(FILE* file, const Employee* employee) {
+    if ((!savePersonToBinary(file, &employee->person)) || ((!fwrite(&employee->id, sizeof(int), 1, file)) == 1))
+        return 0;
+    int length = (int)strlen(employee->position) + 1;
+    if (fwrite(&length, sizeof(int), 1, file) != 1 || fwrite(employee->position, sizeof(char), length, file) != length)
+        return 0;
+    return fwrite(&employee->salary, sizeof(double), 1, file) == 1;
+}
+
+int loadEmployeeFromBinary(Employee* employee, FILE* file) {
+    if (!loadPersonFromBinary(&employee->person, file) || fread(&employee->id, sizeof(int), 1, file) != 1)
+        return 0;
+    int length;
+    if (fread(&length, sizeof(int), 1, file) != 1)
+        return 0;
+    employee->position = (char*)malloc(length);
+    CHECK_ALLOC_INT(employee->position);
+    if (fread(employee->position, sizeof(char), length, file) != length)
+        return 0;
+    return fread(&employee->salary, sizeof(double), 1, file) == 1;
+}
+
 void saveEmployee(FILE* file, const Employee* employee) {
     savePerson(file, &employee->person);
     fprintf(file, "%d\n", employee->id);

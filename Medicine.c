@@ -7,7 +7,7 @@ void initMedicine(Medicine* medicine, const char* medicineID) {
 
     // Copy the medicineID to the Medicine structure
     strncpy(medicine->medicineID, medicineID, 6);
-    medicine->medicineID[6] = '\0';  // Ensure null termination
+    medicine->medicineID[ID_LENGTH] = '\0';  // Ensure null termination
 
     // Set medicine-specific details
     setMedicineExpireDate(medicine);
@@ -42,6 +42,34 @@ void printMedicineDetails(const void* medicine) {
     printDate(&med->expireDate);
     printf("\nPrescription Required: %s\n", med->prescriptionRequired ? "Yes" : "No");
 }
+
+int saveMedicineToBinary(FILE* file, const Medicine* med) {
+    // Save the base product details
+    if (!saveProductToBinary(file, &med->product)) {
+        return 0;
+    }
+
+    // Save medicine-specific details
+    fwrite(med->medicineID, sizeof(char), ID_LENGTH, file);
+    saveDateToBinary(file, &med->expireDate);
+    fwrite(&med->prescriptionRequired, sizeof(int), 1, file);
+
+    return 1;
+}
+
+void* loadMedicineFromBinary(FILE* file) {
+    Medicine* medicine = malloc(sizeof(Medicine));
+    if (medicine == NULL) {
+        return NULL;
+    }
+    if (fread(medicine, sizeof(Medicine), 1, file) != 1) {
+        free(medicine);
+        return NULL;
+    }
+    return medicine;
+}
+
+
 
 void saveMedicine(FILE* file, const void* medicine) {
     const Medicine* med = (const Medicine*)medicine;

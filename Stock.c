@@ -75,12 +75,13 @@ void addNewProductToStock(Stock* stock) {
 
 void addNewMedicineToStock(Stock* stock) {
     Medicine* existingMedicine = NULL;
-    char medicineID[ID_LENGTH];
+    char medicineID[ID_LENGTH],buffer[ID_LENGTH];
 
     do {
         printf("Enter unique Medicine ID: ");
-        scanf("%6s", medicineID);  // Get medicine ID from user
-        clearInputBuffer();
+        myGets(buffer);
+        strcpy(medicineID, buffer);
+
 
         // Use findMedicineByID to check if a medicine with the given ID already exists
         existingMedicine = findMedicineByID(stock, medicineID);
@@ -148,19 +149,58 @@ void updateMedicineStock(Stock* stock, char* medicineID, int quantity) {
     }
 }
 
+int saveStockToBinary(const Stock* stock, FILE* file) {
+    // Save the number of products and medicines in the stock
+    if (fwrite(&stock->products.size, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+    if (fwrite(&stock->medicines.size, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+
+    // Save the products if the list is not empty
+    if (stock->products.size != 0)
+        saveList(file, &stock->products, (void (*)(FILE *, const void *))saveProductToBinary);
+
+    // Save the medicines
+    if (stock->medicines.size != 0)
+        saveList(file,&stock->medicines, (void (*)(FILE *, const void *))saveMedicineToBinary);
+
+    return 1;
+}
+
+int loadStockFromBinary(FILE* file, Stock* stock) {
+    initStock(stock);
+
+    int numProducts, numMedicines;
+    if (fread(&numProducts, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+    if (fread(&numMedicines, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+
+    // Load the products
+    loadListBinary(file,&stock->products, loadProductFromBinary);
+
+    // Load the medicines
+    loadListBinary(file,&stock->medicines, loadMedicineFromBinary);
+
+    return 1;
+}
+
 void saveStock(const Stock* stock, FILE* file) {
     // Save the number of products and medicines in the stock
     fprintf(file, "%d %d\n", stock->products.size, stock->medicines.size);
 
-    if (stock->products.size == 0 && stock->medicines.size == 0) {
-        return;
-    }
-
     // Save the products
-    saveList(file,&stock->products, saveProduct);
+    if (stock->products.size != 0)
+        saveList(file,&stock->products, saveProduct);
+
 
     // Save the medicines
-    saveList(file,&stock->medicines, saveMedicine);
+    if (stock->medicines.size != 0)
+        saveList(file,&stock->medicines, saveMedicine);
 }
 
 void loadStock(FILE* file, Stock* stock) {
@@ -168,7 +208,7 @@ void loadStock(FILE* file, Stock* stock) {
 
     int numProducts, numMedicines;
     fscanf(file, "%d %d", &numProducts, &numMedicines);
-
+    
     // Load the products
     for (int i = 0; i < numProducts; i++) {
         Product* product = loadProduct(file);

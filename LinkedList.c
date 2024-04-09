@@ -65,9 +65,39 @@ void printList(const LinkedList* list, void (*printItem)(const void*)) {
     }
 }
 
+int saveListBinary(FILE* file, const LinkedList* list, int (*saveItem)(FILE*, const void*)) {
+    ListNode* node = list->head;
+    int size = list->size;
+    if (fwrite(&size, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+
+    while (node != NULL) {
+        if (!saveItem(file, node->item))
+            return 0;
+        node = node->next;
+    }
+
+    return 1;
+}
+
+int loadListBinary(FILE* file, LinkedList* list, void* (*loadItem)(FILE*)) {
+    int size;
+    if (fread(&size, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+
+    for (int i = 0; i < size; ++i) {
+        void* item = loadItem(file);
+        addToList(list, item);
+    }
+
+    return 1;
+}
+
 void saveList(FILE* file, const LinkedList* list, void (*saveItem)(FILE*, const void*)) {
     ListNode* node = list->head;
-
+    fprintf(file, "%d\n", list->size);
     while (node != NULL) {
         saveItem(file, node->item);
         node = node->next;

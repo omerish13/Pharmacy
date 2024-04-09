@@ -180,6 +180,24 @@ void replaceEmployeeInOrder(Pharmacy* pharmacy, Order* order);
  */
 void printPharmacyDetails(const Pharmacy* pharmacy);
 
+
+/**
+ * Saves data from the Pharmacy structure to a binary file.
+ *
+ * @param filename The name of the binary file to save the data to.
+ * @param pharmacy A pointer to the Pharmacy structure containing the data to be saved.
+ * @return Returns an integer indicating the success or failure of the operation.
+ */
+int saveDataToBinary(char* filename, Pharmacy* pharmacy);
+
+/**
+ * Loads the data of a Pharmacy object from a file.
+ *
+ * @param pharmacy A pointer to the Pharmacy object to populate with the data.
+ * @param file A pointer to the file to load the data from.
+ */
+int loadDataFromBinary(char* filename, Pharmacy* pharmacy);
+
 /**
  * Saves the data of a Pharmacy object to a file.
  *

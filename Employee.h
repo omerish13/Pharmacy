@@ -55,6 +55,22 @@ Employee* findEmployee(Employee** employees, int numEmployees, int id);
 void printEmployeeDetails(const Employee* employee);
 
 /**
+ * Saves an employee's details to a binary file.
+ * @param file Pointer to the binary file.
+ * @param employee Pointer to the Employee structure to save.
+ * @return 1 if the employee details are successfully saved, 0 otherwise.
+ */
+int saveEmployeeToBinary(FILE* file, const Employee* employee);
+
+/**
+ * Loads an employee's details from a binary file.
+ * @param employee Pointer to the Employee structure to load the details into.
+ * @param file Pointer to the binary file.
+ * @return 1 if the employee details are successfully loaded, 0 otherwise.
+ */
+int loadEmployeeFromBinary(Employee* employee, FILE* file);
+
+/**
  * Save employee details from the user, including name
  * and age.
  * @param employee Pointer to the Employee structure to store the details.

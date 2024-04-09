@@ -46,6 +46,14 @@ void printDate(const Date* date) {
     printf("%02d/%02d/%04d\n", date->day, date->month, date->year);
 }
 
+int saveDateToBinary(FILE* file, const Date* date) {
+    return fwrite(date, sizeof(Date), 1, file) == 1;
+}
+
+int loadDateFromBinary(Date* date, FILE* file) {
+    return fread(date, sizeof(Date), 1, file) == 1;
+}
+
 void saveDate(FILE* file, const Date* date) {
     fprintf(file, "%d/%d/%d", date->day, date->month, date->year);
 }

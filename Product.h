@@ -85,6 +85,21 @@ void printProductInStock(const void* item);
 int compareProducts(void* a, void* b);
 
 /**
+ * Save product details to a binary file, including name, type, price, and stock quantity.
+ * @param file Pointer to the binary file to save the product details to.
+ * @param product Pointer to the Product structure to save.
+ * @return 1 if the product is successfully saved, 0 otherwise.
+ */
+int saveProductToBinary(FILE* file, const Product* product);
+
+/**
+ * Load product details from a binary file, including name, type, price, and stock quantity.
+ * @param file Pointer to the binary file to read the product details from.
+ * @return Pointer to the loaded Product structure.
+ */
+void* loadProductFromBinary(FILE* file);
+
+/**
  * Save product details to a file, including name, type, price, and stock quantity.
  * @param file Pointer to the file to save the product details to.
  * @param product Pointer to the Product structure to save.

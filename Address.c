@@ -1,5 +1,6 @@
 #include "Address.h"
 
+#define POSTAL_CODE_LENGTH 6
 void initAddress(Address* address) {
     setAddressCountry(address);
     setAddressCity(address);
@@ -49,9 +50,9 @@ int setAddressPostalCode(Address* address) {
     char buffer[BUFFER_SIZE];
     printf("Enter postal code (6 characters): ");
     myGets(buffer);
-    if (strlen(buffer) == 6) {
-        strncpy(address->postalCode, buffer, 6);
-        address->postalCode[6] = '\0';
+    if (strlen(buffer) == POSTAL_CODE_LENGTH) {
+        strncpy(address->postalCode, buffer, POSTAL_CODE_LENGTH);
+        address->postalCode[POSTAL_CODE_LENGTH] = '\0';
         return 1;
     }
     printf("Error: Postal code must be exactly 6 characters.\n");
@@ -66,6 +67,56 @@ void saveAddress(const Address* address, FILE* file) {
     fprintf(file, "%s\n%s\n%s\n%d\n%s\n", address->country, address->city, address->street, address->houseNumber, address->postalCode);
 }
 
+int saveAddressToBinary(const Address* address, FILE* file) {
+    int length = (int)strlen(address->country) + 1;
+    if (fwrite(&length, sizeof(int), 1, file) != 1)
+        return 0;
+    if (fwrite(address->country, sizeof(char), length, file) != length)
+        return 0;
+    length = (int)strlen(address->city) + 1;
+    if (fwrite(&length, sizeof(int), 1, file) != 1)
+        return 0;
+    if (fwrite(address->city, sizeof(char), length, file) != length)
+        return 0;
+    length = (int)strlen(address->street) + 1;
+    if (fwrite(&length, sizeof(int), 1, file) != 1)
+        return 0;
+    if (fwrite(address->street, sizeof(char), length, file) != length)
+        return 0;
+    if (fwrite(&address->houseNumber, sizeof(int), 1, file) != 1)
+        return 0;
+    if (fwrite(address->postalCode, sizeof(char), POSTAL_CODE_LENGTH + 1, file) != POSTAL_CODE_LENGTH + 1)
+        return 0;
+    return 1;
+}
+
+int loadAddressFromBinary(Address* address, FILE* file) {
+    int length;
+    if (fread(&length, sizeof(int), 1, file) != 1)
+        return 0;
+    address->country = (char*)malloc(length);
+    CHECK_ALLOC_INT(address->country);
+    if (fread(address->country, sizeof(char), length, file) != length)
+        return 0;
+    if (fread(&length, sizeof(int), 1, file) != 1)
+        return 0;
+    address->city = (char*)malloc(length);
+    CHECK_ALLOC_INT(address->city);
+    if (fread(address->city, sizeof(char), length, file) != length)
+        return 0;
+    if (fread(&length, sizeof(int), 1, file) != 1)
+        return 0;
+    address->street = (char*)malloc(length);
+    CHECK_ALLOC_INT(address->street);
+    if (fread(address->street, sizeof(char), length, file) != length)
+        return 0;
+    if (fread(&address->houseNumber, sizeof(int), 1, file) != 1)
+        return 0;
+    if (fread(address->postalCode, sizeof(char), POSTAL_CODE_LENGTH + 1, file) != POSTAL_CODE_LENGTH + 1)
+        return 0;
+    return 1;
+}
+
 void loadAddress(Address* address, FILE* file){
     address->country = (char*)malloc(BUFFER_SIZE);
     CHECK_ALLOC_VOID(address->country);
@@ -74,8 +125,15 @@ void loadAddress(Address* address, FILE* file){
     address->street = (char*)malloc(BUFFER_SIZE);
     CHECK_ALLOC_VOID(address->street);
     fscanf(file, "%s\n", address->country);
-    fscanf(file, "%s\n", address->city);
-    fscanf(file, "%s\n", address->street);
+    // Read the city included the spaces
+    char buffer[BUFFER_SIZE];
+    fgets(buffer, BUFFER_SIZE, file);
+    buffer[strlen(buffer) - 1] = '\0';
+    strcpy(address->city, buffer);
+    // Read the street included the spaces
+    fgets(buffer, BUFFER_SIZE, file);
+    buffer[strlen(buffer) - 1] = '\0';
+    strcpy(address->street, buffer);
     fscanf(file, "%d\n", &address->houseNumber);
     fscanf(file, "%s\n", address->postalCode);
 }
