@@ -84,6 +84,7 @@ int saveListBinary(FILE* file, const LinkedList* list, int (*saveItem)(FILE*, co
 int loadListBinary(FILE* file, LinkedList* list, void* (*loadItem)(FILE*)) {
     int size;
     if (fread(&size, sizeof(int), 1, file) != 1) {
+        printf("Error reading list size\n");
         return 0;
     }
 

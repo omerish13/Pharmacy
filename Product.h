@@ -90,7 +90,7 @@ int compareProducts(void* a, void* b);
  * @param product Pointer to the Product structure to save.
  * @return 1 if the product is successfully saved, 0 otherwise.
  */
-int saveProductToBinary(FILE* file, const Product* product);
+int saveProductToBinary(FILE* file, const void* prod);
 
 /**
  * Load product details from a binary file, including name, type, price, and stock quantity.

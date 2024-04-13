@@ -577,22 +577,26 @@ int loadPharmacyFromBinary(FILE* file, Pharmacy* pharmacy) {
     }
 
     if (!loadStockFromBinary(file, &pharmacy->stock)) {
+        printf("Failed to load stock.\n");
         return 0;
     }
 
     if (fread(&pharmacy->employeeCount, sizeof(int), 1, file) != 1) {
+        printf("Failed to read employee count.\n");
         return 0;
     }
     if (pharmacy->employeeCount > 0)
         pharmacy->employees = loadEmployeesFromBinary(file, pharmacy->employeeCount);
 
     if (fread(&pharmacy->customerCount, sizeof(int), 1, file) != 1) {
+        printf("Failed to read customer count.\n");
         return 0;
     }
     if (pharmacy->customerCount > 0)
         pharmacy->customers = loadCustomersFromBinary(file, pharmacy->customerCount);
 
     if (fread(&pharmacy->prescriptionCount, sizeof(int), 1, file) != 1) {
+       printf("Failed to read prescription count.\n");
         return 0;
     }
     if (pharmacy->prescriptionCount > 0)

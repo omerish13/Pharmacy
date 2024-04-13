@@ -55,9 +55,9 @@ int loadDateFromBinary(Date* date, FILE* file) {
 }
 
 void saveDate(FILE* file, const Date* date) {
-    fprintf(file, "%d/%d/%d", date->day, date->month, date->year);
+    fprintf(file, "%d/%d/%d\n", date->day, date->month, date->year);
 }
 
 void loadDate(FILE* file, Date* date) {
-    fscanf(file, "%d/%d/%d", &date->day, &date->month, &date->year);
+    fscanf(file, "%d/%d/%d\n", &date->day, &date->month, &date->year);
 }

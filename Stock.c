@@ -150,21 +150,15 @@ void updateMedicineStock(Stock* stock, char* medicineID, int quantity) {
 }
 
 int saveStockToBinary(const Stock* stock, FILE* file) {
-    // Save the number of products and medicines in the stock
-    if (fwrite(&stock->products.size, sizeof(int), 1, file) != 1) {
-        return 0;
-    }
-    if (fwrite(&stock->medicines.size, sizeof(int), 1, file) != 1) {
+    if (fwrite(&stock->lastProductCode, sizeof(int), 1, file) != 1) {
         return 0;
     }
 
-    // Save the products if the list is not empty
-    if (stock->products.size != 0)
-        saveList(file, &stock->products, (void (*)(FILE *, const void *))saveProductToBinary);
+    // Save the products
+    saveListBinary(file,&stock->products, saveProductToBinary);
 
     // Save the medicines
-    if (stock->medicines.size != 0)
-        saveList(file,&stock->medicines, (void (*)(FILE *, const void *))saveMedicineToBinary);
+    saveListBinary(file,&stock->medicines, saveMedicineToBinary);
 
     return 1;
 }
@@ -172,20 +166,23 @@ int saveStockToBinary(const Stock* stock, FILE* file) {
 int loadStockFromBinary(FILE* file, Stock* stock) {
     initStock(stock);
 
-    int numProducts, numMedicines;
-    if (fread(&numProducts, sizeof(int), 1, file) != 1) {
-        return 0;
-    }
-    if (fread(&numMedicines, sizeof(int), 1, file) != 1) {
+    // Load the last product code
+    if (fread(&stock->lastProductCode, sizeof(int), 1, file) != 1) {
+        printf("Error reading last product code from file.\n");
         return 0;
     }
 
     // Load the products
-    loadListBinary(file,&stock->products, loadProductFromBinary);
+    if (!loadListBinary(file,&stock->products, loadProductFromBinary)){
+        printf("Error reading products from file.\n");
+        return 0;
+    }
 
     // Load the medicines
-    loadListBinary(file,&stock->medicines, loadMedicineFromBinary);
-
+    if (!loadListBinary(file,&stock->medicines, loadMedicineFromBinary)){
+        printf("Error reading medicines from file.\n");
+        return 0;
+    }
     return 1;
 }
 

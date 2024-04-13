@@ -55,7 +55,7 @@ void printMedicineDetails(const void* medicine);
  * @param med Pointer to the Medicine structure to save.
  * @return 1 if the medicine is successfully saved, 0 otherwise.
  */
-int saveMedicineToBinary(FILE* file, const Medicine* med);
+int saveMedicineToBinary(FILE* file, const void* medicine);
 
 /**
  * Loads the details of a medicine from a binary file, including product details and medicine-specific information.

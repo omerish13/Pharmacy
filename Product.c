@@ -87,36 +87,59 @@ void printProductDetails(const Product* product) {
     printf("Stock Quantity: %d\n", product->stockQuantity);
 }
 
-int saveProductToBinary(FILE* file, const Product* product) {
+int saveProductToBinary(FILE* file, const void* prod) {
+    const Product* product = (const Product*)prod;
     if (fwrite(&product->code, sizeof(int), 1, file) != 1) {
         return 0;
     }
-    int nameLength = strlen(product->name) + 1;
-    if (fwrite(&nameLength, sizeof(int), 1, file) != 1) {
+    int nameLength = (int)strlen(product->name) + 1;
+    if (fwrite(&nameLength, sizeof(int), 1, file) != 1 || fwrite(product->name, sizeof(char), nameLength, file) != nameLength) {
         return 0;
     }
-    if (fwrite(product->name, sizeof(char), nameLength, file) != nameLength) {
-        return 0;
-    }
-    if (fwrite(&product->type, sizeof(ProductType), 1, file) != 1) {
+    if (fwrite(&product->type, sizeof(int), 1, file) != 1) {
         return 0;
     }
     if (fwrite(&product->price, sizeof(double), 1, file) != 1) {
         return 0;
     }
-    if (fwrite(&product->stockQuantity, sizeof(int), 1, file) != 1) {
-        return 0;
-    }
-
-    return 1;
+    return fwrite(&product->stockQuantity, sizeof(int), 1, file) == 1;
 }
 
 void* loadProductFromBinary(FILE* file) {
-    Product* product = malloc(sizeof(Product));
+    Product* product = (Product*)malloc(sizeof(Product));
     if (product == NULL) {
         return NULL;
     }
-    if (fread(product, sizeof(Product), 1, file) != 1) {
+    if (fread(&product->code, sizeof(int), 1, file) != 1) {
+        free(product);
+        return NULL;
+    }
+    int nameLength;
+    if (fread(&nameLength, sizeof(int), 1, file) != 1) {
+        free(product);
+        return NULL;
+    }
+    product->name = (char*)malloc(nameLength);
+    CHECK_ALLOC_INT(product->name);
+    if (fread(product->name, sizeof(char), nameLength, file) != nameLength) {
+        free(product->name);
+        free(product);
+        return NULL;
+    }
+    int productType;
+    if (fread(&productType, sizeof(int), 1, file) != 1) {
+        free(product->name);
+        free(product);
+        return NULL;
+    }
+    product->type = (ProductType)productType;
+    if (fread(&product->price, sizeof(double), 1, file) != 1) {
+        free(product->name);
+        free(product);
+        return NULL;
+    }
+    if (fread(&product->stockQuantity, sizeof(int), 1, file) != 1) {
+        free(product->name);
         free(product);
         return NULL;
     }

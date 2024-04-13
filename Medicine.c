@@ -20,10 +20,9 @@ void setMedicineExpireDate(Medicine* medicine) {
 }
 
 void setMedicinePrescriptionRequired(Medicine* medicine) {
-    char buffer[BUFFER_SIZE];
-    printf("Is a prescription required? (0 = No, 1 = Yes): ");
-    myGets(buffer);
-    medicine->prescriptionRequired = atoi(buffer);
+    printf("Is a prescription required for this medicine? (0 = No, 1 = Yes): ");
+    scanf("%d", &medicine->prescriptionRequired);
+    clearInputBuffer();
 }
 
 void printMedicineInStock(const void* item) {
@@ -43,7 +42,8 @@ void printMedicineDetails(const void* medicine) {
     printf("\nPrescription Required: %s\n", med->prescriptionRequired ? "Yes" : "No");
 }
 
-int saveMedicineToBinary(FILE* file, const Medicine* med) {
+int saveMedicineToBinary(FILE* file, const void* medicine) {
+    const Medicine* med = (const Medicine*)medicine;
     // Save the base product details
     if (!saveProductToBinary(file, &med->product)) {
         return 0;
