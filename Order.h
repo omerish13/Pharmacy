@@ -13,7 +13,7 @@
  * Node in the linked list of order products, storing product details and quantity.
  */
 typedef struct OrderProductNode {
-    Product* product;                /**< Pointer to the product in the order. */
+    Product product;                /**<  Product in order. */
     int quantity;                    /**< Quantity of this product in the order. */
     struct OrderProductNode* next;   /**< Pointer to the next product node in the order. */
 } OrderProductNode;
@@ -22,7 +22,7 @@ typedef struct OrderProductNode {
  * Node in the linked list of order medicines, storing medicine details and quantity.
  */
 typedef struct OrderMedicineNode {
-    Medicine* medicine;              /**< Pointer to the medicine in the order. */
+    Medicine medicine;              /**< Medicine in order. */
     int quantity;                    /**< Quantity of this medicine in the order. */
     struct OrderMedicineNode* next;  /**< Pointer to the next medicine node in the order. */
 } OrderMedicineNode;
@@ -49,7 +49,7 @@ typedef struct {
  * @param order Pointer to the Order structure to initialize.
  * @param customerID The customer's unique identifier.
  */
-void initOrder(Order* order, int customerID, Employee* employee);
+void initOrder(Order* order, int customerID, Employee* employee, int orderNumber);
 
 /**
  * Displays the details of an order, including each product and the total cost.

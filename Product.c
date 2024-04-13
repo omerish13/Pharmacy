@@ -1,7 +1,5 @@
 #include "Product.h"
 
-static int lastProductCode = 0;  // Static variable to keep track of the last used product code
-
 // Corresponding names for the ProductType enum values
 static const char* ProductTypeNames[PRODUCT_TYPE_COUNT] = {
     "Medicine", 
@@ -9,8 +7,8 @@ static const char* ProductTypeNames[PRODUCT_TYPE_COUNT] = {
     "Equipment"
 };
 
-void initProduct(Product* product, int isMedicine) {
-    product->code = ++lastProductCode;  // Auto-increment the product code
+void initProduct(Product* product, int isMedicine, int productCode) {
+    product->code = productCode;  // Auto-increment the product code
     setProductName(product);
 
     if (!isMedicine) {  // Only set product type if not a medicine
@@ -137,11 +135,7 @@ void saveProduct(FILE* file, const void* product) {
 Product* loadProduct(FILE* file) {
     Product* product = (Product*)malloc(sizeof(Product));
     fscanf(file, "%d\n", &product->code);
-    char buffer[BUFFER_SIZE];
-    fscanf(file, "%s\n", buffer);
-    product->name = (char*)malloc(strlen(buffer) + 1);
-    CHECK_ALLOC_STRUCT(product->name);
-    strcpy(product->name, buffer);
+    readString(file, &product->name);
     fscanf(file, "%d\n", (int*)&product->type);
     fscanf(file, "%lf\n", &product->price);
     fscanf(file, "%d\n", &product->stockQuantity);

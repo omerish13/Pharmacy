@@ -15,10 +15,12 @@ typedef struct {
 } Employee;
 
 /**
- * Initializes an Employee structure with a unique ID and other provided details.
- * @param employee Pointer to the Employee structure to initialize.
+ * Initializes an Employee object with the given last employee ID.
+ *
+ * @param employee A pointer to the Employee object to be initialized.
+ * @param lastEmployeeID The last employee ID to be assigned to the Employee.
  */
-void initEmployee(Employee* employee);
+void initEmployee(Employee* employee, int lastEmployeeID);
 
 /**
  * Sets the position of an employee after dynamically allocating memory for it.

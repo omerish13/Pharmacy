@@ -2,10 +2,8 @@
 #include <string.h>
 #include <time.h>
 
-static int lastPrescriptionID = 0;  // For auto-incrementing the prescription ID
-
-void initPrescription(Prescription* prescription, Customer* customers, int numCustomers, int customerID, const char* medicineID,Stock* stock, Date expirationDate, int quantity) {
-    prescription->id = ++lastPrescriptionID;  // Auto-increment the prescription ID
+void initPrescription(Prescription* prescription, Customer* customers, int numCustomers, int customerID, const char* medicineID,Stock* stock, Date expirationDate, int quantity, int prescriptionID) {
+    prescription->id = prescriptionID;  // Auto-increment the prescription ID
     prescription->customer = findCustomerByID(customers, numCustomers, customerID);
     
     prescription->medicine = findMedicineByID(stock, medicineID);

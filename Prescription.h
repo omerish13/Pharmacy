@@ -40,7 +40,7 @@ typedef struct {
  * @param expirationDate The expiration date of the prescription.
  * @param quantity The quantity of medication allowed for purchase with this prescription.
  */
-void initPrescription(Prescription* prescription,Customer* customers, int numCustomers, int customerID, const char* medicineID,Stock* stock, Date expirationDate, int quantity);
+void initPrescription(Prescription* prescription,Customer* customers, int numCustomers, int customerID, const char* medicineID,Stock* stock, Date expirationDate, int quantity, int prescriptionID);
 
 /**
  * Determines if a given customer has a valid (unused and unexpired) prescription

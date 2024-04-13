@@ -48,7 +48,7 @@ Order* createNewOrder(Pharmacy* pharmacy, int customerID, int employeeID) {
     CHECK_ALLOC_STRUCT(newOrder);
 
     // Initialize the new order with the given customer and employee IDs
-    initOrder(newOrder, customerID, findEmployee(pharmacy->employees, pharmacy->employeeCount, employeeID));
+    initOrder(newOrder, customerID, findEmployee(pharmacy->employees, pharmacy->employeeCount, employeeID), pharmacy->orderHistory.size + 1);
 
     // Update the lastModified date of the order to the current date/time
     updateLastModified(newOrder);
@@ -174,7 +174,7 @@ void purchaseOrder(Pharmacy* pharmacy, int orderNumber) {
         // Update the stock based on the products in the order
         OrderProductNode* currentNode = (OrderProductNode*)finalizedOrder->orderProducts->head;
         while (currentNode != NULL) {
-            updateStock(&pharmacy->stock, currentNode->product->code, currentNode->quantity);
+            updateStock(&pharmacy->stock, currentNode->product.code, currentNode->quantity);
             currentNode = currentNode->next;
         }
 
@@ -245,14 +245,14 @@ void addNewPrescriptionToPharmacy(Pharmacy* pharmacy) {
         pharmacy->prescriptionCapacity = newCapacity;
     }
 
-    initPrescription(&newPrescription,pharmacy->customers,pharmacy->customerCount,customerID,medicineID,&pharmacy->stock,d,quantity);
+    initPrescription(&newPrescription,pharmacy->customers,pharmacy->customerCount,customerID,medicineID,&pharmacy->stock,d,quantity,pharmacy->prescriptionCount+1);
     // Add the new prescription to the array and increment the count
     pharmacy->prescriptions[pharmacy->prescriptionCount++] = newPrescription;
 }
 
 void addEmployeeInteractive(Pharmacy* pharmacy) {
     Employee newEmployee;
-    initEmployee(&newEmployee);
+    initEmployee(&newEmployee, pharmacy->employeeCount + 1);
 
     // Add the new employee to the pharmacy
     addEmployee(pharmacy, &newEmployee);
@@ -260,7 +260,7 @@ void addEmployeeInteractive(Pharmacy* pharmacy) {
 
 void addCustomerInteractive(Pharmacy* pharmacy) {
     Customer newCustomer;
-    initCustomer(&newCustomer);
+    initCustomer(&newCustomer, pharmacy->customerCount + 1);
 
     // Add the new customer to the pharmacy
     addCustomer(pharmacy, &newCustomer);
@@ -362,7 +362,6 @@ int savePharmacyToBinary(FILE* file, const Pharmacy* pharmacy) {
     if (fwrite(pharmacy->name, sizeof(char), length, file) != length) {
         return 0;
     }
-
     // Save the pharmacy address
     if (!saveAddressToBinary(&pharmacy->address,file)) {
         return 0;
@@ -537,6 +536,10 @@ void loadOrders(FILE* file, const Employee** employees, int numEmployees, Linked
     
     int numOrders;
     fscanf(file, "%d\n", &numOrders);
+    printf("Number of orders: %d\n", numOrders);
+    if (numOrders <= 0) {
+        return;
+    }
     for (int i = 0; i < numOrders; i++) {
         Order* order = loadOrder(file, (Employee**)employees, numEmployees);
         addToList(orders, order);
@@ -615,6 +618,7 @@ void loadPharmacyFromFile(FILE* file, Pharmacy* pharmacy) {
     fscanf(file, "%d\n", &pharmacy->prescriptionCount);
     if (pharmacy->prescriptionCount > 0)
         pharmacy->prescriptions = loadPrescriptions(file, pharmacy->prescriptionCount, pharmacy->customers, pharmacy->customerCount, &pharmacy->stock);
+    printf("Prescriptions loaded\n");
     loadOrders(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount, &pharmacy->openOrders);
     printf("Orders loaded\n");
     loadOrders(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount, &pharmacy->orderHistory);

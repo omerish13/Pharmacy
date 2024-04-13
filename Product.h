@@ -14,7 +14,6 @@ typedef enum {
     // Add new product types here
 } ProductType;
 
-
 /**
  * Structure representing a product's basic information.
  */
@@ -27,12 +26,13 @@ typedef struct {
 } Product;
 
 /**
- * Initializes a Product structure with a unique code and other provided details.
- * Optionally skips setting the product type if isMedicine is true.
+ * Initializes a product with the specified product code.
+ * 
  * @param product Pointer to the Product structure to initialize.
- * @param isMedicine Flag to indicate if the product is a medicine, which skips type selection.
+ * @param isMedicine Flag indicating if the product is a medicine.
+ * @param productCode The product code to assign to the product.
  */
-void initProduct(Product* product, int isMedicine);
+void initProduct(Product* product, int isMedicine, int productCode);
 
 /**
  * Sets the name of a product after dynamically allocating memory for it.

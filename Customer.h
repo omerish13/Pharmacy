@@ -13,10 +13,12 @@ typedef struct {
 } Customer;
 
 /**
- * Initializes a Customer structure with a unique ID and other provided details.
- * @param customer Pointer to the Customer structure to initialize.
+ * Initializes a Customer object with the given last customer ID.
+ *
+ * @param customer A pointer to the Customer object to be initialized.
+ * @param lastCustomerID The last customer ID to be assigned to the Customer.
  */
-void initCustomer(Customer* customer);
+void initCustomer(Customer* customer, int lastCustomerID);
 
 /**
  * Finds a customer by their unique ID.

@@ -1,10 +1,9 @@
 #include "Customer.h"
 
-static int lastCustomerID = 0;  // Static variable to keep track of the last used customer ID
 
-void initCustomer(Customer* customer) {
+void initCustomer(Customer* customer, int lastCustomerID) {
     initPerson(&customer->person);
-    customer->id = ++lastCustomerID;  // Auto-increment the customer ID for each new customer
+    customer->id = lastCustomerID;  // Auto-increment the customer ID for each new customer
 }
 
 Customer* findCustomerByID(Customer* customers, int numCustomers, int customerID) {

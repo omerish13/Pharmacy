@@ -17,11 +17,13 @@ typedef struct {
 } Medicine;
 
 /**
- * Initializes a Medicine structure with unique product code, medicineID, and other provided details.
+ * Initializes a Medicine structure with the specified medicine ID and product code.
+ * 
  * @param medicine Pointer to the Medicine structure to initialize.
- * @param medicineID Unique ID for the medicine, expected to be a 6-digit string.
+ * @param medicineID The unique ID to assign to the medicine.
+ * @param productCode The product code to assign to the medicine.
  */
-void initMedicine(Medicine* medicine, const char* medicineID);
+void initMedicine(Medicine* medicine, const char* medicineID, int productCode);
 
 /**
  * Sets the expiration date of a medicine after dynamically allocating memory for it.

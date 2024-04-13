@@ -9,6 +9,7 @@
  * Represents the inventory of a pharmacy, including both general products and medicines.
  */
 typedef struct Stock {
+    int lastProductCode;  /**< Last product code used, for auto-incrementing product codes. */
     LinkedList products;   /**< Linked list of all products, including medicines. */
     LinkedList medicines;  /**< Linked list of medicines for quick access. */
 } Stock;

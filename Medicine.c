@@ -1,9 +1,9 @@
 #include "Medicine.h"
 #include <string.h> 
 
-void initMedicine(Medicine* medicine, const char* medicineID) {
+void initMedicine(Medicine* medicine, const char* medicineID, int productCode) {
     // Initialize the base product part of the medicine with isMedicine flag set to true
-    initProduct(&medicine->product, 1);  // Pass 1 for isMedicine to skip product type setting
+    initProduct(&medicine->product, 1,productCode);  // Pass 1 for isMedicine to skip product type setting
 
     // Copy the medicineID to the Medicine structure
     strncpy(medicine->medicineID, medicineID, 6);

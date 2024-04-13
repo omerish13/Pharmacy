@@ -1,10 +1,8 @@
 #include "Employee.h"
 
-static int lastEmployeeID = 0;  // Static variable to keep track of the last used employee ID
-
-void initEmployee(Employee* employee) {
+void initEmployee(Employee* employee, int lastEmployeeID) {
     initPerson(&employee->person);
-    employee->id = ++lastEmployeeID;  // Auto-increment the employee ID for each new employee
+    employee->id = lastEmployeeID;  // Auto-increment the employee ID for each new employee
     setEmployeePosition(employee);
     setEmployeeSalary(employee);
 }
