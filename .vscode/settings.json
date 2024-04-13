@@ -64,5 +64,6 @@
     "bat": ".bat",
     "powershell": ".ps1",
     "typescript": ".ts"
-  }
+  },
+  "C_Cpp.errorSquiggles": "disabled"
 }

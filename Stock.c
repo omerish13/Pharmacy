@@ -214,7 +214,6 @@ void loadStock(FILE* file, Stock* stock) {
         Product* product = loadProduct(file);
         addToList(&stock->products, product);
     }
-
     // Load the medicines
     for (int i = 0; i < numMedicines; i++) {
         Medicine* medicine = loadMedicine(file);

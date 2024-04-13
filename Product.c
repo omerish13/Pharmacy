@@ -145,7 +145,6 @@ Product* loadProduct(FILE* file) {
     fscanf(file, "%d\n", (int*)&product->type);
     fscanf(file, "%lf\n", &product->price);
     fscanf(file, "%d\n", &product->stockQuantity);
-
     return product;
 }
 

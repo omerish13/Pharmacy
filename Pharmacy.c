@@ -534,7 +534,7 @@ Prescription* loadPrescriptionsFromBinary(FILE* file, int numPrescriptions,Custo
 
 void loadOrders(FILE* file, const Employee** employees, int numEmployees, LinkedList* orders) {
     initList(orders);
-
+    
     int numOrders;
     fscanf(file, "%d\n", &numOrders);
     for (int i = 0; i < numOrders; i++) {
@@ -597,6 +597,7 @@ int loadPharmacyFromBinary(FILE* file, Pharmacy* pharmacy) {
 
     loadOrdersFromBinary(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount, &pharmacy->openOrders);
     loadOrdersFromBinary(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount, &pharmacy->orderHistory);
+    printPharmacyDetails(pharmacy);
     return 1;
 }
 void loadPharmacyFromFile(FILE* file, Pharmacy* pharmacy) {
@@ -615,7 +616,9 @@ void loadPharmacyFromFile(FILE* file, Pharmacy* pharmacy) {
     if (pharmacy->prescriptionCount > 0)
         pharmacy->prescriptions = loadPrescriptions(file, pharmacy->prescriptionCount, pharmacy->customers, pharmacy->customerCount, &pharmacy->stock);
     loadOrders(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount, &pharmacy->openOrders);
+    printf("Orders loaded\n");
     loadOrders(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount, &pharmacy->orderHistory);
+    printf("Order History loaded\n");
     printPharmacyDetails(pharmacy);
 }
 
