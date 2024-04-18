@@ -77,7 +77,6 @@ void showAndUpdateStock(Pharmacy* pharmacy) {
     scanf("%d", &newQuantity);
 
     updateStock(&pharmacy->stock, productCode, newQuantity);
-    printf("Stock updated successfully.\n");
 }
 
 int main() {
@@ -100,6 +99,7 @@ int main() {
         printf("Invalid choice. Initialize from client.\n");
         initPharmacyClient(&pharmacy);
     }
+
     
     int choice;
     do {

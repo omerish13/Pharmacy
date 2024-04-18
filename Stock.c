@@ -28,10 +28,10 @@ int compareMedicineByID(const void* a, const void* b) {
 
 
 Product* findProduct(const Stock* stock, int code) {
-    ListNode* node = stock->products.head->next;
+    ListNode* node = stock->products.head;
     Product* tmp;
     for (int i = 0; i < stock->products.size; ++i) {
-        tmp = (Product*)(node->item);
+       tmp = (Product*)(node->item);
         if (code == tmp->code)
             return tmp;
         node = node->next;
@@ -79,7 +79,7 @@ void addNewMedicineToStock(Stock* stock) {
     char medicineID[ID_LENGTH];
 
     do {
-        printf("Enter unique Medicine ID: ");
+        printf("Enter unique Medicine ID (6 digits): ");
         myGets(medicineID);
 
         // Use findMedicineByID to check if a medicine with the given ID already exists
@@ -119,12 +119,14 @@ void updateStock(Stock* stock, int productCode, int quantity) {
 
     if (stockProduct != NULL) {
         // Update the quantity available in the stock
-        if (stockProduct->stockQuantity >= quantity) {
-            stockProduct->stockQuantity -= quantity;
-        } else {
-            // Handle the case where there's not enough stock
-            printf("Insufficient stock for product code %d. Available: %d, Required: %d\n", productCode, stockProduct->stockQuantity, quantity);
-        }
+        // if (stockProduct->stockQuantity <= quantity) {
+        //     stockProduct->stockQuantity -= quantity;
+        //     printf("Stock updated successfully.\n");
+        // } else {
+        //     // Handle the case where there's not enough stock
+        //     printf("Insufficient stock for product code %d. Available: %d, Required: %d\n", productCode, stockProduct->stockQuantity, quantity);
+        // }
+        stockProduct->stockQuantity = quantity;
     } else {
         // Handle the case where the product is not found in the stock
         printf("Product code %d not found in stock.\n", productCode);

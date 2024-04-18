@@ -231,6 +231,7 @@ void addNewPrescriptionToPharmacy(Pharmacy* pharmacy) {
 
     Date d;
     // Use initDate to set the expiration date
+    printf("Enter date (dd/mm/yyyy): ");
     initDate(&d);
     
     // Resize the prescriptions array if necessary

@@ -83,7 +83,7 @@ void printProductDetails(const Product* product) {
     printf("Product Code: %d ", product->code);
     printf("Name: %s ", product->name);
     printf("Type: %s ", ProductTypeNames[product->type]);
-    printf("Price: $%.2f ", product->price);
+    printf("Price: %.2f₪ ", product->price);
     printf("Stock Quantity: %d\n", product->stockQuantity);
 }
 

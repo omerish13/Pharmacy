@@ -39,7 +39,7 @@ void printMedicineDetails(const void* medicine) {
 
     // Print medicine-specific details
     printDate(&med->expireDate);
-    printf("\nPrescription Required: %s\n", med->prescriptionRequired ? "Yes" : "No");
+    printf("Prescription Required: %s\n", med->prescriptionRequired ? "Yes" : "No");
 }
 
 int saveMedicineToBinary(FILE* file, const void* medicine) {
@@ -58,14 +58,34 @@ int saveMedicineToBinary(FILE* file, const void* medicine) {
 }
 
 void* loadMedicineFromBinary(FILE* file) {
-    Medicine* medicine = malloc(sizeof(Medicine));
-    if (medicine == NULL) {
-        return NULL;
-    }
-    if (fread(medicine, sizeof(Medicine), 1, file) != 1) {
+    Medicine* medicine = (Medicine*)malloc(sizeof(Medicine));
+    CHECK_ALLOC_STRUCT(medicine);
+
+    // Load the base product details
+    Product* product = (Product*)loadProductFromBinary(file);
+    if (product == NULL) {
         free(medicine);
         return NULL;
     }
+    medicine->product = *product;
+
+    // Load medicine-specific details
+    if (fread(medicine->medicineID, sizeof(char), ID_LENGTH, file) != ID_LENGTH) {
+        free(product);
+        free(medicine);
+        return NULL;
+    }
+    if (!loadDateFromBinary(&medicine->expireDate, file)) {
+        free(product);
+        free(medicine);
+        return NULL;
+    }
+    if (fread(&medicine->prescriptionRequired, sizeof(int), 1, file) != 1) {
+        free(product);
+        free(medicine);
+        return NULL;
+    }
+
     return medicine;
 }
 
