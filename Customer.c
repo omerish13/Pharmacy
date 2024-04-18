@@ -6,13 +6,25 @@ void initCustomer(Customer* customer, int lastCustomerID) {
     customer->id = lastCustomerID;  // Auto-increment the customer ID for each new customer
 }
 
+// Comparator for customers by ID
+int compareCustomerByID(const void* a, const void* b) {
+    const Customer* custA = (const Customer*)a;
+    const Customer* custB = (const Customer*)b;
+    return (custA->id - custB->id);
+}
+
 Customer* findCustomerByID(Customer* customers, int numCustomers, int customerID) {
-    for (int i = 0; i < numCustomers; i++) {
-        if (customers[i].id == customerID) {
-            return &customers[i];
-        }
-    }
-    return NULL;  // Customer not found
+    // Create a temporary Customer for the search
+    Customer tmp;
+    tmp.id = customerID;
+
+    qsort(customers, numCustomers, sizeof(Customer), compareCustomerByID);
+
+    // Search the array
+    Customer* found = (Customer*)bsearch(&tmp, customers, numCustomers, sizeof(Customer), compareCustomerByID);
+
+    // Return the found Customer, or NULL if not found
+    return found;
 }
 
 
