@@ -215,8 +215,18 @@ void addNewPrescriptionToPharmacy(Pharmacy* pharmacy) {
     char* medicineID;
     // Get Customer ID from the client
     printf("Enter the Customer ID for the new prescription: ");
-    scanf("%d", &customerID);
-    clearInputBuffer();
+    Customer* customer;
+    do
+    {
+        scanf("%d", &customerID);
+        clearInputBuffer();
+        customer = findCustomerByID(pharmacy->customers,pharmacy->customerCount,customerID);
+        if (customer == NULL){
+            printf("Customer with the ID %d does not exist. Please enter a valid ID: ",customerID);
+        }
+    } while (customer == NULL);
+    
+    
 
     // Get other prescription details from the client
     printf("Enter the Medicine ID for the new prescription: ");
@@ -227,7 +237,9 @@ void addNewPrescriptionToPharmacy(Pharmacy* pharmacy) {
     strcpy(medicineID,buffer);
 
     printf("Enter the quantity for the prescription: ");
-    scanf("%d\n", &quantity);
+    scanf("%d", &quantity);
+    clearInputBuffer();
+    
 
     Date d;
     // Use initDate to set the expiration date

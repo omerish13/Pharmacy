@@ -2,6 +2,7 @@
 #define DATE_H
 
 #include <stdio.h>
+#include "general.h"
 
 /**
  * Structure representing a calendar date.

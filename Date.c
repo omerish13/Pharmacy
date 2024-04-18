@@ -2,13 +2,19 @@
 
 
 void initDate(Date* date) {
-    
-    scanf("%d/%d/%d",&date->day,&date->month,&date->year);
-    while (!checkDateValidity(date))
+    int res;
+    do
     {
-        printf("Error: Invalid date provided.\n");
+        res = 0;
         scanf("%d/%d/%d",&date->day,&date->month,&date->year);
-    }   
+        clearInputBuffer();
+        if (!checkDateValidity(date) || date->year < 1900){
+            res = 1;
+            printf("Error: Invalid date provided.\n");
+            printf("Please enter a valid date (DD/MM/YYYY): ");
+        }
+        
+    } while (res); 
 }
 
 int checkDateValidity(Date* date) {

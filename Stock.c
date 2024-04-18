@@ -53,12 +53,15 @@ Medicine* findMedicine(const Stock* stock, int code) {
 
 Medicine* findMedicineByID(Stock* stock, const char* medicineID)
 {
-    Medicine* temp = (Medicine*)malloc(sizeof(Medicine));
-    CHECK_ALLOC_STRUCT(temp);
-    strcpy(temp->medicineID,medicineID);
-
-    qsort(&stock->medicines,stock->medicines.size,sizeof(Medicine*),compareMedicineByID);
-    return (Medicine*)bsearch(temp,&stock->medicines,stock->medicines.size,sizeof(Medicine),compareMedicineByID);
+    ListNode* node = stock->medicines.head;
+    Medicine* tmp;
+    for (int i = 0; i < stock->medicines.size; ++i) {
+        tmp = (Medicine*)(node->item);
+        if (strcmp(medicineID, tmp->medicineID) == 0)
+            return tmp;
+        node = node->next;
+    }
+    return NULL;  // Medicine not found
 }
 
 void addNewProductToStock(Stock* stock) {
@@ -83,7 +86,6 @@ void addNewMedicineToStock(Stock* stock) {
         myGets(medicineID);
 
         // Use findMedicineByID to check if a medicine with the given ID already exists
-        printf("Medicine ID: %s\n", medicineID);
         existingMedicine = findMedicineByID(stock, medicineID);
 
         if (existingMedicine != NULL) {

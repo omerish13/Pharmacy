@@ -61,6 +61,9 @@ int savePrescriptionToBinary(const Prescription* prescription, FILE* file) {
     if (fwrite(&prescription->used, sizeof(int), 1, file) != 1) {
         return 0;
     }
+    if (!saveDateToBinary(file, &prescription->expirationDate)) {
+        return 0;
+    }
     return 1;
 }
 
@@ -82,7 +85,9 @@ int loadPrescriptionFromBinary(Prescription* prescription, FILE* file, Customer*
     if (fread(&prescription->used, sizeof(int), 1, file) != 1) {
         return 0;
     }
-
+    if (!loadDateFromBinary(&prescription->expirationDate, file)) {
+        return 0;
+    }
     prescription->customer = findCustomerByID(customers, numCustomers, customerID);
     prescription->medicine = findMedicineByID(stock, medicineID);
 
