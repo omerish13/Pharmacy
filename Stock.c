@@ -4,18 +4,23 @@
 
 void initStock(Stock* stock) {
     stock->lastProductCode = 0;
-    initList(&stock->products);
-    initList(&stock->medicines);
+    stock->products = NULL;
+    stock->productCount = 0;
+    
+    stock->medicines = NULL;
+    stock->medicineCount = 0;
+    
 }
 
 void showAvailableProducts(const Stock* stock) {
-    /**
-     * Displays all available products in the stock, including medicines.
-     */
     printf("Available Products:\n");
-    traverseLinkedList(&stock->products, printProductInStock);  // printProduct is a callback function
+    for (int i = 0; i < stock->productCount; i++) {
+        printProductDetails(&stock->products[i]);
+    }
     printf("Available Medicines:\n");
-    traverseLinkedList(&stock->medicines, printMedicineInStock);  // printMedicine is a callback function
+    for (int i = 0; i < stock->medicineCount; i++) {
+        printMedicineDetails(&stock->medicines[i]);
+    }
 }
 
 
@@ -26,42 +31,41 @@ int compareMedicineByID(const void* a, const void* b) {
     return strcmp(medA->medicineID, medB->medicineID);
 }
 
+// Comparator for products by code
+int compareProductByCode(const void* a, const void* b) {
+    const Product* productA = (const Product*)a;
+    const Product* productB = (const Product*)b;
+    return productA->code - productB->code;
+}
 
 Product* findProduct(const Stock* stock, int code) {
-    ListNode* node = stock->products.head;
-    Product* tmp;
-    for (int i = 0; i < stock->products.size; ++i) {
-       tmp = (Product*)(node->item);
-        if (code == tmp->code)
-            return tmp;
-        node = node->next;
-    }
-    return NULL;  // Product not found
+    // Use Binary Search to find the product with the given code
+    Product tmp;
+    tmp.code = code;
+    Product* found = (Product*)bsearch(&tmp, stock->products, stock->productCount, sizeof(Product), compareProductByCode);
+    return found;
+}
+
+int compareMedicineByCode(const void* a, const void* b) {
+    const Medicine* medA = (const Medicine*)a;
+    const Medicine* medB = (const Medicine*)b;
+    return medA->product.code - medB->product.code;
 }
 
 Medicine* findMedicine(const Stock* stock, int code) {
-    ListNode* node = stock->medicines.head->next;
-    Medicine* tmp;
-    for (int i = 0; i < stock->medicines.size; ++i) {
-        tmp = (Medicine*)(node->item);
-        if (code == tmp->product.code)
-            return tmp;
-        node = node->next;
-    }
-    return NULL;  // Product not found
+    // Use Binary Search to find the medicine with the given code
+    Medicine tmp;
+    tmp.product.code = code;
+    Medicine* found = (Medicine*)bsearch(&tmp, stock->medicines, stock->medicineCount, sizeof(Medicine), compareMedicineByCode);
+    return found;
 }
 
-Medicine* findMedicineByID(Stock* stock, const char* medicineID)
-{
-    ListNode* node = stock->medicines.head;
-    Medicine* tmp;
-    for (int i = 0; i < stock->medicines.size; ++i) {
-        tmp = (Medicine*)(node->item);
-        if (strcmp(medicineID, tmp->medicineID) == 0)
-            return tmp;
-        node = node->next;
-    }
-    return NULL;  // Medicine not found
+Medicine* findMedicineByID(Stock* stock, const char* medicineID){
+    // Use Binary Search to find the medicine with the given ID
+    Medicine tmp;
+    strcpy(tmp.medicineID, medicineID);
+    Medicine* found = (Medicine*)bsearch(&tmp, stock->medicines, stock->medicineCount, sizeof(Medicine), compareMedicineByID);
+    return found;
 }
 
 void addNewProductToStock(Stock* stock) {
@@ -73,8 +77,12 @@ void addNewProductToStock(Stock* stock) {
     
     initProduct(newProduct, 0,++stock->lastProductCode);  // 0 indicating this is not a medicine
 
-    // Add the new product to the products list
-    addToList(&stock->products, newProduct);
+    // Add the new product to the products array
+    stock->products = (Product*)realloc(stock->products, (stock->productCount + 1) * sizeof(Product));
+    CHECK_ALLOC_VOID(stock->products);
+    stock->products[stock->productCount] = *newProduct;
+    stock->productCount++;
+    
 }
 
 void addNewMedicineToStock(Stock* stock) {
@@ -103,16 +111,23 @@ void addNewMedicineToStock(Stock* stock) {
     // Initialize new medicine with the provided ID
     initMedicine(newMedicine, medicineID,++stock->lastProductCode);
 
-    // Add the new medicine to the medicines list
-    addToList(&stock->medicines, newMedicine);
+    // Add the new medicine to the medicines array
+    stock->medicines = (Medicine*)realloc(stock->medicines, (stock->medicineCount + 1) * sizeof(Medicine));
+    CHECK_ALLOC_VOID(stock->medicines);
+    stock->medicines[stock->medicineCount] = *newMedicine;
+    stock->medicineCount++;
 }
 
 
 void printStockDetails(const Stock* stock) {
     printf("Available Products:\n");
-    traverseLinkedList(&stock->products, printProduct);
+    for (int i = 0; i < stock->productCount; i++) {
+        printProductDetails(&stock->products[i]);
+    }
     printf("Available Medicines:\n");
-    traverseLinkedList(&stock->medicines, printMedicineDetails);
+    for (int i = 0; i < stock->medicineCount; i++) {
+        printMedicineDetails(&stock->medicines[i]);
+    }
 }
 
 void updateStock(Stock* stock, int productCode, int quantity) {
@@ -121,13 +136,6 @@ void updateStock(Stock* stock, int productCode, int quantity) {
 
     if (stockProduct != NULL) {
         // Update the quantity available in the stock
-        // if (stockProduct->stockQuantity <= quantity) {
-        //     stockProduct->stockQuantity -= quantity;
-        //     printf("Stock updated successfully.\n");
-        // } else {
-        //     // Handle the case where there's not enough stock
-        //     printf("Insufficient stock for product code %d. Available: %d, Required: %d\n", productCode, stockProduct->stockQuantity, quantity);
-        // }
         stockProduct->stockQuantity = quantity;
     } else {
         // Handle the case where the product is not found in the stock
@@ -159,13 +167,46 @@ int saveStockToBinary(const Stock* stock, FILE* file) {
     }
 
     // Save the products
-    saveListBinary(file,&stock->products, saveProductToBinary);
+    if (!saveProductsToBinary(file, stock->products, stock->productCount)) {
+        return 0;
+    }
 
     // Save the medicines
-    saveListBinary(file,&stock->medicines, saveMedicineToBinary);
+    if (!saveMedicinesToBinary(file, stock->medicines, stock->medicineCount)) {
+        return 0;
+    }
 
     return 1;
 }
+
+int saveProductsToBinary(FILE* file, const Product* products, int productCount) {
+    if (fwrite(&productCount, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+
+    for (int i = 0; i < productCount; i++) {
+        if (!saveProductToBinary(file, &products[i])) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int saveMedicinesToBinary(FILE* file, const Medicine* medicines, int medicineCount) {
+    if (fwrite(&medicineCount, sizeof(int), 1, file) != 1) {
+        return 0;
+    }
+
+    for (int i = 0; i < medicineCount; i++) {
+        if (!saveMedicineToBinary(file, &medicines[i])) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
 
 int loadStockFromBinary(FILE* file, Stock* stock) {
     initStock(stock);
@@ -177,16 +218,49 @@ int loadStockFromBinary(FILE* file, Stock* stock) {
     }
 
     // Load the products
-    if (!loadListBinary(file,&stock->products, loadProductFromBinary)){
-        printf("Error reading products from file.\n");
+    if (!loadProductsFromBinary(file, &stock->products))
+        return 0;
+
+    // Load the medicines
+    if(!loadMedicinesFromBinary(file, &stock->medicines))
+        return 0;
+
+    return 1;
+}
+
+int loadProductsFromBinary(FILE* file, Product** products) {
+    int productCount;
+    if (fread(&productCount, sizeof(int), 1, file) != 1) {
         return 0;
     }
 
-    // Load the medicines
-    if (!loadListBinary(file,&stock->medicines, loadMedicineFromBinary)){
-        printf("Error reading medicines from file.\n");
+    *products = (Product*)malloc(productCount * sizeof(Product));
+    CHECK_ALLOC_INT(*products);
+
+    for (int i = 0; i < productCount; i++) {
+        if (!loadProductFromBinary(&(*products)[i], file)) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+int loadMedicinesFromBinary(FILE* file, Medicine** medicines) {
+    int medicineCount;
+    if (fread(&medicineCount, sizeof(int), 1, file) != 1) {
         return 0;
     }
+
+    *medicines = (Medicine*)malloc(medicineCount * sizeof(Medicine));
+    CHECK_ALLOC_INT(*medicines);
+
+    for (int i = 0; i < medicineCount; i++) {
+        if (!loadMedicineFromBinary(&(*medicines)[i], file)) {
+            return 0;
+        }
+    }
+
     return 1;
 }
 
@@ -194,11 +268,24 @@ void saveStock(const Stock* stock, FILE* file) {
 
     fprintf(file,"%d\n",stock->lastProductCode);
     // Save the products
-    saveList(file,&stock->products, saveProduct);
-
+    saveProducts(file, stock->products, stock->productCount);
 
     // Save the medicines
-    saveList(file,&stock->medicines, saveMedicine);
+    saveMedicines(file, stock->medicines, stock->medicineCount);
+}
+
+void saveProducts(FILE* file, const Product* products, int productCount) {
+    fprintf(file, "%d\n", productCount);
+    for (int i = 0; i < productCount; i++) {
+        saveProduct(file, &products[i]);
+    }
+}
+
+void saveMedicines(FILE* file, const Medicine* medicines, int medicineCount) {
+    fprintf(file, "%d\n", medicineCount);
+    for (int i = 0; i < medicineCount; i++) {
+        saveMedicine(file, &medicines[i]);
+    }
 }
 
 void loadStock(FILE* file, Stock* stock) {
@@ -207,13 +294,50 @@ void loadStock(FILE* file, Stock* stock) {
     fscanf(file,"%d\n",&stock->lastProductCode);
     
     // Load the products
-    stock->products = *loadList(file,(void *(*)(FILE *))loadProduct);
+    loadProducts(file, &stock->products);
 
     // Load the medicines
-    stock->medicines = *loadList(file,(void *(*)(FILE *))loadMedicine);
+    loadMedicines(file, &stock->medicines);
+}
+
+void loadProducts(FILE* file, Product** products) {
+    int productCount;
+    fscanf(file, "%d\n", &productCount);
+
+    *products = (Product*)malloc(productCount * sizeof(Product));
+    CHECK_ALLOC_INT(*products);
+
+    for (int i = 0; i < productCount; i++) {
+        loadProduct(file, &(*products)[i]);
+    }
+}
+
+void loadMedicines(FILE* file, Medicine** medicines) {
+    int medicineCount;
+    fscanf(file, "%d\n", &medicineCount);
+
+    *medicines = (Medicine*)malloc(medicineCount * sizeof(Medicine));
+    CHECK_ALLOC_INT(*medicines);
+
+    for (int i = 0; i < medicineCount; i++) {
+        loadMedicine(file, &(*medicines)[i]);
+    }
+}
+
+void freeStockProducts(Stock* stock) {
+    free(stock->products);
+    stock->products = NULL;
+    stock->productCount = 0;
+}
+
+void freeStockMedicines(Stock* stock) {
+    free(stock->medicines);
+    stock->medicines = NULL;
+    stock->medicineCount = 0;
 }
 
 void freeStock(Stock* stock) {
-    freeList(&stock->products, freeProduct);
-    freeList(&stock->medicines, freeMedicine);
+    
+    freeStockProducts(stock);
+    freeStockMedicines(stock);
 }

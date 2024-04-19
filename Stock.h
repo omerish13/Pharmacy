@@ -10,8 +10,12 @@
  */
 typedef struct Stock {
     int lastProductCode;  /**< Last product code used, for auto-incrementing product codes. */
-    LinkedList products;   /**< Linked list of all products, including medicines. */
-    LinkedList medicines;  /**< Linked list of medicines for quick access. */
+    Product* products;   /**< Array of products in the stock. */
+    int productCount;    /**< Number of products in the stock. */
+
+    Medicine* medicines;   /**< Array of medicines in the stock. */
+    int medicineCount;    /**< Number of medicines in the stock. */
+
 } Stock;
 
 /**
