@@ -64,7 +64,7 @@ void manageOrder(Pharmacy* pharmacy, Order* order) {
 
 
 void showAndUpdateStock(Pharmacy* pharmacy) {
-    if (pharmacy->stock.products.head == NULL && pharmacy->stock.medicines.head == NULL) {
+    if (pharmacy->stock.products == NULL && pharmacy->stock.medicines == NULL) {
         printf("No products or medicines available in stock.\n");
         return;
     }
