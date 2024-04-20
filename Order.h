@@ -166,7 +166,7 @@ int saveOrderToBinary(const Order* order, FILE* file);
  * @param file Pointer to the file to save the order product node to.
  * @param data Pointer to the OrderProductNode to save.
  */
-void saveOrderProductNode(FILE* file, void* data);
+void saveOrderProductNode(FILE* file, const void* data);
 
 /**
  * Saves an order medicine node to a binary file.
@@ -174,7 +174,7 @@ void saveOrderProductNode(FILE* file, void* data);
  * @param file Pointer to the file to save the order medicine node to.
  * @param data Pointer to the OrderMedicineNode to save.
  */
-void saveOrderMedicineNode(FILE* file, void* data);
+void saveOrderMedicineNode(FILE* file, const void* data);
 
 /**
  * Saves an order product node to a binary file.
@@ -202,7 +202,7 @@ int saveOrderProductToBinary(FILE* file, const void* item);
  * @param file Pointer to the file to read the order product node from.
  * @return Pointer to the loaded OrderProductNode.
  */
-void* loadOrderProductNode(FILE* file, void* data);
+void* loadOrderProductNode(FILE* file);
 
 /**
  * Loads an order medicine node from a binary file.
@@ -210,7 +210,7 @@ void* loadOrderProductNode(FILE* file, void* data);
  * @param file Pointer to the file to read the order medicine node from.
  * @return Pointer to the loaded OrderMedicineNode.
  */
-void* loadOrderMedicineNode(FILE* file, void* data);
+void* loadOrderMedicineNode(FILE* file);
 
 /**
  * Loads an order medicine from a binary file.
@@ -218,7 +218,7 @@ void* loadOrderMedicineNode(FILE* file, void* data);
  * @param file Pointer to the file to read the order medicine from.
  * @return Pointer to the loaded OrderMedicineNode.
  */
-OrderProductNode* loadOrderProductNodeFromBinary(FILE* file);
+void* loadOrderProductNodeFromBinary(FILE* file);
 
 /**
  * Loads an order medicine from a binary file.
@@ -226,7 +226,7 @@ OrderProductNode* loadOrderProductNodeFromBinary(FILE* file);
  * @param file Pointer to the file to read the order medicine from.
  * @return Pointer to the loaded OrderMedicineNode.
  */
-OrderMedicineNode* loadOrderMedicineNodeFromBinary(FILE* file);
+void* loadOrderMedicineNodeFromBinary(FILE* file);
 
 /**
  * Loads an order from a binary file.
@@ -255,14 +255,6 @@ void saveOrder(const Order* order, FILE* file);
  * @return Pointer to the loaded Order.
  */
 Order* loadOrder(FILE* file, Employee** employees, int numEmployees);
-
-/**
- * Saves an OrderProductNode to a file.
- * 
- * @param file Pointer to the file to save the OrderProductNode to.
- * @param data Pointer to the OrderProductNode to save.
- */
-void saveOrderProductNode(FILE* file, void* data);
 
 
 /**
