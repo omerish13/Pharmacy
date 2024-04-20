@@ -133,7 +133,7 @@ void cancelOrder(Pharmacy* pharmacy, int orderNumber);
  * @param pharmacy Pointer to the Pharmacy structure.
  * @param orderNumber The unique number of the order to be completed.
  */
-void purchaseOrder(Pharmacy* pharmacy, int orderNumber);
+void purchaseOrder(Pharmacy* pharmacy,Order* order);
 
 /**
  * Adds a new prescription to the pharmacy's list of prescriptions.
@@ -180,6 +180,19 @@ void replaceEmployeeInOrder(Pharmacy* pharmacy, Order* order);
  */
 void printPharmacyDetails(const Pharmacy* pharmacy);
 
+/**
+ * Prints the details of a pharmacy, including its name, address, and employee information.
+ * 
+ * @param pharmacy Pointer to the Pharmacy structure to be printed.
+ */
+void printAllEmployees(const Pharmacy* pharmacy);
+
+/**
+ * Prints the details of a pharmacy, including its name, address, and employee information.
+ * 
+ * @param pharmacy Pointer to the Pharmacy structure to be printed.
+ */
+void printAllCustomers(const Pharmacy* pharmacy);
 
 /**
  * Saves data from the Pharmacy structure to a binary file.

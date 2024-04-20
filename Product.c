@@ -72,6 +72,7 @@ void printProduct(const void* item) {
     printProductDetails(product);
 }
 
+
 void printProductInStock(const void* item) {
     const Product* product = (const Product*)item;
     if (product->stockQuantity > 0) {

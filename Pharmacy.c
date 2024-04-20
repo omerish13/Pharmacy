@@ -48,7 +48,9 @@ Order* createNewOrder(Pharmacy* pharmacy, int customerID, int employeeID) {
     CHECK_ALLOC_STRUCT(newOrder);
 
     // Initialize the new order with the given customer and employee IDs
-    initOrder(newOrder, customerID, findEmployee(pharmacy->employees, pharmacy->employeeCount, employeeID), pharmacy->orderHistory.size + 1);
+    Employee* employee = findEmployee(pharmacy->employees, pharmacy->employeeCount, employeeID);
+    initOrder(newOrder, customerID, employee, pharmacy->orderHistory.size + 1);
+    showOrder(newOrder);
 
     // Update the lastModified date of the order to the current date/time
     updateLastModified(newOrder);
@@ -65,8 +67,10 @@ Order* createNewOrderInteractive(Pharmacy* pharmacy) {
     Order* newOrder = (Order*)malloc(sizeof(Order));
     CHECK_ALLOC_STRUCT(newOrder);
     int customerID, employeeID;
+    printAllCustomers(pharmacy);
     printf("Enter the Customer ID for the new order: ");
     scanf("%d", &customerID);
+    printAllEmployees(pharmacy);
     printf("Enter the Employee ID for the new order: ");
     scanf("%d", &employeeID);
 
@@ -117,6 +121,7 @@ void removeEmployeeInteractive(Pharmacy* pharmacy) {
         printf("No employees available to remove.\n");
         return;
     }
+    printAllEmployees(pharmacy);
     int employeeID;
     printf("Enter the ID of the employee to remove: ");
     scanf("%d", &employeeID);
@@ -166,20 +171,20 @@ void cancelOrder(Pharmacy* pharmacy, int orderNumber) {
     }
 }
 
-void purchaseOrder(Pharmacy* pharmacy, int orderNumber) {
+void purchaseOrder(Pharmacy* pharmacy,Order* order) {
     // Find and remove the order from the openOrders linked list
-    Order* finalizedOrder = removeFromList(&pharmacy->openOrders, compareOrderNumber, &orderNumber);
 
-    if (finalizedOrder != NULL) {
+    if (order != NULL) {
         // Update the stock based on the products in the order
-        OrderProductNode* currentNode = (OrderProductNode*)finalizedOrder->orderProducts->head;
+        ListNode* currentNode = order->orderProducts->head;
         while (currentNode != NULL) {
-            updateStock(&pharmacy->stock, currentNode->product.code, currentNode->quantity);
+            OrderProductNode* orderProduct = (OrderProductNode*)currentNode->item;
+            updateStock(&pharmacy->stock, orderProduct->productCode, orderProduct->quantity);
             currentNode = currentNode->next;
         }
 
         // Add the finalized order to the orderHistory linked list
-        addToList(&pharmacy->orderHistory, finalizedOrder);
+        addToList(&pharmacy->orderHistory, order);
     } else {
         printf("Error: This order doesn't exist!");
     }
@@ -295,13 +300,16 @@ void addProductOrMedicineToOrder(Pharmacy* pharmacy, Order* order) {
             printf("Product with the ID %d does not exist",productCode);
             return;
         }
-        addMedicineToOrder(order,pharmacy->prescriptions,pharmacy->prescriptionCount,&pharmacy->stock,productCode,order->customerID);
+        addMedicineToOrder(order,pharmacy->prescriptions,pharmacy->prescriptionCount,&pharmacy->stock,medicine,order->customerID);
     }
-    addProductToOrder(order, &pharmacy->stock, productCode, quantity);
+    addProductToOrder(order, &pharmacy->stock, product, quantity);
 }
 
 void updateProductQuantityOrder(Pharmacy* pharmacy,Order* order) {
-    printOrderProducts(order);
+    printf("Order Products:\n");
+    printList(order->orderProducts,&printOrderProductNode);
+    printf("Order Medicines:\n");
+    printList(order->orderMedicines,&printOrderMedicineNode);
     int productCode, newQuantity;
     printf("Enter Product Code to update quantity: ");
     scanf("%d", &productCode);

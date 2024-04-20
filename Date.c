@@ -17,6 +17,14 @@ void initDate(Date* date) {
     } while (res); 
 }
 
+void currentDate(Date* date) {
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    date->day = tm.tm_mday;
+    date->month = tm.tm_mon + 1;
+    date->year = tm.tm_year + 1900;
+}
+
 int checkDateValidity(Date* date) {
     // Check for valid year
     if (date->year < 1) return 0;

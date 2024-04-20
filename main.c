@@ -51,7 +51,7 @@ void manageOrder(Pharmacy* pharmacy, Order* order) {
                 replaceEmployeeInOrder(pharmacy, order);  // Function to replace employee
                 break;
             case 5:
-                purchaseOrder(pharmacy, order->orderNumber);
+                purchaseOrder(pharmacy, order);
                 return;  // Exit the mini menu after purchasing
             case 6:
                 cancelOrder(pharmacy, order->orderNumber);

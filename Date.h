@@ -2,6 +2,7 @@
 #define DATE_H
 
 #include <stdio.h>
+#include <time.h>
 #include "general.h"
 
 /**
@@ -21,6 +22,12 @@ typedef struct {
  * @param year Year to set.
  */
 void initDate(Date* date);
+
+/**
+ * Initializes a Date structure with the current system date.
+ * @param date Pointer to the Date structure to initialize.
+ */
+void currentDate(Date* date);
 
 /**
  * Checks the validity of the provided date.
