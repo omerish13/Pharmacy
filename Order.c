@@ -58,7 +58,7 @@ int addMedicineToOrder(Order* order, Prescription* prescriptions, int numOfPresc
     int validPrescriptionIndex = -1;
     for (int i = 0; i < numOfPrescriptions; i++) {
         if (prescriptions[i].customer->id == customerID &&
-            strcmp(prescriptions[i].medicine->medicineID, medicine->medicineID) == 0 &&
+            strcmp(prescriptions[i].medicineID, medicine->medicineID) == 0 &&
             !prescriptions[i].used) {
             validPrescriptionIndex = i;
             break;

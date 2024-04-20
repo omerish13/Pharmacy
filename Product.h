@@ -97,7 +97,7 @@ int saveProductToBinary(FILE* file, const void* prod);
  * @param file Pointer to the binary file to read the product details from.
  * @return Pointer to the loaded Product structure.
  */
-void* loadProductFromBinary(FILE* file);
+Product* loadProductFromBinary(FILE* file);
 
 /**
  * Save product details to a file, including name, type, price, and stock quantity.

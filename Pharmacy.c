@@ -362,6 +362,8 @@ void printPharmacyDetails(const Pharmacy* pharmacy) {
     printf("Number of Employees: %d\n", pharmacy->employeeCount);
     printf("Number of Customers: %d\n", pharmacy->customerCount);
     printf("Number of Prescriptions: %d\n", pharmacy->prescriptionCount);
+    printf("Prescriptions:\n");
+    printPrescriptions(pharmacy->prescriptions, pharmacy->prescriptionCount);
     printf("Number of Orders: %d\n", pharmacy->orderHistory.size);
     printStockDetails(&pharmacy->stock);
 }
@@ -508,8 +510,7 @@ Customer* loadCustomersFromBinary(FILE* file, int numCustomers) {
     CHECK_ALLOC_STRUCT(customers);
 
     for (int i = 0; i < numCustomers; i++) {
-        if (!loadCustomerFromBinary(&customers[i],file))
-            return NULL;
+        customers[i] = *loadCustomerFromBinary(file);
     }
 
     return customers;

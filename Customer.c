@@ -37,8 +37,16 @@ int saveCustomerToBinary(FILE* file, const Customer* customer) {
     return savePersonToBinary(file, &customer->person) && fwrite(&customer->id, sizeof(int), 1, file) == 1;
 }
 
-int loadCustomerFromBinary(Customer* customer, FILE* file) {
-    return loadPersonFromBinary(&customer->person, file) && fread(&customer->id, sizeof(int), 1, file) == 1;
+Customer* loadCustomerFromBinary(FILE* file) {
+    Customer* customer = (Customer*)malloc(sizeof(Customer));
+    CHECK_ALLOC_STRUCT(customer);
+
+    if (!loadPersonFromBinary(&customer->person, file) )
+        return NULL;
+    printPersonDetails(&customer->person);
+    if (fread(&customer->id, sizeof(int), 1, file) != 1)
+        return NULL;
+    return customer;
 }
 
 void saveCustomer(FILE* file, const Customer* customer) {

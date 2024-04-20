@@ -57,12 +57,12 @@ int saveMedicineToBinary(FILE* file, const void* medicine) {
     return 1;
 }
 
-void* loadMedicineFromBinary(FILE* file) {
+Medicine* loadMedicineFromBinary(FILE* file) {
     Medicine* medicine = (Medicine*)malloc(sizeof(Medicine));
     CHECK_ALLOC_STRUCT(medicine);
 
     // Load the base product details
-    Product* product = (Product*)loadProductFromBinary(file);
+    Product* product = loadProductFromBinary(file);
     if (product == NULL) {
         free(medicine);
         return NULL;

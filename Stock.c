@@ -204,33 +204,34 @@ int saveStockToBinary(const Stock* stock, FILE* file) {
 }
 
 
-int loadProductsFromBinary(FILE* file, Product** products) {
-    int productCount;
-    if (fread(&productCount, sizeof(int), 1, file) != 1) {
+int loadProductsFromBinary(FILE* file, Stock* stock) {
+    if (fread(&stock->productCount, sizeof(int), 1, file) != 1) {
+        printf("Error reading product count from file.\n");
         return 0;
     }
 
-    *products = (Product*)malloc(productCount * sizeof(Product));
-    CHECK_ALLOC_INT(*products);
+    stock->products = (Product*)malloc(stock->productCount * sizeof(Product));
+    CHECK_ALLOC_INT(stock->products);
 
-    for (int i = 0; i < productCount; i++) {
-        products[i] = (Product*)loadProductFromBinary(file);
+    for (int i = 0; i < stock->productCount; i++) {
+        stock->products[i] = *(loadProductFromBinary(file));
     }
 
     return 1;
+    
 }
 
-int loadMedicinesFromBinary(FILE* file, Medicine** medicines) {
-    int medicineCount;
-    if (fread(&medicineCount, sizeof(int), 1, file) != 1) {
+int loadMedicinesFromBinary(FILE* file, Stock* stock) {
+    if (fread(&stock->medicineCount, sizeof(int), 1, file) != 1) {
+        printf("Error reading medicine count from file.\n");
         return 0;
     }
 
-    *medicines = (Medicine*)malloc(medicineCount * sizeof(Medicine));
-    CHECK_ALLOC_INT(*medicines);
+    stock->medicines = (Medicine*)malloc(stock->medicineCount * sizeof(Medicine));
+    CHECK_ALLOC_INT(stock->medicines);
 
-    for (int i = 0; i < medicineCount; i++) {
-        medicines[i] = (Medicine*)loadMedicineFromBinary(file);
+    for (int i = 0; i < stock->medicineCount; i++) {
+        stock->medicines[i] = *(loadMedicineFromBinary(file));
     }
 
     return 1;
@@ -246,11 +247,11 @@ int loadStockFromBinary(FILE* file, Stock* stock) {
     }
 
     // Load the products
-    if (!loadProductsFromBinary(file, &stock->products))
+    if (!loadProductsFromBinary(file, stock))
         return 0;
 
     // Load the medicines
-    if(!loadMedicinesFromBinary(file, &stock->medicines))
+    if(!loadMedicinesFromBinary(file, stock))
         return 0;
 
     return 1;
@@ -280,27 +281,26 @@ void saveStock(const Stock* stock, FILE* file) {
     saveMedicines(file, stock->medicines, stock->medicineCount);
 }
 
-void loadProducts(FILE* file, Product** products) {
-    int productCount;
-    fscanf(file, "%d\n", &productCount);
+void loadProducts(FILE* file, Stock* stock) {
+    fscanf(file,"%d\n",&stock->productCount);
 
-    *products = (Product*)malloc(productCount * sizeof(Product));
-    CHECK_ALLOC_VOID(*products);
+    stock->products = (Product*)malloc(stock->productCount * sizeof(Product));
+    CHECK_ALLOC_VOID(stock->products);
 
-    for (int i = 0; i < productCount; i++) {
-        products[i] = loadProduct(file);
+    for (int i = 0; i < stock->productCount; i++) {
+        stock->products[i] = *loadProduct(file);
     }
+    
 }
 
-void loadMedicines(FILE* file, Medicine** medicines) {
-    int medicineCount;
-    fscanf(file, "%d\n", &medicineCount);
+void loadMedicines(FILE* file, Stock* stock) {
+    fscanf(file,"%d\n",&stock->medicineCount);
 
-    *medicines = (Medicine*)malloc(medicineCount * sizeof(Medicine));
-    CHECK_ALLOC_VOID(*medicines);
+    stock->medicines = (Medicine*)malloc(stock->medicineCount * sizeof(Medicine));
+    CHECK_ALLOC_VOID(stock->medicines);
 
-    for (int i = 0; i < medicineCount; i++) {
-        medicines[i] = loadMedicine(file);
+    for (int i = 0; i < stock->medicineCount; i++) {
+        stock->medicines[i] = *loadMedicine(file);
     }
 }
 
@@ -310,10 +310,10 @@ void loadStock(FILE* file, Stock* stock) {
     fscanf(file,"%d\n",&stock->lastProductCode);
     
     // Load the products
-    loadProducts(file, &stock->products);
+    loadProducts(file, stock);
 
     // Load the medicines
-    loadMedicines(file, &stock->medicines);
+    loadMedicines(file, stock);
 }
 
 

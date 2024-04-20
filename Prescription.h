@@ -21,7 +21,7 @@
 typedef struct {
     int id;                            /**< Unique prescription ID, automatically incremented. */
     Customer* customer;          /**< Pointer to the customer to whom the prescription is issued. */
-    Medicine* medicine;                /**< Pointer to the medicine prescribed. */
+    char medicineID[ID_LENGTH];                /**< Unique ID of the medicine prescribed. */
     Date expirationDate;               /**< Expiration date of the prescription. */
     int quantity;                      /**< Quantity of medication allowed for purchase with this prescription. */
     int used;                          /**< Flag indicating whether the prescription has been used (0 = No, 1 = Yes). */

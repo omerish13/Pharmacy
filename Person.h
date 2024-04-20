@@ -16,7 +16,6 @@ typedef enum {
  * Structure representing a person's basic information, including a phone number.
  */
 typedef struct {
-    int id;          /**< Unique person ID, automatically incremented */
     char* name;      /**< Dynamically allocated person name */
     Gender gender;   /**< Gender, represented by an enum */
     char* phoneNumber; /**< Dynamically allocated phone number */

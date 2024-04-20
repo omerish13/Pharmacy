@@ -105,7 +105,7 @@ int saveProductToBinary(FILE* file, const void* prod) {
     return fwrite(&product->stockQuantity, sizeof(int), 1, file) == 1;
 }
 
-void* loadProductFromBinary(FILE* file) {
+Product* loadProductFromBinary(FILE* file) {
     Product* product = (Product*)malloc(sizeof(Product));
     if (product == NULL) {
         return NULL;

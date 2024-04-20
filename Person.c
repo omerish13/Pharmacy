@@ -1,9 +1,7 @@
 #include "Person.h"
 
-static int lastPersonID = 0;  // Static variable to keep track of the last used person ID
 
 void initPerson(Person* person) {
-    person->id = ++lastPersonID;  // Auto-increment the person ID for each new person
     setPersonName(person);
     setPersonGender(person);
     setPersonPhoneNumber(person);  // Set the phone number for the person
@@ -79,51 +77,54 @@ int validatePhoneNumber(const char* phoneNumber) {
 
 
 void printPersonDetails(const Person* person) {
-    printf("Person ID: %d ", person->id);
     printf("Name: %s ", person->name);
     printf("Gender: %s ", person->gender == MALE ? "Male" : person->gender == FEMALE ? "Female" : "Other");
     printf("Phone Number: %s ", person->phoneNumber);
 }
 
 int savePersonToBinary(FILE* file, const Person* person) {
-    if (((!fwrite(&person->id, sizeof(int), 1, file)) == 1))
+    int nameLength = (int)(strlen(person->name))+1;
+    if ((fwrite(&nameLength, sizeof(int), 1, file)) != 1)
         return 0;
-    int nameLength = strlen(person->name) + 1;
-    if (((!fwrite(&nameLength, sizeof(int), 1, file)) == 1) || ((!fwrite(person->name, sizeof(char), nameLength, file)) == nameLength))
+    if ((fwrite(person->name, sizeof(char), nameLength, file)) != nameLength)
         return 0;
     int gender = (int)person->gender;
-    if (((!fwrite(&gender, sizeof(int), 1, file)) == 1))
+    if (fwrite(&gender, sizeof(int), 1, file) != 1)
         return 0;
-    int phoneNumberLength = strlen(person->phoneNumber) + 1;
-    if (((!fwrite(&phoneNumberLength, sizeof(int), 1, file)) == 1) || ((!fwrite(person->phoneNumber, sizeof(char), phoneNumberLength, file)) == phoneNumberLength))
+    int phoneNumberLength = (int)(strlen(person->phoneNumber)) + 1;
+    if ((fwrite(&phoneNumberLength, sizeof(int), 1, file) != 1) || (fwrite(person->phoneNumber, sizeof(char), phoneNumberLength, file) != phoneNumberLength))
         return 0;
     return 1;
 }
 
 int loadPersonFromBinary(Person* person, FILE* file) {
-    if (((!fread(&person->id, sizeof(int), 1, file)) != 1))
-        return 0;
     int nameLength;
-    if (((!fread(&nameLength, sizeof(int), 1, file)) != 1))
+    if (fread(&nameLength, sizeof(int), 1, file) != 1)
+    {
+        printf("Error reading name length\n");
         return 0;
+    }
     person->name = (char*)malloc(nameLength);
+    printf("Name length: %d\n", nameLength);
     CHECK_ALLOC_INT(person->name);
-    if (((!fread(person->name, sizeof(char), nameLength, file)) != nameLength))
+    if (fread(person->name, sizeof(char), nameLength, file) != nameLength)
         return 0;
-    if (((!fread(&person->gender, sizeof(Gender), 1, file)) != 1))
+    int gender;
+    if (fread(&gender, sizeof(int), 1, file) != 1)
         return 0;
+    person->gender = (Gender)gender;
+
     int phoneNumberLength;
-    if (((!fread(&phoneNumberLength, sizeof(int), 1, file)) != 1))
+    if (fread(&phoneNumberLength, sizeof(int), 1, file) != 1)
         return 0;
     person->phoneNumber = (char*)malloc(phoneNumberLength);
     CHECK_ALLOC_INT(person->phoneNumber);
-    if (((!fread(person->phoneNumber, sizeof(char), phoneNumberLength, file)) != phoneNumberLength))
+    if (fread(person->phoneNumber, sizeof(char), phoneNumberLength, file) != phoneNumberLength)
         return 0;
     return 1;
 }
 
 void savePerson(FILE* file, const Person* person) {
-    fprintf(file, "%d\n", person->id);
     int nameLength = strlen(person->name) + 1;
     fprintf(file, "%d\n", nameLength);
     fprintf(file, "%s\n", person->name);
@@ -134,7 +135,6 @@ void savePerson(FILE* file, const Person* person) {
 }
 
 void loadPerson(Person* person, FILE* file) {
-    fscanf(file, "%d\n", &person->id);
     int nameLength;
     fscanf(file, "%d\n", &nameLength);
     person->name = (char*)malloc(nameLength);

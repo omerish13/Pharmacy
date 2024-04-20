@@ -62,7 +62,7 @@ int saveMedicineToBinary(FILE* file, const void* medicine);
  * @param file Pointer to the binary file from which the medicine details are to be loaded.
  * @return Pointer to the loaded Medicine structure.
  */
-void* loadMedicineFromBinary(FILE* file);
+Medicine* loadMedicineFromBinary(FILE* file);
 
 /**
  * Saves the details of a medicine to a file, including product details and medicine-specific information.
