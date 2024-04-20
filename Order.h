@@ -284,7 +284,7 @@ void freeOrderMedicineNode(void* data);
  * 
  * @param order Pointer to the Order to free.
  */
-void freeOrder(Order* order);
+void freeOrder(void* order);
 
 
 

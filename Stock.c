@@ -127,6 +127,19 @@ void printStockDetails(const Stock* stock) {
     }
 }
 
+void decreaseStockQuantity(Stock* stock, int productCode, int quantity) {
+    // Find the product in the stock
+    Product* stockProduct = findProduct(stock, productCode);
+
+    if (stockProduct != NULL) {
+        // Update the quantity available in the stock
+        stockProduct->stockQuantity -= quantity;
+    } else {
+        // Handle the case where the product is not found in the stock
+        printf("Product code %d not found in stock.\n", productCode);
+    }
+}
+
 void updateStock(Stock* stock, int productCode, int quantity) {
     // Find the product in the stock
     Product* stockProduct = findProduct(stock, productCode);

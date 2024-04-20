@@ -19,7 +19,6 @@ typedef struct Pharmacy {
     Customer* customers;               /**< Dynamically allocated array of customers. */
     int customerCount;                 /**< Number of customers in the pharmacy. */
     int customerCapacity;              /**< Capacity of the customer array. */
-    LinkedList openOrders;             /**< Linked list of open (incomplete) orders. */
     LinkedList orderHistory;           /**< Linked list of completed orders. */
     Prescription* prescriptions;       /**< Dynamically allocated array of prescriptions. */
     int prescriptionCount;             /**< Number of prescriptions in the pharmacy. */
@@ -119,13 +118,15 @@ void removeEmployee(Pharmacy* pharmacy, int employeeID);
  */
 int compareOrderNumber(void* order, void* orderNumber); 
 
+
 /**
- * Cancels an order and removes it from the list of open orders.
- * 
- * @param pharmacy Pointer to the Pharmacy structure.
- * @param orderNumber The unique number of the order to be canceled.
+ * Cancels an order.
+ *
+ * This function cancels the specified order by removing it from the system.
+ *
+ * @param order A pointer to the Order structure representing the order to be canceled.
  */
-void cancelOrder(Pharmacy* pharmacy, int orderNumber);
+void cancelOrder(Order* order);
 
 /**
  * Completes an order, moving it from the list of open orders to the order history, and updates stock availability.

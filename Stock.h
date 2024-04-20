@@ -54,6 +54,14 @@ Product* findProduct(const Stock* stock, int code);
 void printStockDetails(const Stock* stock);
 
 /**
+ * Adds a new product to the stock. The function prompts the user to enter the product details
+ * such as name, price, and quantity, and then adds the product to the stock array.
+ * 
+ * @param stock Pointer to the Stock structure where the product is to be added.
+ */
+void decreaseStockQuantity(Stock* stock, int productCode, int quantity);
+
+/**
  * Updates the stock quantity of a specific product based on a product code and quantity adjustment.
  * If the product is found in the stock and there is sufficient quantity, the stock is reduced by the specified quantity.
  * If the stock is insufficient, a warning is printed indicating the available and required quantities.

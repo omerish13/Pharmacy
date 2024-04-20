@@ -21,32 +21,41 @@ void updateEmployeeInOrder(Order* order, Employee* newEmployee) {
 }
 
 int addProductToOrder(Order* order, Stock* stock, Product* product, int quantity) {
-    // Find the product in stock
-    if (!product || quantity > product->stockQuantity) {
-        printf("Error: Invalid Product ID or insufficient stock quantity.\n");
+    if (!product) {
+        printf("Error: Invalid Product Code.\n");
         return 0;  // Indicate failure
     }
 
-    // Check if product already in order and adjust quantity if so
-    ListNode* node = order->orderProducts->head;
-    while (node != NULL)
-    {
+    int availableQuantity = product->stockQuantity;
+    if (availableQuantity <= 0) {
+        printf("Error: Product with code %d not found in stock.\n", product->code);
+        return 0;  // Indicate failure
+    }
+
+    if (availableQuantity < quantity) {
+        printf("Error: Insufficient stock for product code %d. Available: %d, Requested: %d\n", product->code, availableQuantity, quantity);
+        return 0;  // Indicate failure due to insufficient stock
+    }
+
+    // Check if product already in order
+    ListNode* node = (ListNode*)order->orderProducts->head;
+    while (node != NULL) {
         OrderProductNode* productNode = (OrderProductNode*)node->item;
         if (productNode->productCode == product->code) {
-            printf("Error: Product Already in order, you can update it's quantity through the menu.\n");
-            return 0; // Indicate failure
+            printf("Error: Product already in order.\n");
+            return 0;  // Indicate failure
         }
         node = node->next;
     }
-    
-    // If product not in order, add it
+
+    // Add the product to the order with the specified quantity
     OrderProductNode* newNode = (OrderProductNode*)malloc(sizeof(OrderProductNode));
+    CHECK_ALLOC_INT(newNode);
     newNode->productCode = product->code;
-    strcpy(newNode->productName, product->name);
+    newNode->productName = strdup(product->name);
     newNode->quantity = quantity;
     newNode->price = product->price;
-    node->next->item = newNode;
-    node->next->next = NULL;
+    addToList(order->orderProducts, newNode);
     order->totalAmount += product->price * quantity;
     updateLastModified(order);
     return 1;  // Indicate success
@@ -102,11 +111,10 @@ int addMedicineToOrder(Order* order, Prescription* prescriptions, int numOfPresc
     OrderMedicineNode* newNode = (OrderMedicineNode*)malloc(sizeof(OrderMedicineNode));
     CHECK_ALLOC_INT(newNode);
     newNode->medicineCode = medicine->product.code;
-    strcpy(newNode->medicineName, medicine->product.name);
+    newNode->medicineName = strdup(medicine->product.name);
     newNode->quantity = prescribedQuantity;
     newNode->price = medicine->product.price;
-    node->next->item = newNode;
-    node->next->next = NULL;
+    addToList(order->orderMedicines, newNode);
     order->totalAmount += medicine->product.price * prescribedQuantity;
     prescriptions[validPrescriptionIndex].used = 1;  // Mark the prescription as used
     updateLastModified(order);
@@ -411,7 +419,8 @@ void freeOrderMedicineNode(void* data) {
     free(node->medicineName);
 }
 
-void freeOrder(Order* order) {
+void freeOrder(void* data) {
+    Order* order = (Order*)data;
     freeList(order->orderProducts, freeOrderProductNode);
     freeList(order->orderMedicines, freeOrderMedicineNode);
 }

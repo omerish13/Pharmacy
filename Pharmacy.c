@@ -11,7 +11,6 @@ void initPharmacy(Pharmacy* pharmacy) {
     pharmacy->customers = NULL;
     pharmacy->customerCount = 0;
     pharmacy->customerCapacity = 0;
-    initList(&pharmacy->openOrders);
     initList(&pharmacy->orderHistory);
     pharmacy->prescriptions = NULL;
     pharmacy->prescriptionCount = 0;
@@ -30,7 +29,6 @@ void initPharmacyClient(Pharmacy* pharmacy) {
     pharmacy->customers = NULL;
     pharmacy->customerCount = 0;
     pharmacy->customerCapacity = 0;
-    initList(&pharmacy->openOrders);
     initList(&pharmacy->orderHistory);
     pharmacy->prescriptions = NULL;
     pharmacy->prescriptionCount = 0;
@@ -54,8 +52,7 @@ Order* createNewOrder(Pharmacy* pharmacy, int customerID, int employeeID) {
 
     // Update the lastModified date of the order to the current date/time
     updateLastModified(newOrder);
-
-    // Add the new order to the pharmacy's openOrders linked list
+    
     return newOrder;
 }
 
@@ -158,28 +155,19 @@ int compareOrderNumber(void* order, void* orderNumber) {
     return o->orderNumber - *num;  // 0 if equal
 }
 
-void cancelOrder(Pharmacy* pharmacy, int orderNumber) {
-    // Find and remove the order from the openOrders linked list
-    Order* removedOrder = removeFromList(&pharmacy->openOrders, compareOrderNumber, &orderNumber);
-
-    if (removedOrder != NULL) {
-        // Free the memory allocated for the removed order
-        freeOrder(removedOrder);
-        free(removedOrder);
-    } else {
-        printf("Error: Order with that ID hasn't been found!");
-    }
+void cancelOrder(Order* order) {
+    freeOrder(order);
+    free(order);
 }
 
 void purchaseOrder(Pharmacy* pharmacy,Order* order) {
-    // Find and remove the order from the openOrders linked list
 
     if (order != NULL) {
         // Update the stock based on the products in the order
         ListNode* currentNode = order->orderProducts->head;
         while (currentNode != NULL) {
             OrderProductNode* orderProduct = (OrderProductNode*)currentNode->item;
-            updateStock(&pharmacy->stock, orderProduct->productCode, orderProduct->quantity);
+            decreaseStockQuantity(&pharmacy->stock, orderProduct->productCode, orderProduct->quantity);
             currentNode = currentNode->next;
         }
 
@@ -294,15 +282,26 @@ void addProductOrMedicineToOrder(Pharmacy* pharmacy, Order* order) {
 
     // Function to add product/medicine to order, based on productCode
     Product* product = findProduct(&pharmacy->stock,productCode);
-    if (!product){
+    if (product == NULL){
         Medicine* medicine = findMedicine(&pharmacy->stock,productCode);
-        if (!medicine){
+        if (medicine == NULL){
             printf("Product with the ID %d does not exist",productCode);
             return;
         }
-        addMedicineToOrder(order,pharmacy->prescriptions,pharmacy->prescriptionCount,&pharmacy->stock,medicine,order->customerID);
+        if (addMedicineToOrder(order,pharmacy->prescriptions,pharmacy->prescriptionCount,&pharmacy->stock,medicine,order->customerID)){
+            printf("Medicine added to order.\n");
+            return;
+        }
+        else
+        {
+            printf("Failed to add medicine to order.\n");
+            return;
+        }
     }
-    addProductToOrder(order, &pharmacy->stock, product, quantity);
+    if (addProductToOrder(order, &pharmacy->stock, product, quantity))
+        printf("Product added to order.\n");
+    else
+        printf("Failed to add product to order.\n");
 }
 
 void updateProductQuantityOrder(Pharmacy* pharmacy,Order* order) {
@@ -431,11 +430,6 @@ int savePharmacyToBinary(FILE* file, const Pharmacy* pharmacy) {
         }
     }
 
-    // Save the open orders
-    if (!saveListBinary(file, &pharmacy->openOrders, (int (*)(FILE*, const void*))saveOrderToBinary)) {
-        return 0;
-    }
-
     // Save the order history
     if (!saveListBinary(file, &pharmacy->orderHistory, (int (*)(FILE*, const void*))saveOrderToBinary)) {
         return 0;
@@ -460,7 +454,6 @@ void savePharmacyToFile(FILE* file, const Pharmacy* pharmacy) {
     for (int i = 0; i < pharmacy->prescriptionCount; i++) {
         savePrescription(&pharmacy->prescriptions[i], file);
     }
-    saveList(file, &pharmacy->openOrders, (void (*)(FILE*, const void*))saveOrder);
     saveList(file, &pharmacy->orderHistory, (void (*)(FILE*, const void*))saveOrder);
 }
 
@@ -624,7 +617,6 @@ int loadPharmacyFromBinary(FILE* file, Pharmacy* pharmacy) {
     if (pharmacy->prescriptionCount > 0)
         pharmacy->prescriptions = loadPrescriptionsFromBinary(file, pharmacy->prescriptionCount, pharmacy->customers, pharmacy->customerCount, &pharmacy->stock);
 
-    loadOrdersFromBinary(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount, &pharmacy->openOrders);
     loadOrdersFromBinary(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount, &pharmacy->orderHistory);
     printPharmacyDetails(pharmacy);
     return 1;
@@ -644,11 +636,7 @@ void loadPharmacyFromFile(FILE* file, Pharmacy* pharmacy) {
     fscanf(file, "%d\n", &pharmacy->prescriptionCount);
     if (pharmacy->prescriptionCount > 0)
         pharmacy->prescriptions = loadPrescriptions(file, pharmacy->prescriptionCount, pharmacy->customers, pharmacy->customerCount, &pharmacy->stock);
-    printf("Prescriptions loaded\n");
-    loadOrders(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount, &pharmacy->openOrders);
-    printf("Orders loaded\n");
     loadOrders(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount, &pharmacy->orderHistory);
-    printf("Order History loaded\n");
     printPharmacyDetails(pharmacy);
 }
 
@@ -728,6 +716,5 @@ void freePharmacy(Pharmacy* pharmacy) {
     freeCustomers(pharmacy->customers, pharmacy->customerCount);
     freePrescriptions(pharmacy->prescriptions, pharmacy->prescriptionCount);
     freeStock(&pharmacy->stock);
-    freeList(&pharmacy->openOrders, (void (*)(void*))freeOrder);
-    freeList(&pharmacy->orderHistory, (void (*)(void*))freeOrder);
+    freeList(&pharmacy->orderHistory, &freeOrder);
 }

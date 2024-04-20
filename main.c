@@ -54,7 +54,7 @@ void manageOrder(Pharmacy* pharmacy, Order* order) {
                 purchaseOrder(pharmacy, order);
                 return;  // Exit the mini menu after purchasing
             case 6:
-                cancelOrder(pharmacy, order->orderNumber);
+                cancelOrder(order);
                 return;  // Exit the mini menu after canceling
             default:
                 printf("Invalid choice, please try again.\n");
@@ -122,8 +122,7 @@ int main() {
                 if (newOrder == NULL) {
                     printf("Error creating new order. Please try again.\n");
                     break;
-                }
-                addToList(&pharmacy.openOrders, newOrder);  
+                }  
                 manageOrder(&pharmacy, newOrder);
                 break;
             }
