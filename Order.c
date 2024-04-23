@@ -333,17 +333,49 @@ int saveOrderToBinary(FILE* file, const void* data) {
 Order* loadOrderFromBinary(FILE* file, Employee** employees, int numEmployees) {
     Order* order = (Order*)malloc(sizeof(Order));
     CHECK_ALLOC_STRUCT(order);
+    printf("Loading order\n");
     int employeeID;
-    if (!loadDateFromBinary(&order->lastModified,file) ||
-        !(loadListBinary(file,order->orderProducts, loadOrderProductNodeFromBinary)) ||
-        !(loadListBinary(file, order->orderMedicines,loadOrderMedicineNodeFromBinary)) ||
-        fread(&order->orderNumber, sizeof(int), 1, file) != 1 ||
-        fread(&order->customerID, sizeof(int), 1, file) != 1 ||
-        fread(&employeeID, sizeof(int), 1, file) != 1) {
+    if (!order)
+        return NULL;
+    if (!loadDateFromBinary(&order->lastModified, file)){
         free(order);
         return NULL;
     }
+    printf("Date loaded\n");
+    order->orderProducts = (LinkedList*)malloc(sizeof(LinkedList));
+    CHECK_ALLOC_STRUCT(order->orderProducts);
+    initList(order->orderProducts);
+    order->orderMedicines = (LinkedList*)malloc(sizeof(LinkedList));
+    CHECK_ALLOC_STRUCT(order->orderMedicines);
+    initList(order->orderMedicines);
+
+    if (!loadListBinary(file, order->orderProducts, loadOrderProductNodeFromBinary)) {
+        free(order);
+        return NULL;
+    }
+
+    if (!loadListBinary(file, order->orderMedicines, loadOrderMedicineNodeFromBinary)) {
+        free(order);
+        return NULL;
+    }
+
+    if (fread(&order->orderNumber, sizeof(int), 1, file) != 1) {
+        free(order);
+        return NULL;
+    }
+
+    if (fread(&order->customerID, sizeof(int), 1, file) != 1) {
+        free(order);
+        return NULL;
+    }
+
+    if (fread(&employeeID, sizeof(int), 1, file) != 1) {
+        free(order);
+        return NULL;
+    }
+
     order->employee = findEmployee(employees, numEmployees, employeeID);
+
     return order;
 }
 

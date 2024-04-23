@@ -105,7 +105,6 @@ int loadPersonFromBinary(Person* person, FILE* file) {
         return 0;
     }
     person->name = (char*)malloc(nameLength);
-    printf("Name length: %d\n", nameLength);
     CHECK_ALLOC_INT(person->name);
     if (fread(person->name, sizeof(char), nameLength, file) != nameLength)
         return 0;

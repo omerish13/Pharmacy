@@ -305,6 +305,22 @@ void addProductOrMedicineToOrder(Pharmacy* pharmacy, Order* order) {
         printf("Failed to add product to order.\n");
 }
 
+void showAndUpdateStock(Pharmacy* pharmacy) {
+    if (pharmacy->stock.products == NULL && pharmacy->stock.medicines == NULL) {
+        printf("No products or medicines available in stock.\n");
+        return;
+    }
+    printStockDetails(&pharmacy->stock);
+
+    int productCode, newQuantity;
+    printf("Enter Product Code to update stock quantity: ");
+    scanf("%d", &productCode);
+    printf("Enter new stock quantity for Product Code %d: ", productCode);
+    scanf("%d", &newQuantity);
+
+    updateStock(&pharmacy->stock, productCode, newQuantity);
+}
+
 void updateProductQuantityOrder(Pharmacy* pharmacy,Order* order) {
     printf("Order Products:\n");
     printList(order->orderProducts,&printOrderProductNode);
@@ -564,15 +580,17 @@ void loadOrders(FILE* file, const Employee** employees, int numEmployees, Linked
 
 void loadOrdersFromBinary(FILE* file, const Employee** employees, int numEmployees, LinkedList* orders) {
     initList(orders);
-
+    printf("Loading orders...\n");
     int numOrders;
     if (fread(&numOrders, sizeof(int), 1, file) != 1) {
         return;
     }
+    printf("Number of orders: %d\n", numOrders);
     for (int i = 0; i < numOrders; i++) {
         Order* order = loadOrderFromBinary(file, (Employee**)employees, numEmployees);
         addToList(orders, order);
     }
+    printf("Orders loaded.\n");
 }
 
 int loadPharmacyFromBinary(FILE* file, Pharmacy* pharmacy) {
@@ -617,8 +635,9 @@ int loadPharmacyFromBinary(FILE* file, Pharmacy* pharmacy) {
     }
     if (pharmacy->prescriptionCount > 0)
         pharmacy->prescriptions = loadPrescriptionsFromBinary(file, pharmacy->prescriptionCount, pharmacy->customers, pharmacy->customerCount, &pharmacy->stock);
-
+    printf("Prescriptions loaded.\n");
     loadOrdersFromBinary(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount, &pharmacy->orderHistory);
+    printf("Orders loaded.\n");
     printPharmacyDetails(pharmacy);
     return 1;
 }

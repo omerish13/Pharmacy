@@ -43,7 +43,6 @@ Customer* loadCustomerFromBinary(FILE* file) {
 
     if (!loadPersonFromBinary(&customer->person, file) )
         return NULL;
-    printPersonDetails(&customer->person);
     if (fread(&customer->id, sizeof(int), 1, file) != 1)
         return NULL;
     return customer;

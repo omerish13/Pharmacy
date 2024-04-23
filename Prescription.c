@@ -5,7 +5,6 @@
 void initPrescription(Prescription* prescription, Customer* customers, int numCustomers, int customerID, const char* medicineID,Stock* stock, Date expirationDate, int quantity, int prescriptionID) {
     prescription->id = prescriptionID;  // Auto-increment the prescription ID
     prescription->customer = findCustomerByID(customers, numCustomers, customerID);
-    printCustomerDetails(prescription->customer);
     strncpy(prescription->medicineID, medicineID, ID_LENGTH);  // Copy the medicine ID
     prescription->expirationDate = expirationDate;  // Assign the expiration date
     prescription->quantity = quantity;  // Assign the allowed quantity of medication

@@ -159,6 +159,14 @@ void addProductOrMedicineToOrder(Pharmacy* pharmacy, Order* order);
  */
 void updateProductQuantityOrder(Pharmacy* pharmacy, Order* order);
 
+
+/**
+ * Displays the current stock of the pharmacy and allows for updating the stock.
+ *
+ * @param pharmacy A pointer to the Pharmacy struct.
+ */
+void showAndUpdateStock(Pharmacy* pharmacy);
+
 /**
  * Raises the salary of an employee by a specified percentage.
  * 
