@@ -317,7 +317,8 @@ void* loadOrderProductNodeFromBinary(FILE* file) {
     return node;
 }
 
-int saveOrderToBinary(const Order* order, FILE* file) {
+int saveOrderToBinary(FILE* file, const void* data) {
+    const Order* order = (const Order*)data;
     if (!saveDateToBinary(file, &order->lastModified) ||
         !saveListBinary(file, order->orderProducts, &saveOrderProductToBinary) ||
         !saveListBinary(file, order->orderMedicines, &saveOrderMedicineNodeToBinary) ||
@@ -332,20 +333,22 @@ int saveOrderToBinary(const Order* order, FILE* file) {
 Order* loadOrderFromBinary(FILE* file, Employee** employees, int numEmployees) {
     Order* order = (Order*)malloc(sizeof(Order));
     CHECK_ALLOC_STRUCT(order);
+    int employeeID;
     if (!loadDateFromBinary(&order->lastModified,file) ||
         !(loadListBinary(file,order->orderProducts, loadOrderProductNodeFromBinary)) ||
         !(loadListBinary(file, order->orderMedicines,loadOrderMedicineNodeFromBinary)) ||
         fread(&order->orderNumber, sizeof(int), 1, file) != 1 ||
         fread(&order->customerID, sizeof(int), 1, file) != 1 ||
-        fread(&order->employee->id, sizeof(int), 1, file) != 1) {
+        fread(&employeeID, sizeof(int), 1, file) != 1) {
         free(order);
         return NULL;
     }
-    order->employee = findEmployee(employees, numEmployees, order->employee->id);
+    order->employee = findEmployee(employees, numEmployees, employeeID);
     return order;
 }
 
-void saveOrder(const Order* order, FILE* file) {
+void saveOrder(FILE* file, const void* data) {
+    Order* order = (Order*)data;
     saveDate(file, &order->lastModified);
     saveList(file, order->orderProducts, &saveOrderProductNode);
     saveList(file, order->orderMedicines, &saveOrderMedicineNode);
@@ -378,8 +381,9 @@ Order* loadOrder(FILE* file, Employee** employees, int numEmployees) {
     loadDate(file, &order->lastModified);
     order->orderProducts = loadList(file, loadOrderProductNode);
     order->orderMedicines = loadList(file, loadOrderMedicineNode);
-    fscanf(file, "%d %d %d %d", &order->orderNumber, &order->customerID, &order->employee->id, &order->totalAmount);
-    order->employee = findEmployee(employees, numEmployees, order->employee->id);
+    int employeeID;
+    fscanf(file, "%d %d %d %d", &order->orderNumber, &order->customerID, &employeeID, &order->totalAmount);
+    order->employee = findEmployee(employees, numEmployees, employeeID);
     return order;
 }
 

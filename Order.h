@@ -154,11 +154,11 @@ void removeProductFromOrderClient(Order* order);
 /**
  * Saves an order to a binary file.
  * 
- * @param order Pointer to the Order to save.
  * @param file Pointer to the file to save the order to.
+ * @param data Pointer to the Order to save.
  * @return Integer indicating success (1) or failure (0) of the operation.
  */
-int saveOrderToBinary(const Order* order, FILE* file);
+int saveOrderToBinary(FILE* file, const void* data);
 
 /**
  * Saves an order product node to a binary file.
@@ -239,12 +239,12 @@ void* loadOrderMedicineNodeFromBinary(FILE* file);
 Order* loadOrderFromBinary(FILE* file, Employee** employees, int numEmployees);
 
 /**
- * Saves the order details to a file.
+ * Saves an order to a file.
  * 
- * @param order Pointer to the Order to save.
  * @param file Pointer to the file to save the order to.
+ * @param data Pointer to the Order to save.
  */
-void saveOrder(const Order* order, FILE* file);
+void saveOrder(FILE* file, const void* data);
 
 /**
  * Loads an order from a file.

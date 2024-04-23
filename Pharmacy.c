@@ -173,6 +173,7 @@ void purchaseOrder(Pharmacy* pharmacy,Order* order) {
 
         // Add the finalized order to the orderHistory linked list
         addToList(&pharmacy->orderHistory, order);
+        showOrder(order);
     } else {
         printf("Error: This order doesn't exist!");
     }
@@ -431,7 +432,7 @@ int savePharmacyToBinary(FILE* file, const Pharmacy* pharmacy) {
     }
 
     // Save the order history
-    if (!saveListBinary(file, &pharmacy->orderHistory, (int (*)(FILE*, const void*))saveOrderToBinary)) {
+    if (!saveListBinary(file, &pharmacy->orderHistory, &saveOrderToBinary)) {
         return 0;
     }
 
@@ -454,7 +455,7 @@ void savePharmacyToFile(FILE* file, const Pharmacy* pharmacy) {
     for (int i = 0; i < pharmacy->prescriptionCount; i++) {
         savePrescription(&pharmacy->prescriptions[i], file);
     }
-    saveList(file, &pharmacy->orderHistory, (void (*)(FILE*, const void*))saveOrder);
+    saveList(file, &pharmacy->orderHistory, &saveOrder);
 }
 
 Employee** loadEmployees(FILE* file, int numEmployees) {
