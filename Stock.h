@@ -123,6 +123,59 @@ void addNewMedicineToStock(Stock* stock);
 int compareMedicineByID(const void* a, const void* b);
 
 /**
+ * @brief Compares two products by their code.
+ *
+ * This function is used as a comparison function for sorting or searching algorithms.
+ * It compares two products based on their code.
+ *
+ * @param a Pointer to the first product.
+ * @param b Pointer to the second product.
+ * @return An integer value less than, equal to, or greater than zero if the code of the first product is less than, equal to, or greater than the code of the second product, respectively.
+ */
+int compareProductByCode(const void* a, const void* b);
+
+/**
+ * @brief Compares two products by name.
+ *
+ * This function is used as a comparison function for sorting or searching
+ * operations on an array of products. It compares the names of two products
+ * and returns an integer value indicating their relative order.
+ *
+ * @param a Pointer to the first product.
+ * @param b Pointer to the second product.
+ * @return An integer value less than, equal to, or greater than zero if the
+ *         name of the first product is considered to be less than, equal to,
+ *         or greater than the name of the second product, respectively.
+ */
+int compareProductByName(const void* a, const void* b);
+
+/**
+ * @brief Compares two products by their price.
+ *
+ * This function is used as a comparison function for sorting products by price.
+ * It takes two pointers to products and compares their prices.
+ * The function returns a negative value if the price of the first product is lower than the price of the second product,
+ * a positive value if the price of the first product is higher than the price of the second product,
+ * and zero if the prices are equal.
+ *
+ * @param a Pointer to the first product.
+ * @param b Pointer to the second product.
+ * @return Negative value if the price of the first product is lower than the price of the second product,
+ *         positive value if the price of the first product is higher than the price of the second product,
+ *         zero if the prices are equal.
+ */
+int compareProductByPrice(const void* a, const void* b);
+
+/**
+ * Sorts the products in the stock.
+ *
+ * This function sorts the products in the stock in ascending order based on a certain criteria.
+ *
+ * @param stock A pointer to the Stock structure.
+ */
+void sortProductInStock(Stock* stock);
+
+/**
  * Saves the stock details to a binary file, including the products and medicines.
  *
  * @param stock Pointer to the Stock structure to save.

@@ -6,10 +6,8 @@ void initStock(Stock* stock) {
     stock->lastProductCode = 0;
     stock->products = NULL;
     stock->productCount = 0;
-    
     stock->medicines = NULL;
     stock->medicineCount = 0;
-    
 }
 
 void showAvailableProducts(const Stock* stock) {
@@ -23,6 +21,31 @@ void showAvailableProducts(const Stock* stock) {
     }
 }
 
+void sortProductInStock(Stock* stock) {
+    int option;
+    if (stock->productCount == 0) {
+        printf("No products to sort.\n");
+        return;
+    }
+    
+    printf("Enter sort option (1 - by code, 2 - by name, 3 - by price): ");
+    scanf("%d", &option);
+    switch (option) {
+    case 1:
+        qsort(stock->products, stock->productCount, sizeof(Product), compareProductByCode);
+        if(stock->medicineCount > 0)
+            qsort(stock->medicines, stock->medicineCount, sizeof(Medicine), compareMedicineByID);
+        break;
+    case 2:
+        qsort(stock->products, stock->productCount, sizeof(Product), compareProductByName);
+        break;
+    case 3:
+        qsort(stock->products, stock->productCount, sizeof(Product), compareProductByPrice);
+        break;
+    default:
+        printf("Invalid sort type.\n");
+    }
+}
 
 // Comparator for medicines by ID
 int compareMedicineByID(const void* a, const void* b) {
@@ -36,6 +59,20 @@ int compareProductByCode(const void* a, const void* b) {
     const Product* productA = (const Product*)a;
     const Product* productB = (const Product*)b;
     return productA->code - productB->code;
+}
+
+// Comparator for products by name
+int compareProductByName(const void* a, const void* b) {
+    const Product* productA = (const Product*)a;
+    const Product* productB = (const Product*)b;
+    return strcmp(productA->name, productB->name);
+}
+
+// Comparator for products by price
+int compareProductByPrice(const void* a, const void* b) {
+    const Product* productA = (const Product*)a;
+    const Product* productB = (const Product*)b;
+    return productA->price - productB->price;
 }
 
 Product* findProduct(const Stock* stock, int code) {
@@ -76,7 +113,6 @@ void addNewProductToStock(Stock* stock) {
     }
     
     initProduct(newProduct, 0,++stock->lastProductCode);  // 0 indicating this is not a medicine
-
     // Add the new product to the products array
     stock->products = (Product*)realloc(stock->products, (stock->productCount + 1) * sizeof(Product));
     CHECK_ALLOC_VOID(stock->products);
@@ -114,7 +150,6 @@ void addNewMedicineToStock(Stock* stock) {
     stock->medicines[stock->medicineCount] = *newMedicine;
     stock->medicineCount++;
 }
-
 
 void printStockDetails(const Stock* stock) {
     printf("Available Products:\n");
@@ -170,6 +205,7 @@ void updateMedicineStock(Stock* stock, char* medicineID, int quantity) {
         printf("Medicine with the ID %s not found in stock.\n", medicineID);
     }
 }
+
 int saveProductsToBinary(FILE* file, const Product* products, int productCount) {
     if (fwrite(&productCount, sizeof(int), 1, file) != 1) {
         return 0;
