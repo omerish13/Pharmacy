@@ -32,18 +32,22 @@ void sortProductInStock(Stock* stock) {
     scanf("%d", &option);
     switch (option) {
     case 1:
-        qsort(stock->products, stock->productCount, sizeof(Product), compareProductByCode);
-        if(stock->medicineCount > 0)
-            qsort(stock->medicines, stock->medicineCount, sizeof(Medicine), compareMedicineByID);
-        showAvailableProducts(stock);
+        qsort(stock->products, stock->productCount, sizeof(Product), compareProductById);
+        printf("Available Products After Sorting By Id:\n");
+        for (int i = 0; i < stock->productCount; i++) 
+            printProductDetails(&stock->products[i]);
         break;
     case 2:
         qsort(stock->products, stock->productCount, sizeof(Product), compareProductByName);
-        showAvailableProducts(stock);
+        printf("Available Products After Sorting By Name:\n");
+        for (int i = 0; i < stock->productCount; i++) 
+            printProductDetails(&stock->products[i]);
         break;
     case 3:
         qsort(stock->products, stock->productCount, sizeof(Product), compareProductByPrice);
-        showAvailableProducts(stock);
+        printf("Available Products After Sorting By Price:\n");
+        for (int i = 0; i < stock->productCount; i++) 
+            printProductDetails(&stock->products[i]);
         break;
     default:
         printf("Invalid sort type.\n");
@@ -69,7 +73,7 @@ void findProductInStockBSearch(Stock* stock) {
         case 1:
             printf("Enter product code to search: ");
             scanf("%d", &product->code);
-            qsort(stock->products, stock->productCount, sizeof(Product), compareProductByCode);
+            qsort(stock->products, stock->productCount, sizeof(Product), compareProductById);
             printProductDetails((Product*)bsearch(product, stock->products, stock->productCount, sizeof(Product), compareProductByCode));
             break;
         case 2:
@@ -98,7 +102,7 @@ int compareMedicineByID(const void* a, const void* b) {
 }
 
 // Comparator for products by code
-int compareProductByCode(const void* a, const void* b) {
+int compareProductById(const void* a, const void* b) {
     const Product* productA = (const Product*)a;
     const Product* productB = (const Product*)b;
     return productA->code - productB->code;

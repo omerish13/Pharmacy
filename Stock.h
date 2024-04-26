@@ -132,7 +132,7 @@ int compareMedicineByID(const void* a, const void* b);
  * @param b Pointer to the second product.
  * @return An integer value less than, equal to, or greater than zero if the code of the first product is less than, equal to, or greater than the code of the second product, respectively.
  */
-int compareProductByCode(const void* a, const void* b);
+int compareProductByID(const void* a, const void* b);
 
 /**
  * @brief Compares two products by name.
