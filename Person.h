@@ -21,6 +21,7 @@ typedef enum {
 typedef struct {
     char* name;      /**< Dynamically allocated person name */
     Gender gender;   /**< Gender, represented by an enum */
+    char* PersonId;  /**< Dynamically allocated person ID */
     char* phoneNumber; /**< Dynamically allocated phone number */
 } Person;
 
@@ -41,6 +42,18 @@ void setPersonName(Person* person);
  * @param person Pointer to the Person structure whose gender is being set.
  */
 void setPersonGender(Person* person);
+
+/**
+ * @brief Sets the ID of a person.
+ * @param person A pointer to the person object.
+ */
+void setPersonId(Person* person);
+
+/**
+ * Validates the ID of a person.
+ * @param personId The ID of the person.
+ */
+int validatePersonId(const char* personId);
 
 /**
  * Sets the phone number of a person after dynamically allocating memory for it.
