@@ -12,7 +12,7 @@ void printMainMenu() {
     printf("Enter your choice: ");
 }
 
-void manageMainMenu(Pharmacy* pharmacy) {
+void manageMainMenu(Pharmacy* pharmacy){
     int choice;
     do {
         printMainMenu();
@@ -30,12 +30,7 @@ void manageMainMenu(Pharmacy* pharmacy) {
                 manageStaff(pharmacy);  // Function to manage staff
                 break;
             case 4:
-                Order* newOrder = createNewOrderInteractive(pharmacy);  // Function to create a new order
-                if (newOrder == NULL) {
-                    printf("Error creating new order. Please try again.\n");
-                    break;
-                }
-                manageOrder(pharmacy, newOrder);  // Function to manage the order
+                manageOrder(pharmacy);  // Function to manage the order
                 break;
             case -1:
                 break;  // Exit the main menu
@@ -57,7 +52,10 @@ void printOrderManagementMenu() {
     printf("Enter your choice: ");
 }
 
-void manageOrder(Pharmacy* pharmacy, Order* order) {
+void manageOrder(Pharmacy* pharmacy) {
+    Order* order = createNewOrderInteractive(pharmacy);  // Function to create a new order
+    CHECK_ALLOC_VOID(order);
+
     int choice;
     do {
         printOrderManagementMenu();
@@ -79,10 +77,10 @@ void manageOrder(Pharmacy* pharmacy, Order* order) {
                 break;
             case 5:
                 purchaseOrder(pharmacy, order);
-                break;;  // Exit the mini menu after purchasing
+                break;  // Exit the mini menu after purchasing
             case 6:
                 cancelOrder(order);
-                break;;  // Exit the mini menu after canceling
+                break;  // Exit the mini menu after canceling
             default:
                 printf("Invalid choice, please try again.\n");
         }
@@ -108,10 +106,10 @@ void menageStock(Pharmacy* pharmacy) {
 
         switch (choice) {
             case 1:
-                addNewProductToStock(pharmacy);  // Function to add new products
+                addNewProductToStock(&pharmacy->stock);  // Function to add new products
                 break;
             case 2:
-                addNewMedicineToStock(pharmacy);  // Function to add new medicines
+                addNewMedicineToStock(&pharmacy->stock);  // Function to add new medicines
                 break;
             case 3:
                 showAndUpdateStock(pharmacy);  // Function to show and update stock
@@ -186,7 +184,7 @@ void managePrescriptions(Pharmacy* pharmacy) {
                 addNewPrescriptionToPharmacy(pharmacy);  // Function to add new prescriptions
                 break;
             case 2:
-                showPrescriptions(pharmacy->prescriptions, pharmacy->numPrescriptions);  // Function to show prescriptions
+                printPrescriptions(pharmacy->prescriptions, pharmacy->prescriptionCount);  // Function to show prescriptions
                 break;
             case -1:
                 break;  // Exit the prescription management menu

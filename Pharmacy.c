@@ -7,14 +7,11 @@ void initPharmacy(Pharmacy* pharmacy) {
     CHECK_ALLOC_VOID(pharmacy->name);
     pharmacy->employees = NULL;
     pharmacy->employeeCount = 0;
-    pharmacy->employeeCapacity = 0;
     pharmacy->customers = NULL;
     pharmacy->customerCount = 0;
-    pharmacy->customerCapacity = 0;
     initList(&pharmacy->orderHistory);
     pharmacy->prescriptions = NULL;
     pharmacy->prescriptionCount = 0;
-    pharmacy->prescriptionCapacity = 0;
 }
 
 void initPharmacyClient(Pharmacy* pharmacy) {
@@ -25,14 +22,11 @@ void initPharmacyClient(Pharmacy* pharmacy) {
     initStock(&pharmacy->stock);
     pharmacy->employees = NULL;
     pharmacy->employeeCount = 0;
-    pharmacy->employeeCapacity = 0;
     pharmacy->customers = NULL;
     pharmacy->customerCount = 0;
-    pharmacy->customerCapacity = 0;
     initList(&pharmacy->orderHistory);
     pharmacy->prescriptions = NULL;
     pharmacy->prescriptionCount = 0;
-    pharmacy->prescriptionCapacity = 0;
 }
 
 void setPharmacyName(char* name) {
@@ -76,16 +70,11 @@ Order* createNewOrderInteractive(Pharmacy* pharmacy) {
 
 
 void addEmployee(Pharmacy* pharmacy, const Employee* employee) {
-    // Check if the employees array needs to be expanded
-    if (pharmacy->employeeCount == pharmacy->employeeCapacity) {
-        int newCapacity = pharmacy->employeeCapacity > 0 ? pharmacy->employeeCapacity * 2 : 1;  // Double the capacity, start with 1 if 0
-        Employee** resizedArray = (Employee**)realloc(pharmacy->employees, newCapacity * sizeof(Employee*));
 
-        CHECK_ALLOC_VOID(resizedArray);
-
-        pharmacy->employees = resizedArray;
-        pharmacy->employeeCapacity = newCapacity;
-    }
+    // Allocate memory for the new employee
+    Employee** resizedArray = (Employee**)realloc(pharmacy->employees, (pharmacy->employeeCount + 1) * sizeof(Employee*));
+    CHECK_ALLOC_VOID(resizedArray);
+    pharmacy->employees = resizedArray;
 
     // Add the new employee to the array and increment the count
     pharmacy->employees[pharmacy->employeeCount] = (Employee*)malloc(sizeof(Employee));
@@ -94,19 +83,10 @@ void addEmployee(Pharmacy* pharmacy, const Employee* employee) {
 }
 
 void addCustomer(Pharmacy* pharmacy, const Customer* customer) {
-    // Check if the customer array needs to be expanded
-    if (pharmacy->customerCount == pharmacy->customerCapacity) {
-        int newCapacity = pharmacy->customerCapacity > 0 ? pharmacy->customerCapacity * 2 : 1;  // Double the capacity, start with 1 if 0
-        Customer* resizedArray = (Customer*)realloc(pharmacy->customers, newCapacity * sizeof(Customer));
-
-        if (resizedArray == NULL) {
-            // Handle reallocation failure; for simplicity, we just return here
-            return;
-        }
-
-        pharmacy->customers = resizedArray;
-        pharmacy->customerCapacity = newCapacity;
-    }
+    // Allocate memory for the new customer
+    Customer* resizedArray = (Customer*)realloc(pharmacy->customers, (pharmacy->customerCount + 1) * sizeof(Customer));
+    CHECK_ALLOC_VOID(resizedArray);
+    pharmacy->customers = resizedArray;
 
     // Add the new customer to the array and increment the count
     memcpy(&pharmacy->customers[pharmacy->customerCount], customer, sizeof(Customer));
@@ -240,19 +220,14 @@ void addNewPrescriptionToPharmacy(Pharmacy* pharmacy) {
     printf("Enter date (dd/mm/yyyy): ");
     initDate(&d);
     
-    // Resize the prescriptions array if necessary
-    if (pharmacy->prescriptionCount >= pharmacy->prescriptionCapacity) {
-        int newCapacity = pharmacy->prescriptionCapacity > 0 ? pharmacy->prescriptionCapacity * 2 : 1;
-        Prescription* resizedArray = (Prescription*)realloc(pharmacy->prescriptions, newCapacity * sizeof(Prescription));
-        if (!resizedArray) {
-            printf("Failed to allocate memory for new prescriptions.\n");
-            return;
-        }
-        pharmacy->prescriptions = resizedArray;
-        pharmacy->prescriptionCapacity = newCapacity;
-    }
+    // Allocate memory for the new prescription
+    Prescription* resizedArray = (Prescription*)realloc(pharmacy->prescriptions, (pharmacy->prescriptionCount + 1) * sizeof(Prescription));
+    CHECK_ALLOC_VOID(resizedArray);
+    pharmacy->prescriptions = resizedArray;
 
+    // Initialize the new prescription with the given details
     initPrescription(&newPrescription,pharmacy->customers,pharmacy->customerCount,customerID,medicineID,&pharmacy->stock,d,quantity,pharmacy->prescriptionCount+1);
+    
     // Add the new prescription to the array and increment the count
     pharmacy->prescriptions[pharmacy->prescriptionCount++] = newPrescription;
 }

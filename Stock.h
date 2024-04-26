@@ -19,7 +19,7 @@ typedef struct Stock {
 } Stock;
 
 /**
- * Initializes a Stock structure with dynamic allocation. Sets initial capacity and allocates memory
+ * Initializes a Stock structure with dynamic allocation. Allocates memory
  * for the product array, preparing the stock for use.
  * 
  * @param stock Pointer to the Stock structure to be initialized.

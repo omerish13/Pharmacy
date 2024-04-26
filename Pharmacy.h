@@ -15,18 +15,15 @@ typedef struct Pharmacy {
     Stock stock;                       /**< Stock of products in the pharmacy. */
     Employee** employees;               /**< Dynamically allocated array of employees. */
     int employeeCount;                 /**< Number of employees in the pharmacy. */
-    int employeeCapacity;              /**< Capacity of the employee array. */
     Customer* customers;               /**< Dynamically allocated array of customers. */
     int customerCount;                 /**< Number of customers in the pharmacy. */
-    int customerCapacity;              /**< Capacity of the customer array. */
     LinkedList orderHistory;           /**< Linked list of completed orders. */
     Prescription* prescriptions;       /**< Dynamically allocated array of prescriptions. */
     int prescriptionCount;             /**< Number of prescriptions in the pharmacy. */
-    int prescriptionCapacity;          /**< Capacity of the prescription array. */
 } Pharmacy;
 
 /**
- * Initializes a Pharmacy structure with dynamic allocation. Sets initial capacity and allocates memory
+ * Initializes a Pharmacy structure with dynamic allocation. Allocates memory
  * for the employee, customer, and prescription arrays, preparing the pharmacy for use.
  * 
  * @param pharmacy Pointer to the Pharmacy structure to be initialized.
@@ -34,7 +31,7 @@ typedef struct Pharmacy {
 void initPharmacy(Pharmacy* pharmacy);
 
 /**
- * Initializes a Pharmacy structure with dynamic allocation. Sets initial capacity and allocates memory
+ * Initializes a Pharmacy structure with dynamic allocation. Allocates memory
  * for the employee, customer, and prescription arrays, preparing the pharmacy for use. Getting data from user.
  * 
  * @param pharmacy Pointer to the Pharmacy structure to be initialized.
