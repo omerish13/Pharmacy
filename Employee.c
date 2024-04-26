@@ -44,7 +44,9 @@ void printEmployeeDetails(const Employee* employee) {
 }
 
 int saveEmployeeToBinary(FILE* file, const Employee* employee) {
-    if ((!savePersonToBinary(file, &employee->person)) || ((!fwrite(&employee->id, sizeof(int), 1, file)) == 1))
+    // if ((!savePersonToBinary(file, &employee->person)) || ((!fwrite(&employee->id, sizeof(int), 1, file)) == 1))
+    //     return 0;
+    if (!savePersonToBinaryFileCompressed(file, &employee->person) || fwrite(&employee->id, sizeof(int), 1, file) != 1)
         return 0;
     int length = (int)strlen(employee->position) + 1;
     if (fwrite(&length, sizeof(int), 1, file) != 1 || fwrite(employee->position, sizeof(char), length, file) != length)
@@ -53,7 +55,9 @@ int saveEmployeeToBinary(FILE* file, const Employee* employee) {
 }
 
 int loadEmployeeFromBinary(Employee* employee, FILE* file) {
-    if (!loadPersonFromBinary(&employee->person, file) || fread(&employee->id, sizeof(int), 1, file) != 1)
+    // if (!loadPersonFromBinary(&employee->person, file) || fread(&employee->id, sizeof(int), 1, file) != 1)
+    //     return 0;
+    if (!loadPersonFromBinaryFileCompressed(&employee->person, file) || fread(&employee->id, sizeof(int), 1, file) != 1)
         return 0;
     int length;
     if (fread(&length, sizeof(int), 1, file) != 1)

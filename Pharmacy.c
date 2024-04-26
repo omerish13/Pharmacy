@@ -175,6 +175,38 @@ void printAllEmployees(const Pharmacy* pharmacy) {
     }
 }
 
+void printAllOrders(const LinkedList* orders) {
+    printf("List of Orders:\n");
+    printList(orders, &showOrder);
+}
+
+void showOrdersByCustomer(const Pharmacy* pharmacy) {
+    if (pharmacy->customerCount == 0) {
+        printf("No customers available. Please add a customer first.\n");
+        return;
+    }
+
+    if (pharmacy->orderHistory.size == 0) {
+        printf("No orders available.\n");
+        return;
+    }
+    
+    int customerID;
+    printAllCustomers(pharmacy);
+    printf("Enter Customer ID: ");
+    scanf("%d", &customerID);
+    clearInputBuffer();
+
+    ListNode* node = pharmacy->orderHistory.head;
+    while (node != NULL) {
+        Order* order = (Order*)node->item;
+        if (order->customerID == customerID) {
+            showOrder(order);
+        }
+        node = node->next;
+    }
+}
+
 void addNewPrescriptionToPharmacy(Pharmacy* pharmacy) {
     Prescription newPrescription;
 

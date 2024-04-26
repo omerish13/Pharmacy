@@ -75,6 +75,49 @@ int validatePhoneNumber(const char* phoneNumber) {
     return 1;
 }
 
+int savePersonToBinaryFileCompressed(FILE* file, const Person* person) {
+    // Compress the information into two bytes
+    BYTE data[2] = { 0 };
+    int nameLength = (int)strlen(person->name);
+    int phoneNumberLength = (int)strlen(person->phoneNumber);
+    data[0] = (BYTE)(nameLength << 5) | (BYTE)(person->gender << 2);
+    data[1] = (BYTE)(phoneNumberLength << 4);
+    if (fwrite(data, sizeof(BYTE), 2, file) != 2)
+        return 0;
+    if (fwrite(person->name, sizeof(char), nameLength, file) != nameLength)
+        return 0;
+    if (fwrite(person->phoneNumber, sizeof(char), phoneNumberLength, file) != phoneNumberLength)
+        return 0;
+    return 1;
+}
+
+int loadPersonFromBinaryFileCompressed(Person* person, FILE* file) {
+    BYTE data[2];
+    if (fread(data, sizeof(BYTE), 2, file) != 2)
+        return 0;
+    int nameLength = (int)(data[0] >> 5);
+    int gender = (int)(data[0] >> 2) & 0x1;
+    int phoneNumberLength = (int)(data[1] >> 4);
+
+    person->name = (char*)malloc(nameLength + 1);
+    CHECK_ALLOC_INT(person->name);
+
+    person->phoneNumber = (char*)malloc(phoneNumberLength + 1);
+    CHECK_ALLOC_INT(person->phoneNumber);
+
+    if (fread(person->name, sizeof(char), nameLength, file) != nameLength)
+        return 0;
+
+    if (fread(person->phoneNumber, sizeof(char), phoneNumberLength, file) != phoneNumberLength)
+        return 0;
+    
+    person->gender = (Gender)gender;
+
+    return 1;
+}
+    
+    
+
 
 void printPersonDetails(const Person* person) {
     printf("Name: %s ", person->name);

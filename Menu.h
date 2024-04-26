@@ -74,5 +74,14 @@ void menageStock(Pharmacy* pharmacy);
  */
 void manageStaff(Pharmacy* pharmacy);
 
+/**
+ *
+ * This function displays the show menu of the pharmacy system, which includes options for printing prescriptions,
+ * stock, staff, orders, and displaying the menu.
+ *
+ * @param pharmacy A pointer to the Pharmacy object representing the pharmacy system.
+ */
+void showMenu(Pharmacy* pharmacy);
+
 
 #endif // MENU_H

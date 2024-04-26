@@ -201,6 +201,20 @@ void printAllEmployees(const Pharmacy* pharmacy);
 void printAllCustomers(const Pharmacy* pharmacy);
 
 /**
+ * Displays the orders made by a specific customer.
+ *
+ * @param pharmacy A pointer to the Pharmacy struct.
+ */
+void showOrdersByCustomer(const Pharmacy* pharmacy);
+
+/**
+ * Prints all orders in the given linked list.
+ *
+ * @param orders The linked list of orders to print.
+ */
+void printAllOrders(const LinkedList* orders);
+
+/**
  * Saves data from the Pharmacy structure to a binary file.
  *
  * @param filename The name of the binary file to save the data to.

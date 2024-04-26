@@ -8,6 +8,7 @@ void printMainMenu() {
     printf("2. Stock Management\n");
     printf("3. Staff Management\n");
     printf("4. Order Management\n");
+    printf("5. Show Menu\n");
     printf("-1. Exit\n");
     printf("Enter your choice: ");
 }
@@ -31,6 +32,9 @@ void manageMainMenu(Pharmacy* pharmacy){
                 break;
             case 4:
                 manageOrder(pharmacy);  // Function to manage the order
+                break;
+            case 5:
+                showMenu(pharmacy);  // Function to show menu
                 break;
             case -1:
                 break;  // Exit the main menu
@@ -192,4 +196,59 @@ void managePrescriptions(Pharmacy* pharmacy) {
                 printf("Invalid choice, please try again.\n");
         }
     } while (choice != -1);  // Loop until the user exits the prescription management menu
+}
+
+void printShowMenu() {
+    printf("\nShow Menu\n");
+    printf("---------\n");
+    printf("1. Show All Orders\n");
+    printf("2. Show All Employees\n");
+    printf("3. Show All Customers\n");
+    printf("4. Show All Prescriptions\n");
+    printf("5. Show All Stock\n");
+    printf("6. Show Orders by Dates\n");
+    printf("7. Show Orders by customer\n");
+    printf("8. Show Pharmacy Information\n");
+    printf("-1. Back to Main Menu\n");
+    printf("Enter your choice: ");
+}
+
+void showMenu(Pharmacy* pharmacy) {
+    int choice;
+    do {
+        printShowMenu();
+        scanf("%d", &choice);
+        clearInputBuffer();
+
+        switch (choice) {
+            case 1:
+                printAllOrders(&pharmacy->orderHistory);  // Function to show all orders
+                break;
+            case 2:
+                printAllEmployees(pharmacy);  // Function to show all employees
+                break;
+            case 3:
+                printAllCustomers(pharmacy);  // Function to show all customers
+                break;
+            case 4:
+                printPrescriptions(pharmacy->prescriptions, pharmacy->prescriptionCount);  // Function to show all prescriptions
+                break;
+            case 5:
+                printStockDetails(&pharmacy->stock);  // Function to show all stock
+                break;
+            case 6:
+                showOrdersHistoryByDate(&pharmacy->orderHistory);  // Function to show orders by dates
+                break;
+            case 7:
+                showOrdersByCustomer(pharmacy);  // Function to show orders by customer
+                break;
+            case 8:
+                printPharmacyDetails(pharmacy);  // Function to show pharmacy information
+                break;
+            case -1:
+                break;  // Exit the show menu
+            default:
+                printf("Invalid choice, please try again.\n");
+        }
+    } while (choice != -1);  // Loop until the user exits the show menu
 }

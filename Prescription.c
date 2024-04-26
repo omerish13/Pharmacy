@@ -95,10 +95,7 @@ Prescription* loadPrescription(FILE* file,Customer* customers, int numCustomers,
     prescription->customer = findCustomerByID(customers, numCustomers, customerID);
     return prescription;
 }
-
-
     
-
 void freePrescription(Prescription* prescription) {
     prescription->id = 0;
     freeCustomer(prescription->customer);

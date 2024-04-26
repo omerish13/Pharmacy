@@ -3,6 +3,9 @@
 
 #include "general.h"  // Include for CHECK_ALLOC and myGets
 #include <ctype.h>    // Include for isdigit
+
+typedef unsigned char BYTE;
+
 /**
  * Enum for Gender.
  */
@@ -70,6 +73,21 @@ int savePersonToBinary(FILE* file, const Person* person);
  * @param person Pointer to the Person structure to load.
  */
 int loadPersonFromBinary(Person* person, FILE* file);
+
+/**
+ * Save person details to a binary file with compression.
+ * @param file Pointer to the binary file.
+ * @param person Pointer to the Person structure to save.
+ */
+int savePersonToBinaryFileCompressed(FILE* file, const Person* person);
+
+/**
+ * Load person details from a binary file with compression.
+ * @param file Pointer to the binary file.
+ * @param person Pointer to the Person structure to load.
+ */
+int loadPersonFromBinaryFileCompressed(Person* person, FILE* file);
+
 /**
  * Save person details from the user, including name and phone number.
  * @param person Pointer to the Person structure to store the details.

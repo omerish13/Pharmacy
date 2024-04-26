@@ -34,14 +34,17 @@ void printCustomerDetails(const Customer* customer) {
 }
 
 int saveCustomerToBinary(FILE* file, const Customer* customer) {
-    return savePersonToBinary(file, &customer->person) && fwrite(&customer->id, sizeof(int), 1, file) == 1;
+    return savePersonToBinaryFileCompressed(file, &customer->person) && fwrite(&customer->id, sizeof(int), 1, file) == 1;
+    // return savePersonToBinary(file, &customer->person) && fwrite(&customer->id, sizeof(int), 1, file) == 1;
 }
 
 Customer* loadCustomerFromBinary(FILE* file) {
     Customer* customer = (Customer*)malloc(sizeof(Customer));
     CHECK_ALLOC_STRUCT(customer);
 
-    if (!loadPersonFromBinary(&customer->person, file) )
+    // if (!loadPersonFromBinary(&customer->person, file) )
+    //     return NULL;
+    if (!loadPersonFromBinaryFileCompressed(&customer->person, file))
         return NULL;
     if (fread(&customer->id, sizeof(int), 1, file) != 1)
         return NULL;

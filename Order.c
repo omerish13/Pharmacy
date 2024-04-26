@@ -178,7 +178,8 @@ int updateProductQuantityInOrder(Stock* stock, Order* order, int productCode, in
     return 0;  // Indicate failure
 }
 
-void showOrder(const Order* order) {
+void showOrder(const void* data) {
+    const Order* order = (const Order*)data;
     printf("Order Number: %d\n", order->orderNumber);
     printf("Customer ID: %d\n", order->customerID);
     printEmployeeDetails(order->employee);
@@ -190,6 +191,33 @@ void showOrder(const Order* order) {
     printf("Last Modified: ");
     printDate(&order->lastModified);
 }
+
+void showOrdersHistoryByDate(const LinkedList* orders) {
+    if (orders->size == 0) {
+        printf("No orders found.\n");
+        return;
+    }
+    ListNode* node = orders->head;
+    Date start, end;
+    printf("Enter Start Date (DD/MM/YYYY):\n");
+    initDate(&start);
+    printf("Enter End Date (DD/MM/YYYY):\n");
+    initDate(&end);
+
+    if (compareDates(&start, &end) > 0) {
+        printf("Error: Start date is after end date.\n");
+        return;
+    }
+
+    while (node != NULL) {
+        Order* order = (Order*)node->item;
+        if (compareDates(&order->lastModified, &start) >= 0 && compareDates(&order->lastModified, &end) <= 0) {
+            showOrder(order);
+        }
+        node = node->next;
+    }
+}
+    
 
 void updateLastModified(Order* order) {
     // Update the lastModified field to the current date

@@ -58,7 +58,7 @@ void initOrder(Order* order, int customerID, Employee* employee, int orderNumber
  * 
  * @param order Pointer to the Order to display.
  */
-void showOrder(const Order* order);
+void showOrder(const void* order);
 
 /**
  * Adds a product to an order by product code and quantity.
@@ -107,6 +107,18 @@ int updateProductQuantityInOrder(Stock* stock, Order* order, int productCode, in
  * @return Integer indicating success (1) or failure (0) of the operation.
  */
 int removeProductFromOrder(Order* order, int productCode);
+
+
+/**
+ * Displays the orders history by date.
+ *
+ * This function takes a pointer to a LinkedList of orders and displays the orders
+ * history sorted by date. The orders are displayed in chronological order, starting
+ * from the oldest order to the most recent order.
+ *
+ * @param orders A pointer to a LinkedList of orders.
+ */
+void showOrdersHistoryByDate(const LinkedList* orders);
 
 /**
  * Updates the 'lastModified' date of the order to the current date.
