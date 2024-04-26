@@ -98,6 +98,7 @@ void printStockManagementMenu() {
     printf("2. Add New Medicine\n");
     printf("3. Show and Update Stock\n");
     printf("4. Sort Stock\n");
+    printf("5. Find Product In Stock Using BSearch\n");
     printf("-1. Back to Main Menu\n");
     printf("Enter your choice: ");
 }
@@ -121,6 +122,10 @@ void menageStock(Pharmacy* pharmacy) {
                 break;
             case 4:
                 sortProductInStock(&pharmacy->stock);  // Function to sort stock
+                break;
+            case 5:
+                findProductInStockBSearch(&pharmacy->stock);  // Function to find product in stock using bsearch
+                break;
             case -1:
                 break;  // Exit the stock management menu
             default:

@@ -176,6 +176,18 @@ int compareProductByPrice(const void* a, const void* b);
 void sortProductInStock(Stock* stock);
 
 /**
+ * @brief Finds a product in the stock using binary search.
+ * 
+ * This function searches for a given product in the stock using binary search algorithm.
+ * It takes a pointer to the stock and a pointer to the product as parameters.
+ * 
+ * @param stock A pointer to the stock.
+ * @param product A pointer to the product to be found.
+ * @return A pointer to the found product if it exists in the stock, NULL otherwise.
+ */
+void findProductInStockBSearch(Stock* stock);
+
+/**
  * Saves the stock details to a binary file, including the products and medicines.
  *
  * @param stock Pointer to the Stock structure to save.

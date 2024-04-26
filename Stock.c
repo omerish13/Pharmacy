@@ -35,15 +35,58 @@ void sortProductInStock(Stock* stock) {
         qsort(stock->products, stock->productCount, sizeof(Product), compareProductByCode);
         if(stock->medicineCount > 0)
             qsort(stock->medicines, stock->medicineCount, sizeof(Medicine), compareMedicineByID);
+        showAvailableProducts(stock);
         break;
     case 2:
         qsort(stock->products, stock->productCount, sizeof(Product), compareProductByName);
+        showAvailableProducts(stock);
         break;
     case 3:
         qsort(stock->products, stock->productCount, sizeof(Product), compareProductByPrice);
+        showAvailableProducts(stock);
         break;
     default:
         printf("Invalid sort type.\n");
+    }
+}
+
+void findProductInStockBSearch(Stock* stock) {
+    int option;
+    Product* product = (Product*)malloc(sizeof(Product));
+    if (product == NULL) {
+        printf("Memory allocation failed for product.\n");
+        return;
+    }
+
+    if (stock->productCount == 0) {
+        printf("No products to search.\n");
+        return;
+    }
+
+    printf("Enter search option (1 - by code, 2 - by name, 3 - by price): ");
+    scanf("%d", &option);
+    switch (option) {
+        case 1:
+            printf("Enter product code to search: ");
+            scanf("%d", &product->code);
+            qsort(stock->products, stock->productCount, sizeof(Product), compareProductByCode);
+            printProductDetails((Product*)bsearch(product, stock->products, stock->productCount, sizeof(Product), compareProductByCode));
+            break;
+        case 2:
+            printf("Enter product name to search: ");
+            myGets(product->name);
+            qsort(stock->products, stock->productCount, sizeof(Product), compareProductByName);
+            printProductDetails((Product*)bsearch(product, stock->products, stock->productCount, sizeof(Product), compareProductByName));
+            break;
+        case 3:
+            printf("Enter product price to search: ");
+            scanf("%lf", &product->price);
+            qsort(stock->products, stock->productCount, sizeof(Product), compareProductByPrice);
+            printProductDetails((Product*)bsearch(product, stock->products, stock->productCount, sizeof(Product), compareProductByPrice));
+            break;
+        default:
+            printf("Invalid search type.\n");
+            break;
     }
 }
 
