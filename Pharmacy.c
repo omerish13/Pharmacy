@@ -163,7 +163,7 @@ void purchaseOrder(Pharmacy* pharmacy,Order* order) {
 void printAllCustomers(const Pharmacy* pharmacy) {
     printf("List of Customers:\n");
     for (int i = 0; i < pharmacy->customerCount; ++i) {
-        printf("%d: %s\n", pharmacy->customers[i].id, pharmacy->customers[i].person.name);
+        printCustomerDetails(&pharmacy->customers[i]);
     }
 }
 
@@ -171,7 +171,7 @@ void printAllCustomers(const Pharmacy* pharmacy) {
 void printAllEmployees(const Pharmacy* pharmacy) {
     printf("List of Employees:\n");
     for (int i = 0; i < pharmacy->employeeCount; ++i) {
-        printf("%d: %s\n", pharmacy->employees[i]->id, pharmacy->employees[i]->person.name);
+        printEmployeeDetails(pharmacy->employees[i]);
     }
 }
 
@@ -190,7 +190,7 @@ void showOrdersByCustomer(const Pharmacy* pharmacy) {
         printf("No orders available.\n");
         return;
     }
-    
+
     int customerID;
     printAllCustomers(pharmacy);
     printf("Enter Customer ID: ");
@@ -364,6 +364,7 @@ void raiseSalaryClient(Pharmacy* pharmacy) {
         printf("Enter the percentage to raise the salary: ");
         double percent;
         scanf("%lf", &percent);
+        clearInputBuffer();
         // Function to raise salary of employee
         raiseSalary(employee,percent);
     } else {
@@ -587,17 +588,14 @@ void loadOrders(FILE* file, const Employee** employees, int numEmployees, Linked
 
 void loadOrdersFromBinary(FILE* file, const Employee** employees, int numEmployees, LinkedList* orders) {
     initList(orders);
-    printf("Loading orders...\n");
     int numOrders;
     if (fread(&numOrders, sizeof(int), 1, file) != 1) {
         return;
     }
-    printf("Number of orders: %d\n", numOrders);
     for (int i = 0; i < numOrders; i++) {
         Order* order = loadOrderFromBinary(file, (Employee**)employees, numEmployees);
         addToList(orders, order);
     }
-    printf("Orders loaded.\n");
 }
 
 int loadPharmacyFromBinary(FILE* file, Pharmacy* pharmacy) {
@@ -635,16 +633,14 @@ int loadPharmacyFromBinary(FILE* file, Pharmacy* pharmacy) {
     }
     if (pharmacy->customerCount > 0)
         pharmacy->customers = loadCustomersFromBinary(file, pharmacy->customerCount);
-
+    printAllCustomers(pharmacy);
     if (fread(&pharmacy->prescriptionCount, sizeof(int), 1, file) != 1) {
        printf("Failed to read prescription count.\n");
         return 0;
     }
     if (pharmacy->prescriptionCount > 0)
         pharmacy->prescriptions = loadPrescriptionsFromBinary(file, pharmacy->prescriptionCount, pharmacy->customers, pharmacy->customerCount, &pharmacy->stock);
-    printf("Prescriptions loaded.\n");
     loadOrdersFromBinary(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount, &pharmacy->orderHistory);
-    printf("Orders loaded.\n");
     printPharmacyDetails(pharmacy);
     return 1;
 }

@@ -17,10 +17,9 @@ void setEmployeePosition(Employee* employee) {
 }
 
 void setEmployeeSalary(Employee* employee) {
-    char buffer[BUFFER_SIZE];
     printf("Enter employee salary: ");
-    myGets(buffer);
-    employee->salary = atof(buffer);
+    scanf("%lf", &employee->salary);
+    clearInputBuffer();
 }
 
 void raiseSalary(Employee* employee, double raisePercentage) {
@@ -37,10 +36,10 @@ Employee* findEmployee(Employee** employees, int numEmployees, int id) {
 }
 
 void printEmployeeDetails(const Employee* employee) {
-    printf("Employee ID: %d ", employee->id);
+    printf("Employee ID: %d, ", employee->id);
     printPersonDetails(&employee->person);
-    printf("Position: %s ", employee->position);
-    printf("Salary: $%.2f\n", employee->salary);
+    printf("Position: %s, ", employee->position);
+    printf("Salary: ₪%.2f\n", employee->salary);
 }
 
 int saveEmployeeToBinary(FILE* file, const Employee* employee) {

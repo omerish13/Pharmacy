@@ -33,25 +33,23 @@ void setProductName(Product* product) {
 void setProductType(Product* product) {
     printf("Select product type:\n");
     for (int i = 1; i < PRODUCT_TYPE_COUNT; ++i) {
-        printf("%d. %s\n", i + 1, ProductTypeNames[i]);
+        printf("%d. %s\n", i, ProductTypeNames[i]);
     }
     
-    char buffer[BUFFER_SIZE];
-    myGets(buffer);
-    int typeIndex = atoi(buffer) - 1;  // Adjust for 0-based index
+    int typeIndex;  // Adjust for 0-based index
+    scanf("%d", &typeIndex);
 
-    if (typeIndex >= 0 && typeIndex < PRODUCT_TYPE_COUNT) {
-        product->type = (ProductType)typeIndex;
+    if (typeIndex > 0 && typeIndex < PRODUCT_TYPE_COUNT) {
+        product->type = (ProductType)typeIndex+1;
     } else {
         printf("Error: Invalid product type selection.\n");
     }
 }
 
 void setProductPrice(Product* product) {
-    char buffer[BUFFER_SIZE];
     printf("Enter product price: ");
-    myGets(buffer);
-    product->price = atof(buffer);
+    scanf("%lf", &product->price);
+    clearInputBuffer();
 }
 
 void setProductStockQuantity(Product* product) {

@@ -100,6 +100,7 @@ int addMedicineToOrder(Order* order, Prescription* prescriptions, int numOfPresc
         printf("Insufficient stock. Available: %d, Required: %d\n", medicine->product.stockQuantity, prescribedQuantity);
         printf("Do you want to take the available amount? (y/n): ");
         scanf(" %c", &choice);
+        clearInputBuffer();
         if (choice == 'y' || choice == 'Y') {
             prescribedQuantity = medicine->product.stockQuantity;
         } else {

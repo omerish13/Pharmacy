@@ -71,7 +71,6 @@ int loadPrescriptionFromBinary(Prescription* prescription, FILE* file, Customer*
         return 0;
     }
     loadDateFromBinary(&prescription->expirationDate, file);
-    printDate(&prescription->expirationDate);
     return 1;
 }
 

@@ -55,34 +55,6 @@ void* removeFromList(LinkedList* list, int (*compare)(void*, void*), void* item)
 void printList(const LinkedList* list, void (*printItem)(const void*));
 
 /**
- * Iterates over each item in the list and applies a given function.
- * 
- * @param list Pointer to the LinkedList structure.
- * @param callback Function applied to each item in the list.
- */
-void traverseLinkedList(const LinkedList* list, void (*callback)(const void*));
-
-/**
- * Searches the list for an item matching the target based on a comparison function.
- * 
- * @param list Pointer to the LinkedList structure.
- * @param target Pointer to the target item to find.
- * @param compFunc Function used to compare two list items.
- * @return Pointer to the found item, or NULL if not found.
- */
-void* traverseAndFind(const LinkedList* list, const void* target, int (*compFunc)(const void*, const void*));
-
-/**
- * Attempts to perform a binary search on the list (not recommended for linked lists due to inefficiency).
- * 
- * @param list Pointer to the LinkedList structure.
- * @param target Pointer to the target item to find.
- * @param compFunc Function used to compare two list items.
- * @return Always returns NULL, as binary search is not suitable for linked lists.
- */
-void* binarySearchLinkedList(const LinkedList* list, const void* target, int (*compFunc)(const void*, const void*));
-
-/**
  * Saves the contents of a linked list to a binary file, using a given function to save each item.
  * 
  * @param file Pointer to the file to save the list to.

@@ -32,7 +32,7 @@ void sortProductInStock(Stock* stock) {
     scanf("%d", &option);
     switch (option) {
     case 1:
-        qsort(stock->products, stock->productCount, sizeof(Product), compareProductById);
+        qsort(stock->products, stock->productCount, sizeof(Product), compareProductByID);
         printf("Available Products After Sorting By Id:\n");
         for (int i = 0; i < stock->productCount; i++) 
             printProductDetails(&stock->products[i]);
@@ -73,20 +73,37 @@ void findProductInStockBSearch(Stock* stock) {
         case 1:
             printf("Enter product code to search: ");
             scanf("%d", &product->code);
-            qsort(stock->products, stock->productCount, sizeof(Product), compareProductById);
-            printProductDetails((Product*)bsearch(product, stock->products, stock->productCount, sizeof(Product), compareProductByCode));
+            clearInputBuffer();
+            qsort(stock->products, stock->productCount, sizeof(Product), compareProductByID);
+            Product* foundProduct = (Product*)bsearch(product, stock->products, stock->productCount, sizeof(Product), compareProductByID);
+            if (foundProduct != NULL) {
+                printProductDetails(foundProduct);
+            } else {
+                printf("Product with code %d not found.\n", product->code);
+            }
             break;
         case 2:
             printf("Enter product name to search: ");
             myGets(product->name);
             qsort(stock->products, stock->productCount, sizeof(Product), compareProductByName);
-            printProductDetails((Product*)bsearch(product, stock->products, stock->productCount, sizeof(Product), compareProductByName));
+            Product* foundProductByName = (Product*)bsearch(product, stock->products, stock->productCount, sizeof(Product), compareProductByName);
+            if (foundProductByName != NULL) {
+                printProductDetails(foundProductByName);
+            } else {
+                printf("Product with name %s not found.\n", product->name);
+            }
             break;
         case 3:
             printf("Enter product price to search: ");
             scanf("%lf", &product->price);
+            clearInputBuffer();
             qsort(stock->products, stock->productCount, sizeof(Product), compareProductByPrice);
-            printProductDetails((Product*)bsearch(product, stock->products, stock->productCount, sizeof(Product), compareProductByPrice));
+            Product* foundProductByPrice = (Product*)bsearch(product, stock->products, stock->productCount, sizeof(Product), compareProductByPrice);
+            if (foundProductByPrice != NULL) {
+                printProductDetails(foundProductByPrice);
+            } else {
+                printf("Product with price %.2f not found.\n", product->price);
+            }
             break;
         default:
             printf("Invalid search type.\n");
@@ -102,7 +119,7 @@ int compareMedicineByID(const void* a, const void* b) {
 }
 
 // Comparator for products by code
-int compareProductById(const void* a, const void* b) {
+int compareProductByID(const void* a, const void* b) {
     const Product* productA = (const Product*)a;
     const Product* productB = (const Product*)b;
     return productA->code - productB->code;
@@ -126,7 +143,8 @@ Product* findProduct(const Stock* stock, int code) {
     // Use Binary Search to find the product with the given code
     Product tmp;
     tmp.code = code;
-    Product* found = (Product*)bsearch(&tmp, stock->products, stock->productCount, sizeof(Product), compareProductByCode);
+    qsort(stock->products, stock->productCount, sizeof(Product), compareProductByID);
+    Product* found = (Product*)bsearch(&tmp, stock->products, stock->productCount, sizeof(Product), compareProductByID);
     return found;
 }
 
@@ -140,6 +158,7 @@ Medicine* findMedicine(const Stock* stock, int code) {
     // Use Binary Search to find the medicine with the given code
     Medicine tmp;
     tmp.product.code = code;
+    qsort(stock->medicines, stock->medicineCount, sizeof(Medicine), compareMedicineByCode);
     Medicine* found = (Medicine*)bsearch(&tmp, stock->medicines, stock->medicineCount, sizeof(Medicine), compareMedicineByCode);
     return found;
 }
@@ -148,6 +167,7 @@ Medicine* findMedicineByID(Stock* stock, const char* medicineID){
     // Use Binary Search to find the medicine with the given ID
     Medicine tmp;
     strcpy(tmp.medicineID, medicineID);
+    qsort(stock->medicines, stock->medicineCount, sizeof(Medicine), compareMedicineByID);
     Medicine* found = (Medicine*)bsearch(&tmp, stock->medicines, stock->medicineCount, sizeof(Medicine), compareMedicineByID);
     return found;
 }

@@ -139,6 +139,7 @@ int loadPersonFromBinaryFileCompressed(Person* person, FILE* file) {
     if (fread(data, sizeof(BYTE), 3, file) != 3)
         return 0;
     int nameLength = (int)(data[0] >> 5);
+    printf("Name length: %d\n", nameLength);
     int gender = (int)(data[0] >> 2) & 0x1;
     int personIdLength = (int)(data[1] >> 4);
     int phoneNumberLength = (int)(data[2] >> 4);
@@ -160,6 +161,9 @@ int loadPersonFromBinaryFileCompressed(Person* person, FILE* file) {
 
     if (fread(person->phoneNumber, sizeof(char), phoneNumberLength, file) != phoneNumberLength)
         return 0;
+    person->name[nameLength] = '\0';
+    person->PersonId[personIdLength] = '\0';
+    person->phoneNumber[phoneNumberLength] = '\0';
     
     person->gender = (Gender)gender;
 
@@ -167,10 +171,10 @@ int loadPersonFromBinaryFileCompressed(Person* person, FILE* file) {
 }
  
 void printPersonDetails(const Person* person) {
-    printf("Name: %s ", person->name);
-    printf("Gender: %s ", person->gender == MALE ? "Male" : person->gender == FEMALE ? "Female" : "Other");
-    printf("Person ID: %s ", person->PersonId);
-    printf("Phone Number: %s ", person->phoneNumber);
+    printf("Name: %s, ", person->name);
+    printf("Gender: %s, ", person->gender == MALE ? "Male" : person->gender == FEMALE ? "Female" : "Other");
+    printf("Person ID: %s, ", person->PersonId);
+    printf("Phone Number: %s, ", person->phoneNumber);
 }
 
 int savePersonToBinary(FILE* file, const Person* person) {
