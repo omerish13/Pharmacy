@@ -153,6 +153,8 @@ int addMedicineToOrder(Order* order, Prescription* prescriptions, int numOfPresc
             return 0;  // Indicate failure
         }
     }
+    else if (medicine->prescriptionRequired)
+        prescriptions[validPrescriptionIndex].used = 1;  // Mark the prescription as used
 
     // Add the medicine to the order with the prescribed quantity
     OrderMedicineNode* newNode = (OrderMedicineNode*)malloc(sizeof(OrderMedicineNode));
@@ -163,7 +165,7 @@ int addMedicineToOrder(Order* order, Prescription* prescriptions, int numOfPresc
     newNode->price = medicine->product.price;
     addToList(order->orderMedicines, newNode);
     order->totalAmount += medicine->product.price * prescribedQuantity;
-    
+    decreaseStockQuantity(stock, medicine->product.code, prescribedQuantity);
     updateLastModified(order);
     return 1;  // Indicate success
 }

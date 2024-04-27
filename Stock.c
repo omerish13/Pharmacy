@@ -227,7 +227,14 @@ void decreaseStockQuantity(Stock* stock, int productCode, int quantity) {
         stockProduct->stockQuantity -= quantity;
     } else {
         // Handle the case where the product is not found in the stock
-        printf("Product code %d not found in stock.\n", productCode);
+        Medicine* stockMedicine = findMedicine(stock, productCode);
+        if (stockMedicine != NULL) {
+            // Update the quantity available in the stock
+            stockMedicine->product.stockQuantity -= quantity;
+        } else {
+
+            printf("Product code %d not found in stock.\n", productCode);
+        }
     }
 }
 
