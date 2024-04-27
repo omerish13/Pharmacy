@@ -184,7 +184,7 @@ void showOrder(const void* data) {
     printf("Order Number: %d\n", order->orderNumber);
     printf("Customer ID: %d\n", order->customerID);
     printEmployeeDetails(order->employee);
-    printf("Total Amount: $%d\n", order->totalAmount);
+    printf("Total Amount: ₪%d\n", order->totalAmount);
     printf("Order Products:\n");
     printList(order->orderProducts, printOrderProductNode);
     printf("Order Medicines:\n");
@@ -236,12 +236,14 @@ void printOrderMedicineNode(const void* data) {
 }
 
 void removeProductFromOrderClient(Order* order) {
-    int productCode, quantity;
+    int productCode;
     printList(order->orderProducts, printOrderProductNode);
+    if (order->orderProducts->size == 0) {
+        printf("No products in order.\n");
+        return;
+    }
     printf("Enter Product Code to remove from order: ");
     scanf("%d", &productCode);
-    printf("Enter quantity: ");
-    scanf("%d", &quantity);
 
     removeProductFromOrder(order,productCode);
 }

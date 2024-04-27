@@ -118,10 +118,16 @@ int savePersonToBinaryFileCompressed(FILE* file, const Person* person) {
     // Compress the information into two bytes
     BYTE data[3] = { 0 };
     int nameLength = (int)strlen(person->name);
+    int personGender = (int)person->gender;
     int personIdLength = (int)strlen(person->PersonId);
     int phoneNumberLength = (int)strlen(person->phoneNumber);
-    data[0] = (BYTE)(nameLength << 5) | (BYTE)(person->gender << 2);
+    // Allocate 8 bits for name length
+    data[0] = (BYTE)nameLength;
+    // Allocate 4 bits for person ID
     data[1] = (BYTE)(personIdLength << 4);
+    // Allocate 2 bits for gender
+    data[1] |= (BYTE)(personGender << 2);
+    // Allocate 4 bits for phone number length
     data[2] = (BYTE)(phoneNumberLength << 4);
     if (fwrite(data, sizeof(BYTE), 3, file) != 3)
         return 0;
@@ -138,19 +144,18 @@ int loadPersonFromBinaryFileCompressed(Person* person, FILE* file) {
     BYTE data[3];
     if (fread(data, sizeof(BYTE), 3, file) != 3)
         return 0;
-    int nameLength = (int)(data[0] >> 5);
-    printf("Name length: %d\n", nameLength);
-    int gender = (int)(data[0] >> 2) & 0x1;
+    int nameLength = (int)data[0];
     int personIdLength = (int)(data[1] >> 4);
+    int gender = (int)(data[1] >> 2) & 0x03;
     int phoneNumberLength = (int)(data[2] >> 4);
 
-    person->name = (char*)malloc(nameLength + 1);
+    person->name = (char*)malloc(nameLength);
     CHECK_ALLOC_INT(person->name);
 
-    person->phoneNumber = (char*)malloc(phoneNumberLength + 1);
+    person->phoneNumber = (char*)malloc(phoneNumberLength);
     CHECK_ALLOC_INT(person->phoneNumber);
 
-    person->PersonId = (char*)malloc(personIdLength + 1);
+    person->PersonId = (char*)malloc(personIdLength);
     CHECK_ALLOC_INT(person->PersonId);
 
     if (fread(person->name, sizeof(char), nameLength, file) != nameLength)

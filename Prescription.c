@@ -33,7 +33,7 @@ void printPrescription(const Prescription* prescription) {
 
     printf("Prescription ID: %d ", prescription->id);
     printCustomerDetails(prescription->customer);
-    printf("Medicine ID: %s)\n",prescription->medicineID);
+    printf("Medicine ID: %s\n",prescription->medicineID);
     // Additional details can be printed here if needed
 }
 

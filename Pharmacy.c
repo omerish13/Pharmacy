@@ -50,6 +50,20 @@ Order* createNewOrder(Pharmacy* pharmacy, int customerID, int employeeID) {
     return newOrder;
 }
 
+void printCustomersChoose(Pharmacy* pharmacy) {
+    printf("List of Customers:\n");
+    for (int i = 0; i < pharmacy->customerCount; ++i) {
+        printf("ID: %d, Name: %s\n", pharmacy->customers[i].id, pharmacy->customers[i].person.name);
+    }
+}
+
+void printEmployeesChoose(Pharmacy* pharmacy) {
+    printf("List of Employees:\n");
+    for (int i = 0; i < pharmacy->employeeCount; ++i) {
+        printf("ID: %d, Name: %s\n", pharmacy->employees[i]->id, pharmacy->employees[i]->person.name);
+    }
+}
+
 Order* createNewOrderInteractive(Pharmacy* pharmacy) {
     if (pharmacy->customerCount == 0) {
         printf("No customers available. Please add a customer first.\n");
@@ -58,10 +72,10 @@ Order* createNewOrderInteractive(Pharmacy* pharmacy) {
     Order* newOrder = (Order*)malloc(sizeof(Order));
     CHECK_ALLOC_STRUCT(newOrder);
     int customerID, employeeID;
-    printAllCustomers(pharmacy);
+    printCustomersChoose(pharmacy);
     printf("Enter the Customer ID for the new order: ");
     scanf("%d", &customerID);
-    printAllEmployees(pharmacy);
+    printEmployeesChoose(pharmacy);
     printf("Enter the Employee ID for the new order: ");
     scanf("%d", &employeeID);
 
@@ -215,7 +229,7 @@ void addNewPrescriptionToPharmacy(Pharmacy* pharmacy) {
         return;
     }
     // Print all customers to let the user choose
-    printAllCustomers(pharmacy);
+    printCustomersChoose(pharmacy);
 
     int customerID,quantity;
     char* medicineID;
@@ -373,7 +387,7 @@ void raiseSalaryClient(Pharmacy* pharmacy) {
 }
 
 void replaceEmployeeInOrder(Pharmacy* pharmacy, Order* order) {
-    printAllEmployees(pharmacy);
+    printEmployeesChoose(pharmacy);
     int employeeID;
     printf("Enter the ID of the employee to replace: ");
     scanf("%d", &employeeID);
@@ -626,14 +640,12 @@ int loadPharmacyFromBinary(FILE* file, Pharmacy* pharmacy) {
     }
     if (pharmacy->employeeCount > 0)
         pharmacy->employees = loadEmployeesFromBinary(file, pharmacy->employeeCount);
-
     if (fread(&pharmacy->customerCount, sizeof(int), 1, file) != 1) {
         printf("Failed to read customer count.\n");
         return 0;
     }
     if (pharmacy->customerCount > 0)
         pharmacy->customers = loadCustomersFromBinary(file, pharmacy->customerCount);
-    printAllCustomers(pharmacy);
     if (fread(&pharmacy->prescriptionCount, sizeof(int), 1, file) != 1) {
        printf("Failed to read prescription count.\n");
         return 0;
