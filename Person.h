@@ -4,6 +4,9 @@
 #include "general.h"  // Include for CHECK_ALLOC and myGets
 #include <ctype.h>    // Include for isdigit
 
+#define ID_LENGTH 9
+#define PHONE_NUMBER_LENGTH 11
+
 typedef unsigned char BYTE;
 
 /**
@@ -21,8 +24,8 @@ typedef enum {
 typedef struct {
     char* name;      /**< Dynamically allocated person name */
     Gender gender;   /**< Gender, represented by an enum */
-    char* PersonId;  /**< Dynamically allocated person ID */
-    char* phoneNumber; /**< Dynamically allocated phone number */
+    char PersonId[ID_LENGTH+1]; /**< Person ID, a 9-digit string */
+    char phoneNumber[PHONE_NUMBER_LENGTH+1]; /**< Dynamically allocated phone number */
 } Person;
 
 /**

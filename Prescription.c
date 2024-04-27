@@ -5,7 +5,7 @@
 void initPrescription(Prescription* prescription, Customer* customers, int numCustomers, int customerID, const char* medicineID,Stock* stock, Date expirationDate, int quantity, int prescriptionID) {
     prescription->id = prescriptionID;  // Auto-increment the prescription ID
     prescription->customer = findCustomerByID(customers, numCustomers, customerID);
-    strncpy(prescription->medicineID, medicineID, ID_LENGTH);  // Copy the medicine ID
+    strncpy(prescription->medicineID, medicineID, MEDICINE_ID_LENGTH);  // Copy the medicine ID
     prescription->expirationDate = expirationDate;  // Assign the expiration date
     prescription->quantity = quantity;  // Assign the allowed quantity of medication
     prescription->used = 0;  // Initially mark the prescription as unused
@@ -49,7 +49,7 @@ void printPrescriptions(const Prescription* prescriptions, int numPrescriptions)
 int savePrescriptionToBinary(const Prescription* prescription, FILE* file) {
     return fwrite(&prescription->id, sizeof(int), 1, file) == 1 &&
            fwrite(&prescription->customer->id, sizeof(int), 1, file) == 1 &&
-           fwrite(prescription->medicineID, sizeof(char), ID_LENGTH, file) == ID_LENGTH &&
+           fwrite(prescription->medicineID, sizeof(char), MEDICINE_ID_LENGTH, file) == MEDICINE_ID_LENGTH &&
            fwrite(&prescription->quantity, sizeof(int), 1, file) == 1 &&
            fwrite(&prescription->used, sizeof(int), 1, file) == 1 &&
            saveDateToBinary(file,&prescription->expirationDate);
@@ -64,7 +64,7 @@ int loadPrescriptionFromBinary(Prescription* prescription, FILE* file, Customer*
         return 0;
     }
     prescription->customer = findCustomerByID(customers, numCustomers, customerID);
-    if (fread(prescription->medicineID, sizeof(char), ID_LENGTH, file) != ID_LENGTH) {
+    if (fread(prescription->medicineID, sizeof(char), MEDICINE_ID_LENGTH, file) != MEDICINE_ID_LENGTH) {
         return 0;
     }
     if (fread(&prescription->quantity, sizeof(int), 1, file) != 1) {

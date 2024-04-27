@@ -179,7 +179,7 @@ void addNewProductToStock(Stock* stock) {
 
 void addNewMedicineToStock(Stock* stock) {
     Medicine* existingMedicine = NULL;
-    char medicineID[ID_LENGTH];
+    char medicineID[MEDICINE_ID_LENGTH];
 
     do {
         printf("Enter unique Medicine ID (6 digits): ");
@@ -246,8 +246,14 @@ void updateStock(Stock* stock, int productCode, int quantity) {
         // Update the quantity available in the stock
         stockProduct->stockQuantity = quantity;
     } else {
+        Medicine* stockMedicine = findMedicine(stock, productCode);
+        if (stockMedicine != NULL) {
+            // Handle the case where the product is a medicine
+            stockMedicine->product.stockQuantity = quantity;
+        } else {
         // Handle the case where the product is not found in the stock
         printf("Product code %d not found in stock.\n", productCode);
+        }
     }
 }
 

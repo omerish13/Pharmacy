@@ -232,7 +232,7 @@ void addNewPrescriptionToPharmacy(Pharmacy* pharmacy) {
     printCustomersChoose(pharmacy);
 
     int customerID,quantity;
-    char* medicineID;
+    char medicineID[MEDICINE_ID_LENGTH+1];
     // Get Customer ID from the client
     printf("Enter the Customer ID for the new prescription: ");
     Customer* customer;
@@ -246,16 +246,16 @@ void addNewPrescriptionToPharmacy(Pharmacy* pharmacy) {
         }
     } while (customer == NULL);
     
-    
-
-    // Get other prescription details from the client
-    printf("Enter the Medicine ID for the new prescription: ");
     char buffer[BUFFER_SIZE];
-    myGets(buffer);
-    medicineID = (char*)malloc(strlen(buffer)+1);
-    CHECK_ALLOC_VOID(medicineID);
-    strcpy(medicineID,buffer);
-
+    do {
+        printf("Enter the medicine ID for the prescription: ");
+        myGets(buffer);
+        if (strlen(buffer) != MEDICINE_ID_LENGTH) {
+            printf("Medicine ID must be %d characters long.\n", MEDICINE_ID_LENGTH);
+        }
+    } while (strlen(buffer) != MEDICINE_ID_LENGTH);
+    strcpy(medicineID, buffer);
+        
     printf("Enter the quantity for the prescription: ");
     scanf("%d", &quantity);
     clearInputBuffer();
@@ -614,6 +614,7 @@ void loadOrdersFromBinary(FILE* file, const Employee** employees, int numEmploye
 
 int loadPharmacyFromBinary(FILE* file, Pharmacy* pharmacy) {
     initPharmacy(pharmacy);
+    printf("Loading pharmacy from binary file.\n");
     // Read the pharmacy name from the file
     int length;
     if (fread(&length, sizeof(int), 1, file) != 1) {
@@ -624,15 +625,18 @@ int loadPharmacyFromBinary(FILE* file, Pharmacy* pharmacy) {
     if (fread(pharmacy->name, sizeof(char), length, file) != length) {
         return 0;
     }
+    printf("Pharmacy Name: %s\n", pharmacy->name);
 
     if (!loadAddressFromBinary(&pharmacy->address,file)) {
         return 0;
     }
+    printf("Address loaded.\n");
 
     if (!loadStockFromBinary(file, &pharmacy->stock)) {
         printf("Failed to load stock.\n");
         return 0;
     }
+    printf("Stock loaded.\n");
 
     if (fread(&pharmacy->employeeCount, sizeof(int), 1, file) != 1) {
         printf("Failed to read employee count.\n");
@@ -640,18 +644,21 @@ int loadPharmacyFromBinary(FILE* file, Pharmacy* pharmacy) {
     }
     if (pharmacy->employeeCount > 0)
         pharmacy->employees = loadEmployeesFromBinary(file, pharmacy->employeeCount);
+    printf("Employees loaded.\n");
     if (fread(&pharmacy->customerCount, sizeof(int), 1, file) != 1) {
         printf("Failed to read customer count.\n");
         return 0;
     }
     if (pharmacy->customerCount > 0)
         pharmacy->customers = loadCustomersFromBinary(file, pharmacy->customerCount);
+    printf("Customers loaded.\n");
     if (fread(&pharmacy->prescriptionCount, sizeof(int), 1, file) != 1) {
        printf("Failed to read prescription count.\n");
         return 0;
     }
     if (pharmacy->prescriptionCount > 0)
         pharmacy->prescriptions = loadPrescriptionsFromBinary(file, pharmacy->prescriptionCount, pharmacy->customers, pharmacy->customerCount, &pharmacy->stock);
+    printf("Prescriptions loaded.\n");
     loadOrdersFromBinary(file, (const Employee**)pharmacy->employees, pharmacy->employeeCount, &pharmacy->orderHistory);
     printPharmacyDetails(pharmacy);
     return 1;

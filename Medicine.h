@@ -3,7 +3,7 @@
 
 #include "Product.h"  
 #include "Date.h"     
-#define ID_LENGTH 6
+#define MEDICINE_ID_LENGTH 6
 
 /**
  * Structure representing a medicine's information, extending the Product structure.
@@ -11,7 +11,7 @@
  */
 typedef struct {
     Product product;            /**< Base Product structure */
-    char medicineID[ID_LENGTH+1];         /**< Unique medicine ID, a 6-digit string */
+    char medicineID[MEDICINE_ID_LENGTH+1];         /**< Unique medicine ID, a 6-digit string */
     Date expireDate;           /**< Dynamically allocated expiration date string */
     int prescriptionRequired;   /**< Flag indicating if a prescription is required (0 = No, 1 = Yes) */
 } Medicine;
