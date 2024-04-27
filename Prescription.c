@@ -34,7 +34,10 @@ void printPrescription(const Prescription* prescription) {
     printf("Prescription ID: %d ", prescription->id);
     printCustomerDetails(prescription->customer);
     printf("Medicine ID: %s\n",prescription->medicineID);
-    // Additional details can be printed here if needed
+    printf("Expiration Date: ");
+    printDate(&prescription->expirationDate);
+    printf("Quantity: %d, ", prescription->quantity);
+    printf("Used: %s\n", prescription->used ? "Yes" : "No");
 }
 
 void printPrescriptions(const Prescription* prescriptions, int numPrescriptions) {

@@ -295,12 +295,10 @@ void addCustomerInteractive(Pharmacy* pharmacy) {
 }
 
 void addProductOrMedicineToOrder(Pharmacy* pharmacy, Order* order) {
-    showAvailableProducts(&pharmacy->stock);
+    showAvailableProducts(&pharmacy->stock, order);
     int productCode, quantity;
     printf("Enter Product/Medicine Code to add to order: ");
     scanf("%d", &productCode);
-    printf("Enter quantity: ");
-    scanf("%d", &quantity);
 
     // Function to add product/medicine to order, based on productCode
     Product* product = findProduct(&pharmacy->stock,productCode);
@@ -320,6 +318,8 @@ void addProductOrMedicineToOrder(Pharmacy* pharmacy, Order* order) {
             return;
         }
     }
+    printf("Enter quantity: ");
+    scanf("%d", &quantity);
     if (addProductToOrder(order, &pharmacy->stock, product, quantity))
         printf("Product added to order.\n");
     else

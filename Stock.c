@@ -10,17 +10,6 @@ void initStock(Stock* stock) {
     stock->medicineCount = 0;
 }
 
-void showAvailableProducts(const Stock* stock) {
-    printf("Available Products:\n");
-    for (int i = 0; i < stock->productCount; i++) {
-        printProductDetails(&stock->products[i]);
-    }
-    printf("Available Medicines:\n");
-    for (int i = 0; i < stock->medicineCount; i++) {
-        printMedicineDetails(&stock->medicines[i]);
-    }
-}
-
 void sortProductInStock(Stock* stock) {
     int option;
     if (stock->productCount == 0) {

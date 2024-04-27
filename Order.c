@@ -20,6 +20,44 @@ void updateEmployeeInOrder(Order* order, Employee* newEmployee) {
     currentDate(&order->lastModified);
 }
 
+int isProductInOrder(Order* order, int productCode) {
+    ListNode* node = order->orderProducts->head;
+    while (node != NULL) {
+        OrderProductNode* productNode = (OrderProductNode*)node->item;
+        if (productNode->productCode == productCode) {
+            return 1;  // Product found in order
+        }
+        node = node->next;
+    }
+    return 0;  // Product not found in order
+}
+
+int isMedicineInOrder(Order* order, int medicineCode) {
+    ListNode* node = order->orderMedicines->head;
+    while (node != NULL) {
+        OrderMedicineNode* medicineNode = (OrderMedicineNode*)node->item;
+        if (medicineNode->medicineCode == medicineCode) {
+            return 1;  // Medicine found in order
+        }
+        node = node->next;
+    }
+    return 0;  // Medicine not found in order
+}
+
+void showAvailableProducts(Stock* stock, Order* order) {
+    printf("Available Products:\n");
+    for (int i = 0; i < stock->productCount; i++) {
+        if (!isProductInOrder(order, stock->products[i].code)) {
+            printProduct(&stock->products[i]);
+        }
+    }
+    printf("Available Medicines:\n");
+    for (int i = 0; i < stock->medicineCount; i++) {
+        if (!isMedicineInOrder(order, stock->medicines[i].product.code)) {
+            printMedicineInStock(&stock->medicines[i]);
+        }
+    }
+}
 int addProductToOrder(Order* order, Stock* stock, Product* product, int quantity) {
     if (!product) {
         printf("Error: Invalid Product Code.\n");
@@ -77,7 +115,7 @@ int addMedicineToOrder(Order* order, Prescription* prescriptions, int numOfPresc
         }
     }
 
-    if (validPrescriptionIndex == -1) {
+    if (validPrescriptionIndex == -1 && medicine->prescriptionRequired) {
         printf("Error: No valid prescription for this medicine.\n");
         return 0;  // Indicate failure
     }
@@ -94,7 +132,13 @@ int addMedicineToOrder(Order* order, Prescription* prescriptions, int numOfPresc
     }
     // Check if stock is sufficient for the prescribed quantity
 
-    int prescribedQuantity = prescriptions[validPrescriptionIndex].quantity;
+    int prescribedQuantity;
+    if (medicine->prescriptionRequired)
+        prescribedQuantity = prescriptions[validPrescriptionIndex].quantity;
+    else{
+        printf("Enter quantity: ");
+        scanf("%d", &prescribedQuantity);
+    }
     if (medicine->product.stockQuantity < prescribedQuantity) {
         char choice;
         printf("Insufficient stock. Available: %d, Required: %d\n", medicine->product.stockQuantity, prescribedQuantity);
@@ -103,6 +147,8 @@ int addMedicineToOrder(Order* order, Prescription* prescriptions, int numOfPresc
         clearInputBuffer();
         if (choice == 'y' || choice == 'Y') {
             prescribedQuantity = medicine->product.stockQuantity;
+            if (medicine->prescriptionRequired)
+                prescriptions[validPrescriptionIndex].used = 1;  // Mark the prescription as used
         } else {
             return 0;  // Indicate failure
         }
@@ -117,7 +163,7 @@ int addMedicineToOrder(Order* order, Prescription* prescriptions, int numOfPresc
     newNode->price = medicine->product.price;
     addToList(order->orderMedicines, newNode);
     order->totalAmount += medicine->product.price * prescribedQuantity;
-    prescriptions[validPrescriptionIndex].used = 1;  // Mark the prescription as used
+    
     updateLastModified(order);
     return 1;  // Indicate success
 }

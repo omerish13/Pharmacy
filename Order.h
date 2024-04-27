@@ -60,6 +60,15 @@ void initOrder(Order* order, int customerID, Employee* employee, int orderNumber
  */
 void showOrder(const void* order);
 
+
+/**
+ * Displays the available products in the stock and the current order.
+ *
+ * @param stock The stock containing the available products.
+ * @param order The current order.
+ */
+void showAvailableProducts(Stock* stock, Order* order);
+
 /**
  * Adds a product to an order by product code and quantity.
  * 

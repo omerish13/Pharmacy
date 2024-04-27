@@ -27,15 +27,6 @@ typedef struct Stock {
 void initStock(Stock* stock);
 
 /**
- * Displays all available products in the stock by printing detailed information for each product.
- * This function iterates over the array of products in the stock and uses printProductDetails
- * to show each product's details.
- * 
- * @param stock Pointer to the Stock structure whose products are to be displayed.
- */
-void showAvailableProducts(const Stock* stock);
-
-/**
  * Searches for a product in the stock by its unique code. Iterates through the array of products
  * and returns a pointer to the Product structure if found. If the product is not found, returns NULL.
  * 
